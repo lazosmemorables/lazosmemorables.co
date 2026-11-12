@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.11.0 · Panel administrativo -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.12.0 · Panel administrativo -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -528,6 +528,29 @@
     .etiqueta.anulada { background: transparent; border: 1px solid var(--linea); color: var(--texto-suave); }
     .bloque-pago { background: var(--marfil-suave); padding: 22px 20px; margin: 18px 0 0; }
     .cifras.tres { grid-template-columns: repeat(3, 1fr); }
+    /* ---------- Finanzas ---------- */
+    .selector-mes { display: flex; align-items: center; gap: 14px; margin: 0 0 20px; }
+    .selector-mes button { background: none; border: 1px solid var(--linea); width: 36px; height: 36px; cursor: pointer; color: var(--cacao); font-size: 16px; }
+    .selector-mes span { font-family: var(--serif); font-size: 24px; min-width: 170px; text-align: center; }
+    .estado-res { width: 100%; border-collapse: collapse; font-size: 14px; margin: 0 0 28px; }
+    .estado-res td { padding: 11px 0; border-bottom: 1px solid var(--linea); }
+    .estado-res td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .estado-res td.pct { text-align: right; width: 64px; color: var(--texto-suave); font-size: 12px; }
+    .estado-res tr.sub td { padding-left: 16px; color: var(--texto-suave); font-size: 13px; }
+    .estado-res tr.total td { font-weight: 600; border-bottom: 1px solid var(--cacao); }
+    .estado-res tr.final td { font-family: var(--serif); font-size: 24px; font-weight: 400; border-bottom: 0; padding-top: 16px; }
+    .estado-res tr.final td.pct { font-family: var(--sans); font-size: 12px; }
+    .negativo { color: inherit; }
+    .valor .negativo, .final .negativo { color: #C2556A; }
+    .aviso-suave { background: var(--marfil-suave, #FBF8F3); padding: 18px 20px; margin: 0 0 24px; }
+    .aviso-suave p { margin: 0; }
+    .barras { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; align-items: end; height: 150px; margin: 8px 0 6px; border-bottom: 1px solid var(--linea); }
+    .barras div { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; }
+    .barras i { display: block; width: 60%; max-width: 38px; background: var(--oro); min-height: 2px; }
+    .barras i.neg { background: #C16478; }
+    .barras-etq { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--texto-suave); text-align: center; margin-bottom: 28px; }
+    .barras-etq b { display: block; font-weight: 500; color: var(--cacao); letter-spacing: 0; text-transform: none; font-size: 11px; }
+
 
     /* ---------- Ventas ---------- */
     .buscador-clienta { position: relative; }
@@ -686,6 +709,7 @@
       <button type="button" data-vista="productos">Productos</button>
       <button type="button" data-vista="inventario">Inventario</button>
       <button type="button" data-vista="compras">Compras</button>
+      <button type="button" data-vista="finanzas">Finanzas</button>
       <button type="button" data-vista="categorias">Categorías</button>
       <button type="button" data-vista="configuracion">Configuración</button>
     </nav>
@@ -1081,6 +1105,30 @@
       </section>
 
       <!-- Categorías -->
+      <!-- Finanzas -->
+      <section id="vista-finanzas" hidden>
+        <div class="encabezado-vista">
+          <h2 class="titulo-vista">Finanzas</h2>
+        </div>
+        <p class="intro">Resultados, caja y gastos calculados desde las ventas, compras y pagos registrados. Nada se digita dos veces.</p>
+        <div class="selector-mes"><button type="button" data-mes="-1" aria-label="Mes anterior">‹</button><span id="fin-mes">—</span><button type="button" data-mes="1" aria-label="Mes siguiente">›</button></div>
+        <div class="cifras">
+          <div class="cifra-bloque"><span id="fin-ingresos" class="valor">—</span><span class="rotulo">Ingresos netos</span></div>
+          <div class="cifra-bloque"><span id="fin-utilidad" class="valor">—</span><span class="rotulo">Utilidad operativa</span></div>
+          <div class="cifra-bloque"><span id="fin-flujo" class="valor">—</span><span class="rotulo">Flujo de caja</span></div>
+          <div class="cifra-bloque"><span id="fin-ticket" class="valor">—</span><span class="rotulo">Ticket promedio</span></div>
+        </div>
+        <div class="filtros">
+          <div class="pildoras" id="filtro-finanzas" role="group" aria-label="Ver">
+            <button class="pildora" type="button" data-f="resultados" aria-pressed="true">Resultados</button>
+            <button class="pildora" type="button" data-f="caja" aria-pressed="false">Flujo de caja</button>
+            <button class="pildora" type="button" data-f="gastos" aria-pressed="false">Gastos</button>
+            <button class="pildora" type="button" data-f="cierre" aria-pressed="false">Cierre de caja</button>
+          </div>
+        </div>
+        <div id="fin-contenido"><p class="vacio">Cargando…</p></div>
+      </section>
+
       <section id="vista-categorias" hidden>
         <h2 class="titulo-vista">Categorías</h2>
         <p class="intro">Cada categoría asigna su SKU de forma automática y en orden. El código no cambia aunque cambies el nombre.</p>
@@ -1314,11 +1362,12 @@
       document.querySelectorAll('.nav button').forEach(function (b) {
         if (b.dataset.vista === navActiva) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
       });
-      ['inicio', 'ventas', 'nueva-venta', 'pedido', 'productos', 'nuevo', 'producto', 'inventario', 'compras', 'nueva-compra', 'compra', 'categorias', 'configuracion'].forEach(function (v) { $('vista-' + v).hidden = v !== vista; });
+      ['inicio', 'ventas', 'nueva-venta', 'pedido', 'productos', 'nuevo', 'producto', 'inventario', 'compras', 'nueva-compra', 'compra', 'finanzas', 'categorias', 'configuracion'].forEach(function (v) { $('vista-' + v).hidden = v !== vista; });
       window.scrollTo(0, 0);
       if (vista === 'productos') cargarProductos();
       if (vista === 'inventario') cargarInventario();
       if (vista === 'compras') cargarCompras();
+      if (vista === 'finanzas') cargarFinanzas();
       if (vista === 'ventas') cargarVentas();
       if (vista === 'nueva-venta') prepararVenta();
       if (vista === 'nueva-compra') prepararCompra();
@@ -2194,7 +2243,7 @@
       if (p.transportadora) datos.push(['Transportadora', p.transportadora + (p.guia ? ' · Guía ' + p.guia : '')]);
       datos.push(['Novedades', p.clienta.consentimiento_marketing ? 'Acepta recibirlas' : 'No autorizadas']);
       $('pe-datos').innerHTML = datos.map(function (d) { return '<div class="fila"><dt>' + d[0] + '</dt><dd>' + escapar(d[1]) + '</dd></div>'; }).join('');
-      var nombresCobro = { reportado: 'Reportado', verificado: 'Verificado', rechazado: 'Rechazado', por_reembolsar: 'Por reembolsar' };
+      var nombresCobro = { reportado: 'Reportado', verificado: 'Verificado', rechazado: 'Rechazado', por_reembolsar: 'Por reembolsar', reembolsado: 'Reembolsado' };
       $('pe-cobros').innerHTML = p.cobros.length ? p.cobros.map(function (c) {
         return '<li class="item"><div class="item-principal"><span class="item-nombre">' + pesos(c.monto) + ' · ' + escapar(c.medio) + '</span>' +
           '<span class="item-meta">' + escapar(nombresCobro[c.estado] || c.estado) + (c.referencia ? ' · Ref. ' + escapar(c.referencia) : '') +
@@ -2265,6 +2314,188 @@
         avisar('Pedido ' + pedido.numero + ': ' + pedido.estado_texto.toLowerCase() + '.');
       });
     }
+
+
+    /* ---------------- Finanzas ---------------- */
+    var finMes = '', finVista = 'resultados', finDatos = null, claveGasto = null;
+    var MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    function mesTexto(m) { var p = m.split('-'); return MESES[Number(p[1]) - 1].replace(/^./, function (c) { return c.toUpperCase(); }) + ' ' + p[0]; }
+    function mesCorto(m) { return MESES[Number(m.split('-')[1]) - 1].slice(0, 3); }
+    function hoyBogota() { return new Date(Date.now() - 5 * 3600000).toISOString().slice(0, 10); }
+    function moverMes(m, d) { var p = m.split('-').map(Number), y = p[0], n = p[1] + d; if (n < 1) { n = 12; y--; } if (n > 12) { n = 1; y++; } return y + '-' + ('0' + n).slice(-2); }
+    function firmado(n) { return (n < 0 ? '−' : '') + pesos(Math.abs(n)); }
+    function claseSigno(n) { return n < 0 ? ' class="negativo"' : ''; }
+    function cargarFinanzas() {
+      if (!finMes) finMes = hoyBogota().slice(0, 7);
+      $('fin-mes').textContent = mesTexto(finMes);
+      $('fin-contenido').innerHTML = '<p class="vacio">Cargando…</p>';
+      api('resumenFinanzas', { mes: finMes }).then(function (r) {
+        if (!r.ok) { manejarError(r); return; }
+        finDatos = r.data;
+        var R = r.data.resultados, F = r.data.flujo;
+        $('fin-ingresos').textContent = firmado(R.ingresos_netos);
+        $('fin-utilidad').innerHTML = '<span' + claseSigno(R.utilidad_operativa) + '>' + firmado(R.utilidad_operativa) + '</span>';
+        $('fin-flujo').innerHTML = '<span' + claseSigno(F.neto) + '>' + firmado(F.neto) + '</span>';
+        $('fin-ticket').textContent = R.pedidos ? pesos(R.ticket_promedio) : '—';
+        pintarFinanzas();
+      });
+    }
+    function filaRes(nombre, valor, base, clase) {
+      return '<tr' + (clase ? ' class="' + clase + '"' : '') + '><td>' + nombre + '</td><td class="num"><span' + claseSigno(valor) + '>' + firmado(valor) + '</span></td><td class="pct">' + (base ? String(Math.round(Math.abs(valor) / base * 1000) / 10).replace('.', ',') + '%' : '') + '</td></tr>';
+    }
+    function pintarFinanzas() {
+      var d = finDatos, c = $('fin-contenido');
+      if (finVista === 'resultados') {
+        var R = d.resultados, b = R.ingresos_netos;
+        var gastosCat = Object.keys(R.gastos_por_categoria).map(function (k) { return filaRes(escapar(d.categorias[k] || k), -R.gastos_por_categoria[k], b, 'sub'); }).join('');
+        c.innerHTML = '<p class="titulo-seccion" style="margin-top:0">Estado de resultados · ' + mesTexto(d.mes) + '</p>' +
+          '<table class="estado-res"><tbody>' +
+          filaRes('Ventas (' + R.pedidos + ' pedidos · ' + R.unidades + ' uds)', R.ventas, 0) +
+          (R.descuentos ? filaRes('Descuentos', -R.descuentos, 0, 'sub') : '') +
+          (R.envio_cobrado ? filaRes('Envíos cobrados', R.envio_cobrado, 0, 'sub') : '') +
+          (R.reversiones ? filaRes('Cancelaciones y devoluciones', -R.reversiones, 0, 'sub') : '') +
+          filaRes('Ingresos netos', b, b, 'total') +
+          filaRes('Costo de la mercancía', -R.costo_neto, b) +
+          filaRes('Costo real de envíos', -R.costo_envios, b) +
+          filaRes('Contribución', R.contribucion, b, 'total') +
+          filaRes('Gastos operativos', -R.gastos, b) + gastosCat +
+          filaRes('Utilidad operativa', R.utilidad_operativa, b, 'final') +
+          '</tbody></table>' + graficoSerie('utilidad_operativa', 'Utilidad operativa · últimos 6 meses') +
+          '<p class="pista">La venta cuenta cuando el pago se verifica. El costo de la mercancía es el costo promedio de cada pieza vendida.</p>';
+      } else if (finVista === 'caja') {
+        var F = d.flujo, P = d.pendientes;
+        c.innerHTML = '<p class="titulo-seccion" style="margin-top:0">Flujo de caja · ' + mesTexto(d.mes) + '</p>' +
+          '<table class="estado-res"><tbody>' +
+          filaRes('Cobros verificados', F.cobros, 0) +
+          filaRes('Reembolsos a clientas', -F.reembolsos, 0, 'sub') +
+          filaRes('Pagos a proveedores', -F.pagos_proveedores, 0, 'sub') +
+          filaRes('Gastos operativos', -F.gastos, 0, 'sub') +
+          filaRes('Envíos pagados', -F.envios, 0, 'sub') +
+          filaRes('Flujo neto del mes', F.neto, 0, 'final') + '</tbody></table>' +
+          graficoSerie('flujo_neto', 'Flujo neto · últimos 6 meses') +
+          '<p class="titulo-seccion">Pendientes hoy</p><div class="cifras">' +
+          '<div class="cifra-bloque"><span class="valor">' + pesos(P.por_cobrar) + '</span><span class="rotulo">Pagos por verificar</span></div>' +
+          '<div class="cifra-bloque"><span class="valor">' + pesos(P.por_pagar) + '</span><span class="rotulo">Por pagar a proveedores</span></div>' +
+          '<div class="cifra-bloque"><span class="valor">' + pesos(P.vencido) + '</span><span class="rotulo">Vencido</span></div>' +
+          '<div class="cifra-bloque"><span class="valor">' + pesos(P.por_reembolsar) + '</span><span class="rotulo">Por reembolsar</span></div></div>' +
+          (P.reembolsos.length ? '<ul class="lista" id="lista-reembolsos">' + P.reembolsos.map(function (x) {
+            return '<li class="item"><div class="item-principal"><span class="item-nombre">' + escapar(x.numero) + ' · ' + pesos(x.monto) + '</span><span class="item-meta">' + escapar(x.medio) + (x.motivo ? ' · ' + escapar(x.motivo) : '') + '</span></div>' +
+              '<button class="enlace" type="button" data-reembolso="' + escapar(x.payment_id) + '">Ya se reembolsó</button></li>';
+          }).join('') + '</ul>' : '');
+      } else if (finVista === 'gastos') {
+        c.innerHTML = '<p class="vacio">Cargando gastos…</p>';
+        api('listarGastos', { mes: finMes }).then(function (r) {
+          if (!r.ok) { manejarError(r); return; }
+          if (!claveGasto) claveGasto = nuevaClave();
+          var g = r.data;
+          c.innerHTML = '<form id="form-gasto" class="formulario panel-var" autocomplete="off">' +
+            '<p class="titulo-seccion" style="margin:0">Registrar gasto</p>' +
+            '<p class="pista" style="margin:0">Publicidad, empaques, fotos, suscripciones. Las compras de mercancía van en Compras y el envío de cada pedido se registra al despacharlo.</p>' +
+            '<div class="doble"><div><label class="etq" for="gs-cat">Categoría</label><select id="gs-cat" class="selector" style="width:100%"><option value="">Elige…</option>' + opciones(g.categorias) + '</select></div>' +
+            '<div><label class="etq" for="gs-desc">Descripción</label><input id="gs-desc" class="campo" maxlength="120" placeholder="Ej.: pauta historia lanzamiento"></div></div>' +
+            '<div class="doble"><div><label class="etq" for="gs-monto">Valor</label><input id="gs-monto" class="campo" inputmode="numeric" data-precio placeholder="0"></div>' +
+            '<div><label class="etq" for="gs-fecha">Fecha</label><input id="gs-fecha" class="campo" type="date" value="' + hoyBogota() + '" max="' + hoyBogota() + '"></div></div>' +
+            '<div><label class="etq" for="gs-medio">Cómo se pagó</label><select id="gs-medio" class="selector" style="width:100%">' + opciones(g.medios) + '</select></div>' +
+            '<div class="pie-form" style="margin:0"><button class="boton" type="submit" id="gs-guardar">Guardar gasto</button></div></form>' +
+            '<p class="titulo-seccion">Gastos de ' + mesTexto(g.mes) + ' · ' + pesos(g.total) + '</p>' +
+            '<ul class="lista">' + (g.gastos.length ? g.gastos.map(function (x) {
+              var anulado = x.estado !== 'activo';
+              return '<li class="item"' + (anulado ? ' style="opacity:.5"' : '') + '><div class="item-principal"><span class="item-nombre">' + escapar(x.descripcion) + '</span>' +
+                '<span class="item-meta">' + escapar(fechaLarga(x.fecha)) + ' · ' + escapar(x.categoria_texto) + ' · ' + escapar(x.medio) + ' · ' + escapar(x.creado_por) + (anulado ? ' · Anulado: ' + escapar(x.nota_anulacion) : '') + '</span></div>' +
+                '<div class="item-precio"><span class="cifra">' + pesos(x.monto) + '</span>' + (anulado ? '' : '<button class="enlace peligro" type="button" data-anular-gasto="' + escapar(x.gasto_id) + '">Anular</button>') + '</div></li>';
+            }).join('') : '<li class="vacio">Sin gastos este mes.</li>') + '</ul>';
+        });
+      } else if (finVista === 'cierre') {
+        cargarCierre(hoyBogota());
+      }
+    }
+    function graficoSerie(campo, titulo) {
+      var serie = finDatos.serie, max = Math.max.apply(null, serie.map(function (x) { return Math.abs(x[campo]); })) || 1;
+      return '<p class="titulo-seccion">' + titulo + '</p><div class="barras">' + serie.map(function (x) {
+        return '<div><i class="' + (x[campo] < 0 ? 'neg' : '') + '" style="height:' + Math.max(1, Math.round(Math.abs(x[campo]) / max * 100)) + '%" title="' + firmado(x[campo]) + '"></i></div>';
+      }).join('') + '</div><div class="barras-etq">' + serie.map(function (x) {
+        return '<span>' + mesCorto(x.mes) + '<b>' + (x[campo] < 0 ? '−' : '') + (Math.abs(x[campo]) >= 1000000 ? (Math.abs(x[campo]) / 1000000).toFixed(1).replace('.', ',') + ' M' : Math.round(Math.abs(x[campo]) / 1000) + ' mil') + '</b></span>';
+      }).join('') + '</div>';
+    }
+    function cargarCierre(dia) {
+      var c = $('fin-contenido');
+      c.innerHTML = '<p class="vacio">Cargando el día…</p>';
+      api('cierreCaja', { fecha: dia }).then(function (r) {
+        if (!r.ok) { manejarError(r); return; }
+        var d = r.data, e = d.efectivo;
+        c.innerHTML = '<div class="doble" style="display:grid;grid-template-columns:1fr auto;gap:16px;align-items:end;margin-bottom:18px"><div><label class="etq" for="cc-fecha">Día</label>' +
+          '<input id="cc-fecha" class="campo" type="date" value="' + d.fecha + '" max="' + hoyBogota() + '"></div></div>' +
+          '<table class="estado-res"><tbody><tr class="total"><td>Medio</td><td class="num">Entradas</td><td class="num">Salidas</td></tr>' +
+          (d.medios.length ? d.medios.map(function (m) { return '<tr><td>' + escapar(m.medio) + '</td><td class="num">' + pesos(m.entradas) + '</td><td class="num">' + pesos(m.salidas) + '</td></tr>'; }).join('')
+            : '<tr><td colspan="3" class="pista">Sin movimientos este día.</td></tr>') + '</tbody></table>' +
+          '<p class="titulo-seccion">Efectivo</p><table class="estado-res"><tbody>' +
+          filaRes('Saldo inicial' + (e.desde ? ' (cierre del ' + fechaLarga(e.desde) + ')' : ''), e.inicial, 0) +
+          filaRes('Entradas en efectivo', e.entradas, 0, 'sub') + filaRes('Salidas en efectivo', -e.salidas, 0, 'sub') +
+          filaRes('Debe haber en caja', e.esperado, 0, 'final') + '</tbody></table>' +
+          (d.cierre ? '<div class="aviso-suave"><p class="titulo-seccion" style="margin-top:0">Día cerrado por ' + escapar(d.cierre.cerrado_por) + '</p><p>Contado: ' + pesos(d.cierre.efectivo_contado) +
+              ' · Diferencia: <span' + claseSigno(d.cierre.diferencia) + '>' + firmado(d.cierre.diferencia) + '</span>' + (d.cierre.nota ? ' · ' + escapar(d.cierre.nota) : '') + '</p>' +
+              (d.cierre.efectivo_esperado !== e.esperado ? '<p class="pista" style="margin-top:8px">Después del cierre se registraron movimientos en efectivo de este día (esperado al cerrar: ' + pesos(d.cierre.efectivo_esperado) + ').</p>' : '') + '</div>'
+            : '<form id="form-cierre" class="formulario panel-var"><div class="doble"><div><label class="etq" for="cc-contado">Efectivo contado</label><input id="cc-contado" class="campo" inputmode="numeric" data-precio placeholder="0"></div>' +
+              '<div><label class="etq" for="cc-nota">Nota (opcional)</label><input id="cc-nota" class="campo" maxlength="200"></div></div>' +
+              '<div class="pie-form" style="margin:0"><button class="boton" type="submit">Cerrar el día</button></div></form>') +
+          (d.historial.length ? '<p class="titulo-seccion">Últimos cierres</p><ul class="lista">' + d.historial.map(function (h) {
+            return '<li class="item"><div class="item-principal"><span class="item-nombre">' + escapar(fechaLarga(h.fecha)) + '</span><span class="item-meta">Esperado ' + pesos(h.esperado) + ' · Contado ' + pesos(h.contado) + ' · ' + escapar(h.por) + '</span></div>' +
+              '<div class="item-precio"><span class="cifra"' + claseSigno(h.diferencia) + '>' + firmado(h.diferencia) + '</span></div></li>';
+          }).join('') + '</ul>' : '') +
+          '<p class="pista">Las transferencias y la tarjeta se revisan contra el extracto del banco. El efectivo se cuenta físicamente.</p>';
+      });
+    }
+    $('vista-finanzas').addEventListener('click', function (ev) {
+      var m = ev.target.closest('[data-mes]');
+      if (m) { finMes = moverMes(finMes, Number(m.dataset.mes)); cargarFinanzas(); return; }
+      var f = ev.target.closest('#filtro-finanzas .pildora');
+      if (f) {
+        document.querySelectorAll('#filtro-finanzas .pildora').forEach(function (x) { x.setAttribute('aria-pressed', x === f ? 'true' : 'false'); });
+        finVista = f.dataset.f; if (finDatos) pintarFinanzas(); return;
+      }
+      var rb = ev.target.closest('[data-reembolso]');
+      if (rb) {
+        if (!window.confirm('¿Confirmas que ya le devolviste el dinero a la clienta hoy?')) return;
+        rb.disabled = true;
+        api('registrarReembolso', { payment_id: rb.dataset.reembolso, fecha: hoyBogota() }).then(function (r) {
+          if (!r.ok) { rb.disabled = false; manejarError(r); return; }
+          avisar('Reembolso registrado.'); cargarFinanzas();
+        });
+        return;
+      }
+      var ag = ev.target.closest('[data-anular-gasto]');
+      if (ag) {
+        var motivo = window.prompt('¿Por qué se anula este gasto?'); if (!motivo) return;
+        ag.disabled = true;
+        api('anularGasto', { gasto_id: ag.dataset.anularGasto, motivo: motivo }).then(function (r) {
+          if (!r.ok) { ag.disabled = false; manejarError(r); return; }
+          avisar('Gasto anulado.'); cargarFinanzas();
+        });
+      }
+    });
+    $('vista-finanzas').addEventListener('change', function (ev) { if (ev.target.id === 'cc-fecha' && ev.target.value) cargarCierre(ev.target.value); });
+    $('vista-finanzas').addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var btn = ev.target.querySelector('button[type="submit"]');
+      if (ev.target.id === 'form-gasto') {
+        btn.disabled = true;
+        api('registrarGasto', { categoria: $('gs-cat').value, descripcion: $('gs-desc').value, monto: soloDigitos($('gs-monto').value),
+          fecha: $('gs-fecha').value, medio: $('gs-medio').value, idempotency_key: claveGasto }).then(function (r) {
+          btn.disabled = false;
+          if (!r.ok) { manejarError(r); return; }
+          claveGasto = null; avisar('Gasto registrado.'); cargarFinanzas();
+        });
+      }
+      if (ev.target.id === 'form-cierre') {
+        if ($('cc-contado').value.trim() === '') { avisar('Escribe el efectivo contado (0 si no hay).'); return; }
+        btn.disabled = true;
+        api('cerrarCaja', { fecha: $('cc-fecha').value, efectivo_contado: soloDigitos($('cc-contado').value), nota: $('cc-nota').value }).then(function (r) {
+          btn.disabled = false;
+          if (!r.ok) { manejarError(r); return; }
+          avisar('Caja cerrada.'); cargarCierre($('cc-fecha').value);
+        });
+      }
+    });
 
     /* ---------------- Compras ---------------- */
     var filtroCompras = '';
