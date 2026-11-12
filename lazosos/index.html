@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.7.0 · Panel administrativo -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.8.0 · Panel administrativo -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -491,6 +491,24 @@
     .mov .det { font-size: 11px; color: var(--texto-suave); grid-column: 1 / -1; }
     .mov.anulado .que, .mov.anulado .cant { text-decoration: line-through; color: var(--texto-suave); }
 
+    /* ---------- Fotos ---------- */
+    .fotos { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 14px; margin: 0 0 14px; }
+    .foto { position: relative; }
+    .foto img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; background: var(--marfil); }
+    .foto .marca-principal { position: absolute; top: 8px; left: 8px; }
+    .foto .acciones-foto { display: flex; gap: 14px; margin-top: 8px; }
+    .foto-agregar {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+      aspect-ratio: 4 / 5; border: 1px dashed rgba(53, 39, 44, .35); cursor: pointer;
+      font-size: 10px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--texto-suave);
+      text-align: center; padding: 10px;
+    }
+    .foto-agregar:hover { border-color: var(--cacao); color: var(--cacao); }
+    .foto-agregar .mas { font-family: var(--serif); font-size: 34px; font-weight: 400; letter-spacing: 0; line-height: 1; }
+    .foto-agregar.cargando { pointer-events: none; opacity: .6; }
+    .mini-lista { width: 44px; height: 55px; object-fit: cover; background: var(--marfil); flex: none; }
+    .mini-vacia { width: 44px; height: 55px; flex: none; border: 1px dashed var(--linea); }
+
     /* ---------- Aviso flotante ---------- */
     .toast {
       position: fixed;
@@ -652,6 +670,7 @@
             <button class="pildora" type="button" data-estado="" aria-pressed="true">Vigentes</button>
             <button class="pildora" type="button" data-estado="publicado" aria-pressed="false">Publicados</button>
             <button class="pildora" type="button" data-estado="borrador" aria-pressed="false">Borradores</button>
+            <button class="pildora" type="button" data-estado="sin_foto" aria-pressed="false">Sin foto</button>
             <button class="pildora" type="button" data-estado="archivado" aria-pressed="false">Archivados</button>
           </div>
         </div>
@@ -696,6 +715,11 @@
           <span id="pd-estado" class="etiqueta"></span>
           <span id="pd-acciones-estado" class="item-acciones" style="justify-content:flex-start"></span>
         </div>
+
+        <p class="titulo-seccion">Fotos</p>
+        <div id="fotos-prod" class="fotos"></div>
+        <input id="input-foto" type="file" accept="image/*" hidden>
+        <p class="pista" style="margin:0 0 48px">Formato vertical 4:5, como en Instagram. Fondo claro y luz suave. La primera foto es la principal. Hasta 5 por producto.</p>
 
         <p class="titulo-seccion">Información</p>
         <form id="form-producto" class="formulario" autocomplete="off">
@@ -788,6 +812,17 @@
 
         <p class="titulo-seccion">Valores del sistema</p>
         <div id="lista-config" class="lista" aria-live="polite"></div>
+
+        <div class="bloque-respaldo">
+          <p class="titulo-seccion">Catálogo web</p>
+          <dl>
+            <div class="fila"><dt>Conexión con el sitio</dt><dd id="c-conexion">—</dd></div>
+            <div class="fila"><dt>Productos visibles</dt><dd id="c-visibles">—</dd></div>
+            <div class="fila"><dt>Última publicación</dt><dd id="c-ultima">—</dd></div>
+          </dl>
+          <p id="c-error" class="pista" hidden></p>
+          <button id="btn-catalogo" class="boton" type="button">Publicar catálogo ahora</button>
+        </div>
 
         <div class="bloque-respaldo">
           <p class="titulo-seccion">Respaldo de la información</p>
@@ -994,7 +1029,7 @@
       if (vista === 'inventario') cargarInventario();
       if (vista === 'nuevo') prepararNuevo();
       if (vista === 'categorias') cargarCategorias();
-      if (vista === 'configuracion') { cargarConfiguracion(); cargarRespaldo(); }
+      if (vista === 'configuracion') { cargarConfiguracion(); cargarRespaldo(); cargarCatalogo(); }
     }
     document.querySelector('.nav').addEventListener('click', function (ev) {
       var b = ev.target.closest('button[data-vista]');
@@ -1169,6 +1204,7 @@
       ul.innerHTML = lista.map(function (p) {
         var vars = p.variantes.length ? ' · ' + p.variantes.map(escapar).join(', ') : '';
         return '<li class="item enlazado" data-id="' + escapar(p.product_id) + '" tabindex="0">' +
+          (p.mini ? '<img class="mini-lista" src="' + escapar(p.mini) + '" alt="" loading="lazy">' : '<span class="mini-vacia" aria-hidden="true"></span>') +
           '<div class="item-principal"><span class="item-nombre">' + escapar(p.nombre) + '</span>' +
           '<span class="item-meta"><b>' + escapar(p.sku) + '</b> · ' + escapar(p.categoria) + vars + '</span></div>' +
           '<div class="item-precio"><span class="cifra">' + pesos(p.precio) + '</span>' +
@@ -1298,6 +1334,7 @@
       $('pd-guardar').disabled = true;
       $('pd-traza').textContent = 'Creado por ' + p.creado_por + ' · ' + fechaCorta(p.creado_en) +
         (p.actualizado_en && p.actualizado_en !== p.creado_en ? ' · Última edición: ' + p.actualizado_por + ', ' + fechaCorta(p.actualizado_en) : '');
+      pintarFotos();
       pintarVariantes();
     }
 
@@ -1620,6 +1657,109 @@
           avisar(r.data.valor + ' agregada · SKU ' + r.data.sku_variante);
           recargarProducto(producto.product_id);
         });
+    });
+
+
+    /* ---------------- Fotos ---------------- */
+    function pintarFotos() {
+      var fotos = producto.fotos || [];
+      var html = fotos.map(function (f, i) {
+        return '<div class="foto" data-foto="' + escapar(f.foto_id) + '">' +
+          '<img src="' + escapar(f.mini) + '" alt="Foto ' + (i + 1) + ' de ' + escapar(producto.nombre) + '" loading="lazy">' +
+          (i === 0 ? '<span class="etiqueta publicado marca-principal">Principal</span>' : '') +
+          '<div class="acciones-foto">' +
+            (i === 0 ? '' : '<button class="enlace" data-acc-foto="principal" type="button">Principal</button>') +
+            '<button class="enlace peligro" data-acc-foto="eliminar" type="button">Quitar</button>' +
+          '</div></div>';
+      }).join('');
+      if (fotos.length < 5) {
+        html += '<label class="foto-agregar" for="input-foto" id="btn-foto"><span class="mas">+</span>' +
+          (fotos.length ? 'Agregar foto' : 'Agregar la primera foto') + '</label>';
+      }
+      $('fotos-prod').innerHTML = html;
+    }
+
+    /** Recorta al centro en 4:5 y genera JPEG en dos tamaños. */
+    function prepararFoto(archivo) {
+      return new Promise(function (resolve, reject) {
+        var url = URL.createObjectURL(archivo);
+        var img = new Image();
+        img.onload = function () {
+          var w = img.naturalWidth, h = img.naturalHeight, objetivo = 4 / 5;
+          var sw = w, sh = h, sx = 0, sy = 0;
+          if (w / h > objetivo) { sw = Math.round(h * objetivo); sx = Math.round((w - sw) / 2); }
+          else { sh = Math.round(w / objetivo); sy = Math.round((h - sh) / 2); }
+          function exportar(ancho, calidad) {
+            var c = document.createElement('canvas');
+            var escala = Math.min(1, ancho / sw);
+            c.width = Math.round(sw * escala); c.height = Math.round(sh * escala);
+            var ctx = c.getContext('2d');
+            ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, c.width, c.height);
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(img, sx, sy, sw, sh, 0, 0, c.width, c.height);
+            return c.toDataURL('image/jpeg', calidad).split(',')[1];
+          }
+          URL.revokeObjectURL(url);
+          if (sw < 600) { reject(new Error('La foto es muy pequeña. Usa una de mejor resolución.')); return; }
+          resolve({ web: exportar(1200, 0.84), mini: exportar(600, 0.8) });
+        };
+        img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('No pudimos leer esa imagen. Prueba con otra foto.')); };
+        img.src = url;
+      });
+    }
+
+    $('input-foto').addEventListener('change', function () {
+      var archivo = this.files && this.files[0];
+      this.value = '';
+      if (!archivo) return;
+      var boton = $('btn-foto');
+      if (boton) { boton.classList.add('cargando'); boton.lastChild.textContent = 'Subiendo…'; }
+      prepararFoto(archivo).then(function (f) {
+        return api('subirFoto', { product_id: producto.product_id, web: f.web, mini: f.mini });
+      }).then(function (r) {
+        if (!r.ok) { manejarError(r); pintarFotos(); return; }
+        avisar('Foto guardada. En el sitio se verá en uno o dos minutos.');
+        recargarProducto(producto.product_id);
+      }).catch(function (e) { avisar(e.message, true); pintarFotos(); });
+    });
+
+    $('fotos-prod').addEventListener('click', function (ev) {
+      var b = ev.target.closest('[data-acc-foto]');
+      if (!b) return;
+      var id = b.closest('.foto').dataset.foto;
+      if (b.dataset.accFoto === 'eliminar' && b.dataset.confirmar !== '1') {
+        b.dataset.confirmar = '1'; b.textContent = '¿Quitar?'; return;
+      }
+      b.disabled = true;
+      var accion = b.dataset.accFoto === 'eliminar' ? 'eliminarFoto' : 'hacerPrincipalFoto';
+      api(accion, { foto_id: id }).then(function (r) {
+        if (!r.ok) { b.disabled = false; manejarError(r); return; }
+        avisar(accion === 'eliminarFoto' ? 'Foto retirada del sitio. La copia queda en Drive.' : 'Foto principal actualizada.');
+        recargarProducto(producto.product_id);
+      });
+    });
+
+    /* ---------------- Catálogo web ---------------- */
+    function cargarCatalogo() {
+      api('estadoCatalogo').then(function (r) {
+        if (!r.ok) { manejarError(r); return; }
+        var d = r.data;
+        $('c-conexion').textContent = d.conectado ? 'Conectado' : 'Pendiente · conéctalo desde el menú de la hoja';
+        $('c-visibles').textContent = d.visibles + (d.visibles === 1 ? ' producto' : ' productos');
+        $('c-ultima').textContent = d.ultima ? fechaCorta(d.ultima) : 'Aún no se ha publicado';
+        $('c-error').hidden = !d.error;
+        $('c-error').textContent = d.error ? 'Último aviso: ' + d.error : '';
+      });
+    }
+    $('btn-catalogo').addEventListener('click', function () {
+      var btn = this;
+      btn.disabled = true; btn.textContent = 'Publicando…';
+      api('publicarCatalogo').then(function (r) {
+        btn.disabled = false; btn.textContent = 'Publicar catálogo ahora';
+        if (!r.ok) { manejarError(r); return; }
+        avisar('Catálogo publicado con ' + r.data.productos + ' productos visibles.');
+        cargarCatalogo();
+      });
     });
 
     /* ---------------- Configuración ---------------- */
