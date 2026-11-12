@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.4.0 · Panel administrativo -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.5.0 · Panel administrativo -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -402,6 +402,22 @@
     .confirmar p { margin: 0 0 10px; }
     .vacio { color: var(--texto-suave); padding: 24px 0; font-size: 14px; }
 
+    /* ---------- Configuración ---------- */
+    .ajuste { display: flex; gap: 20px; align-items: flex-start; padding: 20px 0; border-bottom: 1px solid var(--linea); }
+    .ajuste-texto { flex: 1; min-width: 0; }
+    .ajuste-nombre { display: block; font-weight: 500; }
+    .ajuste-ayuda { display: block; font-size: 12px; color: var(--texto-suave); margin-top: 4px; line-height: 1.55; }
+    .ajuste-traza { display: block; font-size: 11px; color: var(--texto-suave); margin-top: 6px; letter-spacing: .02em; }
+    .ajuste-valor { text-align: right; white-space: nowrap; }
+    .ajuste-valor .cifra { font-family: var(--serif); font-size: 26px; line-height: 1; }
+    .ajuste-valor .unidad { font-size: 12px; color: var(--texto-suave); margin-left: 4px; }
+    .ajuste-valor .enlace { display: inline-block; margin-top: 10px; }
+    .ajuste-valor .campo { width: 96px; text-align: right; font-size: 18px; padding: 6px 2px; }
+    .ajuste-valor .acciones-edicion { display: flex; gap: 14px; justify-content: flex-end; margin-top: 10px; }
+    .nota { font-size: 11px; letter-spacing: .04em; color: var(--texto-suave); margin-top: 10px; display: inline-block; }
+    .bloque-respaldo { margin-top: 56px; }
+    .bloque-respaldo dl { margin-bottom: 24px; }
+
     /* ---------- Aviso flotante ---------- */
     .toast {
       position: fixed;
@@ -441,6 +457,10 @@
       .item { flex-wrap: wrap; }
       .item-acciones { width: 100%; justify-content: flex-start; }
       .form-linea .boton { width: auto; padding: 14px 18px; }
+      .ajuste { flex-direction: column; gap: 10px; }
+      .ajuste-valor { text-align: left; }
+      .ajuste-valor .acciones-edicion { justify-content: flex-start; }
+      .ajuste-valor .campo { text-align: left; }
     }
     @media (max-height: 640px) {
       .acceso-logo { width: 104px; margin-bottom: 20px; }
@@ -509,6 +529,7 @@
     <nav class="nav" aria-label="Secciones">
       <button type="button" data-vista="inicio" aria-current="page">Inicio</button>
       <button type="button" data-vista="categorias">Categorías</button>
+      <button type="button" data-vista="configuracion">Configuración</button>
     </nav>
 
     <main>
@@ -525,6 +546,7 @@
           <div class="fila"><dt>Hoja vinculada</dt><dd id="v-hoja">—</dd></div>
           <div class="fila"><dt>Hora del servidor</dt><dd id="v-hora">—</dd></div>
           <div class="fila"><dt>Tu sesión vence</dt><dd id="v-expira">—</dd></div>
+          <div class="fila"><dt>Último respaldo</dt><dd id="v-respaldo">—</dd></div>
         </dl>
       </section>
 
@@ -540,6 +562,25 @@
         </form>
 
         <ul id="lista-cat" class="lista" aria-live="polite"></ul>
+      </section>
+
+      <!-- Configuración -->
+      <section id="vista-configuracion" hidden>
+        <h2 class="titulo-vista">Configuración</h2>
+        <p class="intro">Reglas del sistema. Cada cambio queda registrado con tu nombre en la auditoría.</p>
+
+        <p class="titulo-seccion">Valores del sistema</p>
+        <div id="lista-config" class="lista" aria-live="polite"></div>
+
+        <div class="bloque-respaldo">
+          <p class="titulo-seccion">Respaldo de la información</p>
+          <dl>
+            <div class="fila"><dt>Respaldo automático</dt><dd id="r-auto">—</dd></div>
+            <div class="fila"><dt>Último respaldo</dt><dd id="r-ultimo">—</dd></div>
+            <div class="fila"><dt>Copias guardadas</dt><dd id="r-copias">—</dd></div>
+          </dl>
+          <button id="btn-respaldo" class="boton" type="button">Hacer respaldo ahora</button>
+        </div>
       </section>
     </main>
 
@@ -690,6 +731,7 @@
       $('v-hoja').textContent = e.hoja;
       $('v-hora').textContent = e.hora + ' · Bogotá';
       $('v-expira').textContent = e.sesionExpira;
+      $('v-respaldo').textContent = e.ultimoRespaldo ? fechaCorta(e.ultimoRespaldo) : 'Aún no hay respaldos';
       var badge = $('entorno');
       badge.textContent = e.entorno === 'prod' ? 'Producción' : 'Pruebas';
       badge.className = 'entorno ' + e.entorno;
@@ -725,9 +767,10 @@
       document.querySelectorAll('.nav button').forEach(function (b) {
         if (b.dataset.vista === vista) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
       });
-      ['inicio', 'categorias'].forEach(function (v) { $('vista-' + v).hidden = v !== vista; });
+      ['inicio', 'categorias', 'configuracion'].forEach(function (v) { $('vista-' + v).hidden = v !== vista; });
       window.scrollTo(0, 0);
       if (vista === 'categorias') cargarCategorias();
+      if (vista === 'configuracion') { cargarConfiguracion(); cargarRespaldo(); }
     }
     document.querySelector('.nav').addEventListener('click', function (ev) {
       var b = ev.target.closest('button[data-vista]');
@@ -860,6 +903,109 @@
         input.value = '';
         avisar(r.data.nombre + ' creada · código ' + r.data.codigo + ' · primer SKU ' + r.data.proximo_sku);
         cargarCategorias();
+      });
+    });
+
+
+    /* ---------------- Configuración ---------------- */
+    var ajustes = [];
+    var editandoAjuste = null;
+
+    function fechaCorta(iso) {
+      // "2026-11-12T14:05:00-05:00" → "12 nov · 14:05"
+      var m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);
+      if (!m) return iso;
+      var meses = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+      return Number(m[3]) + ' ' + meses[Number(m[2]) - 1] + ' · ' + m[4] + ':' + m[5];
+    }
+
+    function cargarConfiguracion() {
+      if (!ajustes.length) $('lista-config').innerHTML = '<p class="vacio">Cargando…</p>';
+      api('listarConfiguracion').then(function (r) {
+        if (!r.ok) { manejarError(r); return; }
+        ajustes = r.data;
+        pintarConfiguracion();
+      });
+    }
+
+    function pintarConfiguracion() {
+      $('lista-config').innerHTML = ajustes.map(function (a) {
+        var clave = escapar(a.clave);
+        var traza = a.actualizado_por && a.actualizado_por !== 'sistema'
+          ? '<span class="ajuste-traza">Cambiado por ' + escapar(a.actualizado_por) + ' · ' + escapar(fechaCorta(a.actualizado_en)) + '</span>' : '';
+        var derecha;
+        if (editandoAjuste === a.clave) {
+          var esNum = a.tipo === 'numero';
+          derecha = '<input class="campo" data-campo="ajuste" value="' + escapar(a.valor) + '"' +
+            (esNum ? ' inputmode="numeric" pattern="[0-9]*"' : ' autocapitalize="characters"') +
+            ' maxlength="6" aria-label="' + escapar(a.etiqueta) + '">' +
+            '<div class="acciones-edicion"><button class="enlace" data-acc="guardar" type="button">Guardar</button>' +
+            '<button class="enlace" data-acc="cancelar" type="button">Cancelar</button></div>';
+        } else {
+          derecha = '<span class="cifra">' + escapar(a.valor) + '</span>' +
+            (a.unidad ? '<span class="unidad">' + escapar(a.unidad) + '</span>' : '') + '<br>' +
+            (a.editable ? '<button class="enlace" data-acc="editar" type="button">Editar</button>'
+                        : '<span class="nota">' + escapar(a.motivo) + '</span>');
+        }
+        return '<div class="ajuste" data-clave="' + clave + '">' +
+          '<div class="ajuste-texto"><span class="ajuste-nombre">' + escapar(a.etiqueta) + '</span>' +
+          '<span class="ajuste-ayuda">' + escapar(a.ayuda) + '</span>' + traza + '</div>' +
+          '<div class="ajuste-valor">' + derecha + '</div></div>';
+      }).join('');
+      var input = $('lista-config').querySelector('[data-campo="ajuste"]');
+      if (input) { input.focus(); input.select(); }
+    }
+
+    function guardarAjuste(clave) {
+      var input = $('lista-config').querySelector('[data-campo="ajuste"]');
+      var a = ajustes.filter(function (x) { return x.clave === clave; })[0];
+      var valor = input.value.trim();
+      if (valor === a.valor) { editandoAjuste = null; pintarConfiguracion(); return; }
+      input.disabled = true;
+      api('actualizarConfiguracion', { clave: clave, valor: valor }).then(function (r) {
+        if (!r.ok) { input.disabled = false; manejarError(r); input.focus(); return; }
+        editandoAjuste = null;
+        avisar(a.etiqueta + ': ' + r.data.valor + (a.unidad ? ' ' + a.unidad : '') + '.');
+        cargarConfiguracion();
+      });
+    }
+
+    $('lista-config').addEventListener('click', function (ev) {
+      var b = ev.target.closest('button[data-acc]');
+      if (!b) return;
+      var clave = b.closest('.ajuste').dataset.clave;
+      if (b.dataset.acc === 'editar') { editandoAjuste = clave; pintarConfiguracion(); }
+      else if (b.dataset.acc === 'cancelar') { editandoAjuste = null; pintarConfiguracion(); }
+      else if (b.dataset.acc === 'guardar') guardarAjuste(clave);
+    });
+
+    $('lista-config').addEventListener('keydown', function (ev) {
+      if (ev.target.dataset.campo !== 'ajuste') return;
+      if (ev.key === 'Enter') { ev.preventDefault(); guardarAjuste(ev.target.closest('.ajuste').dataset.clave); }
+      if (ev.key === 'Escape') { editandoAjuste = null; pintarConfiguracion(); }
+    });
+
+    /* ---------------- Respaldo ---------------- */
+    function cargarRespaldo() {
+      api('estadoRespaldo').then(function (r) {
+        if (!r.ok) { manejarError(r); return; }
+        var d = r.data;
+        $('r-auto').textContent = d.automatico ? 'Activo · cada día cerca de las ' + d.hora + ' a. m.' : 'Inactivo · actívalo desde el menú de la hoja';
+        $('r-ultimo').textContent = d.ultimo ? fechaCorta(d.ultimo) : 'Aún no hay respaldos';
+        $('r-copias').textContent = d.copias + ' de ' + d.conservar;
+      });
+    }
+
+    $('btn-respaldo').addEventListener('click', function () {
+      var btn = this;
+      btn.disabled = true;
+      btn.textContent = 'Creando respaldo…';
+      api('respaldarAhora').then(function (r) {
+        btn.disabled = false;
+        btn.textContent = 'Hacer respaldo ahora';
+        if (!r.ok) { manejarError(r); return; }
+        avisar('Respaldo creado y guardado en Drive.');
+        cargarRespaldo();
       });
     });
 
