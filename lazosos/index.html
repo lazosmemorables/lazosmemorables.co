@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.12.0 · Panel administrativo -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.13.0 · Panel administrativo -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -528,6 +528,16 @@
     .etiqueta.anulada { background: transparent; border: 1px solid var(--linea); color: var(--texto-suave); }
     .bloque-pago { background: var(--marfil-suave); padding: 22px 20px; margin: 18px 0 0; }
     .cifras.tres { grid-template-columns: repeat(3, 1fr); }
+
+    /* ---------- Clientas ---------- */
+    .proximas { list-style: none; margin: 0 0 28px; padding: 0; display: grid; gap: 8px; }
+    .proximas li { display: flex; justify-content: space-between; gap: 12px; background: var(--marfil-suave, #FBF8F3); padding: 12px 14px; font-size: 13px; cursor: pointer; }
+    .proximas li b { font-weight: 600; }
+    .fecha-md { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .etiqueta.recurrente { background: var(--marfil); border: 1px solid var(--oro); }
+    .etiqueta.en_riesgo { background: var(--rosa-claro); }
+    .etiqueta.inactiva, .etiqueta.sin_compras { background: transparent; border: 1px solid var(--linea); }
+
     /* ---------- Finanzas ---------- */
     .selector-mes { display: flex; align-items: center; gap: 14px; margin: 0 0 20px; }
     .selector-mes button { background: none; border: 1px solid var(--linea); width: 36px; height: 36px; cursor: pointer; color: var(--cacao); font-size: 16px; }
@@ -706,6 +716,7 @@
     <nav class="nav" aria-label="Secciones">
       <button type="button" data-vista="inicio" aria-current="page">Inicio</button>
       <button type="button" data-vista="ventas">Ventas</button>
+      <button type="button" data-vista="clientas">Clientas</button>
       <button type="button" data-vista="productos">Productos</button>
       <button type="button" data-vista="inventario">Inventario</button>
       <button type="button" data-vista="compras">Compras</button>
@@ -1105,6 +1116,47 @@
       </section>
 
       <!-- Categorías -->
+      <!-- Clientas -->
+      <section id="vista-clientas" hidden>
+        <div class="encabezado-vista"><h2 class="titulo-vista">Clientas</h2></div>
+        <p class="intro">Quién compra, cada cuánto y qué le gusta. Solo se contacta con novedades a quien lo autorizó.</p>
+        <div class="cifras">
+          <div class="cifra-bloque"><span id="cl-compradoras" class="valor">—</span><span class="rotulo">Clientas con compras</span></div>
+          <div class="cifra-bloque"><span id="cl-recompra" class="valor">—</span><span class="rotulo">Tasa de recompra</span></div>
+          <div class="cifra-bloque"><span id="cl-valor" class="valor">—</span><span class="rotulo">Valor por clienta</span></div>
+          <div class="cifra-bloque"><span id="cl-novedades" class="valor">—</span><span class="rotulo">Autorizan novedades</span></div>
+        </div>
+        <div id="cl-proximas"></div>
+        <div class="filtros">
+          <input id="cl-buscar" class="campo" type="search" placeholder="Buscar por nombre o celular" autocomplete="off" style="max-width:320px;margin-bottom:18px">
+          <div class="pildoras" id="filtro-clientas" role="group" aria-label="Ver">
+            <button class="pildora" type="button" data-f="" aria-pressed="true">Todas</button>
+            <button class="pildora" type="button" data-f="recurrente" aria-pressed="false">Recurrentes</button>
+            <button class="pildora" type="button" data-f="nueva" aria-pressed="false">Nuevas</button>
+            <button class="pildora" type="button" data-f="en_riesgo" aria-pressed="false">Por reactivar</button>
+            <button class="pildora" type="button" data-f="inactiva" aria-pressed="false">Inactivas</button>
+            <button class="pildora" type="button" data-f="fechas" aria-pressed="false">Fechas próximas</button>
+            <button class="pildora" type="button" data-f="novedades" aria-pressed="false">Autorizan novedades</button>
+          </div>
+        </div>
+        <ul id="lista-clientas" class="lista" aria-live="polite"></ul>
+      </section>
+
+      <!-- Clientas: ficha -->
+      <section id="vista-clienta" hidden>
+        <button class="enlace volver" type="button" data-ir="clientas">← Clientas</button>
+        <p class="sku-grande" id="ck-sub"></p>
+        <h2 class="titulo-vista" id="ck-titulo">Clienta</h2>
+        <span id="ck-segmento" class="etiqueta"></span>
+        <div class="cifras" style="margin-top:22px">
+          <div class="cifra-bloque"><span id="ck-compras" class="valor">—</span><span class="rotulo">Compras</span></div>
+          <div class="cifra-bloque"><span id="ck-total" class="valor">—</span><span class="rotulo">Total comprado</span></div>
+          <div class="cifra-bloque"><span id="ck-ticket" class="valor">—</span><span class="rotulo">Ticket promedio</span></div>
+          <div class="cifra-bloque"><span id="ck-ultima" class="valor">—</span><span class="rotulo">Última compra</span></div>
+        </div>
+        <div id="ck-cuerpo"></div>
+      </section>
+
       <!-- Finanzas -->
       <section id="vista-finanzas" hidden>
         <div class="encabezado-vista">
@@ -1358,16 +1410,17 @@
       });
       var navActiva = (vista === 'nuevo' || vista === 'producto') ? 'productos'
         : (vista === 'nueva-compra' || vista === 'compra') ? 'compras'
-        : (vista === 'nueva-venta' || vista === 'pedido') ? 'ventas' : vista;
+        : (vista === 'nueva-venta' || vista === 'pedido') ? 'ventas' : vista === 'clienta' ? 'clientas' : vista;
       document.querySelectorAll('.nav button').forEach(function (b) {
         if (b.dataset.vista === navActiva) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
       });
-      ['inicio', 'ventas', 'nueva-venta', 'pedido', 'productos', 'nuevo', 'producto', 'inventario', 'compras', 'nueva-compra', 'compra', 'finanzas', 'categorias', 'configuracion'].forEach(function (v) { $('vista-' + v).hidden = v !== vista; });
+      ['inicio', 'ventas', 'clientas', 'clienta', 'nueva-venta', 'pedido', 'productos', 'nuevo', 'producto', 'inventario', 'compras', 'nueva-compra', 'compra', 'finanzas', 'categorias', 'configuracion'].forEach(function (v) { $('vista-' + v).hidden = v !== vista; });
       window.scrollTo(0, 0);
       if (vista === 'productos') cargarProductos();
       if (vista === 'inventario') cargarInventario();
       if (vista === 'compras') cargarCompras();
       if (vista === 'finanzas') cargarFinanzas();
+      if (vista === 'clientas') cargarClientas();
       if (vista === 'ventas') cargarVentas();
       if (vista === 'nueva-venta') prepararVenta();
       if (vista === 'nueva-compra') prepararCompra();
@@ -2242,7 +2295,8 @@
       if (p.tipo_entrega !== 'recoge') datos.push(['Dirección', [p.direccion_entrega, p.ciudad_entrega].filter(Boolean).join(', ') || '—']);
       if (p.transportadora) datos.push(['Transportadora', p.transportadora + (p.guia ? ' · Guía ' + p.guia : '')]);
       datos.push(['Novedades', p.clienta.consentimiento_marketing ? 'Acepta recibirlas' : 'No autorizadas']);
-      $('pe-datos').innerHTML = datos.map(function (d) { return '<div class="fila"><dt>' + d[0] + '</dt><dd>' + escapar(d[1]) + '</dd></div>'; }).join('');
+      $('pe-datos').innerHTML = datos.map(function (d) { return '<div class="fila"><dt>' + d[0] + '</dt><dd>' + escapar(d[1]) + '</dd></div>'; }).join('') +
+        (p.clienta.customer_id ? '<div class="fila"><dt></dt><dd><button class="enlace" type="button" data-ficha="' + escapar(p.clienta.customer_id) + '">Ver ficha de la clienta</button></dd></div>' : '');
       var nombresCobro = { reportado: 'Reportado', verificado: 'Verificado', rechazado: 'Rechazado', por_reembolsar: 'Por reembolsar', reembolsado: 'Reembolsado' };
       $('pe-cobros').innerHTML = p.cobros.length ? p.cobros.map(function (c) {
         return '<li class="item"><div class="item-principal"><span class="item-nombre">' + pesos(c.monto) + ' · ' + escapar(c.medio) + '</span>' +
@@ -2315,6 +2369,116 @@
       });
     }
 
+
+
+    /* ---------------- Clientas ---------------- */
+    var filtroClientas = '', clienta = null, buscarClTimer;
+    var MESES_CORTOS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    function telTexto(t) { var d = String(t || '').replace(/\D/g, '').replace(/^57(?=\d{10}$)/, ''); return d.length === 10 ? d.slice(0, 3) + ' ' + d.slice(3, 6) + ' ' + d.slice(6) : String(t || ''); }
+    function mesDiaTexto(md) { if (!md) return ''; var p = md.split('-'); return Number(p[1]) + ' ' + MESES_CORTOS[Number(p[0]) - 1]; }
+    function cuandoTexto(d) { return d === 0 ? 'Hoy' : d === 1 ? 'Mañana' : 'En ' + d + ' días'; }
+    function haceTexto(d) { return d === null || d === undefined ? '' : d === 0 ? 'hoy' : d === 1 ? 'ayer' : 'hace ' + d + ' días'; }
+    function cargarClientas() {
+      $('lista-clientas').innerHTML = '<li class="vacio">Cargando clientas…</li>';
+      api('listarClientas', { filtro: filtroClientas, q: $('cl-buscar').value }).then(function (r) {
+        if (!r.ok) { manejarError(r); return; }
+        var d = r.data, R = d.resumen;
+        $('cl-compradoras').textContent = R.con_compras + ' de ' + R.clientas;
+        $('cl-recompra').textContent = String(R.tasa_recompra).replace('.', ',') + '%';
+        $('cl-valor').textContent = R.con_compras ? pesos(R.valor_promedio) : '—';
+        $('cl-novedades').textContent = R.novedades;
+        $('cl-proximas').innerHTML = d.proximas.length ? '<p class="titulo-seccion" style="margin-top:0">Fechas en los próximos 30 días</p><ul class="proximas">' + d.proximas.map(function (x) {
+          return '<li data-cid="' + escapar(x.customer_id) + '"><span><b>' + escapar(x.nombre) + '</b> · ' + escapar(x.tipo) + ' · ' + mesDiaTexto(x.fecha) + '</span><span>' + cuandoTexto(x.dias) + (x.novedades ? '' : ' · sin autorización') + '</span></li>';
+        }).join('') + '</ul>' : '';
+        document.querySelectorAll('#filtro-clientas .pildora').forEach(function (b) {
+          var n = b.dataset.f ? d.conteo[b.dataset.f] : R.clientas; var base = b.textContent.replace(/ · \d+$/, '');
+          b.textContent = base + (n ? ' · ' + n : '');
+        });
+        $('lista-clientas').innerHTML = d.clientas.length ? d.clientas.map(function (c) {
+          return '<li class="item enlazado" data-cid="' + escapar(c.customer_id) + '" tabindex="0"><div class="item-principal"><span class="item-nombre">' + escapar(c.nombre) + '</span>' +
+            '<span class="item-meta">' + escapar(telTexto(c.telefono)) + (c.ciudad ? ' · ' + escapar(c.ciudad) : '') + (c.compras ? ' · ' + c.compras + (c.compras === 1 ? ' compra' : ' compras') + ' · última ' + haceTexto(c.dias_sin_comprar) : '') + (c.novedades ? ' · novedades ✓' : '') + '</span></div>' +
+            '<div class="item-precio"><span class="cifra">' + (c.total ? pesos(c.total) : '—') + '</span><span class="etiqueta ' + c.segmento + '">' + escapar(c.segmento_texto) + '</span></div></li>';
+        }).join('') : '<li class="vacio">' + ($('cl-buscar').value ? 'No hay coincidencias.' : 'Nadie en este grupo por ahora.') + '</li>';
+      });
+    }
+    $('filtro-clientas').addEventListener('click', function (ev) {
+      var b = ev.target.closest('.pildora'); if (!b) return;
+      this.querySelectorAll('.pildora').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      filtroClientas = b.dataset.f; cargarClientas();
+    });
+    $('cl-buscar').addEventListener('input', function () { clearTimeout(buscarClTimer); buscarClTimer = setTimeout(cargarClientas, 350); });
+    $('vista-clientas').addEventListener('click', function (ev) { var li = ev.target.closest('[data-cid]'); if (li) abrirClienta(li.dataset.cid); });
+    document.addEventListener('click', function (ev) { var b = ev.target.closest('[data-ficha]'); if (b) abrirClienta(b.dataset.ficha); });
+    function abrirClienta(id) {
+      irA('clienta'); $('ck-titulo').textContent = 'Cargando…'; $('ck-cuerpo').innerHTML = '';
+      api('obtenerClienta', { customer_id: id }).then(function (r) { if (!r.ok) { manejarError(r); return; } clienta = r.data; pintarClienta(false); });
+    }
+    function selectorMesDia(id, valor) {
+      var p = valor ? valor.split('-') : ['', ''];
+      var dias = '<option value="">Día</option>'; for (var i = 1; i <= 31; i++) { var v = ('0' + i).slice(-2); dias += '<option value="' + v + '"' + (p[1] === v ? ' selected' : '') + '>' + i + '</option>'; }
+      var meses = '<option value="">Mes</option>' + MESES.map(function (m, i) { var v = ('0' + (i + 1)).slice(-2); return '<option value="' + v + '"' + (p[0] === v ? ' selected' : '') + '>' + m + '</option>'; }).join('');
+      return '<div class="fecha-md"><select id="' + id + '-d" class="selector">' + dias + '</select><select id="' + id + '-m" class="selector">' + meses + '</select></div>';
+    }
+    function leerMesDia(id) { var d = $(id + '-d').value, m = $(id + '-m').value; return d && m ? m + '-' + d : ''; }
+    function pintarClienta(editando) {
+      var c = clienta, m = c.metricas;
+      $('ck-sub').textContent = telTexto(c.telefono) + (c.ciudad ? ' · ' + c.ciudad : '') + ' · Desde ' + fechaLarga(c.creado_en);
+      $('ck-titulo').textContent = c.nombre;
+      $('ck-segmento').className = 'etiqueta ' + m.segmento; $('ck-segmento').textContent = c.segmento_texto;
+      $('ck-segmento').title = c.segmentos[m.segmento].ayuda;
+      $('ck-compras').textContent = m.compras;
+      $('ck-total').textContent = pesos(m.total);
+      $('ck-ticket').textContent = m.compras ? pesos(m.ticket) : '—';
+      $('ck-ultima').textContent = m.ultima ? fechaLarga(m.ultima) : '—';
+      if (editando) {
+        $('ck-cuerpo').innerHTML = '<form id="form-clienta" class="formulario panel-var" autocomplete="off"><p class="titulo-seccion" style="margin:0">Editar ficha</p>' +
+          '<div class="doble"><div><label class="etq" for="fc-nombre">Nombre</label><input id="fc-nombre" class="campo" maxlength="80" value="' + escapar(c.nombre) + '"></div>' +
+          '<div><label class="etq" for="fc-tel">Celular</label><input id="fc-tel" class="campo" maxlength="16" inputmode="tel" value="' + escapar(telTexto(c.telefono)) + '"></div></div>' +
+          '<div class="doble"><div><label class="etq" for="fc-email">Correo</label><input id="fc-email" class="campo" maxlength="80" value="' + escapar(c.email || '') + '"></div>' +
+          '<div><label class="etq" for="fc-ciudad">Ciudad</label><input id="fc-ciudad" class="campo" maxlength="40" value="' + escapar(c.ciudad || '') + '"></div></div>' +
+          '<div class="doble"><div><label class="etq" for="fc-barrio">Barrio</label><input id="fc-barrio" class="campo" maxlength="60" value="' + escapar(c.barrio || '') + '"></div>' +
+          '<div><label class="etq" for="fc-dir">Dirección</label><input id="fc-dir" class="campo" maxlength="120" value="' + escapar(c.direccion || '') + '"></div></div>' +
+          '<div class="doble"><div><span class="etq">Cumpleaños (opcional)</span>' + selectorMesDia('fc-cumple', c.cumpleanos) + '</div>' +
+          '<div><span class="etq">Otra fecha especial (opcional)</span>' + selectorMesDia('fc-especial', c.fecha_especial) +
+          '<input id="fc-motivo" class="campo" maxlength="40" placeholder="Ej.: aniversario, grado" value="' + escapar(c.fecha_especial_motivo) + '" style="margin-top:10px"></div></div>' +
+          '<div><label class="etq" for="fc-pref">Preferencias</label><input id="fc-pref" class="campo" maxlength="200" placeholder="Ej.: dorado, aretes pequeños, regala a su mamá" value="' + escapar(c.preferencias) + '"></div>' +
+          '<div><label class="etq" for="fc-notas">Notas internas</label><input id="fc-notas" class="campo" maxlength="300" value="' + escapar(c.notas) + '"></div>' +
+          '<label class="confirmacion"><input type="checkbox" id="fc-novedades"' + (c.consentimiento_marketing ? ' checked' : '') + '> Autorizó recibir novedades (marca solo si ella lo dijo)</label>' +
+          '<div class="pie-form" style="margin:0"><button class="boton" type="submit">Guardar</button><button class="enlace" type="button" data-cancelar-ficha>Cancelar</button></div></form>';
+        return;
+      }
+      var datos = [['Celular', telTexto(c.telefono)], ['Correo', c.email || '—'], ['Dirección', [c.direccion, c.barrio, c.ciudad].filter(Boolean).join(', ') || '—'],
+        ['Cumpleaños', c.cumpleanos ? mesDiaTexto(c.cumpleanos) : '—'], ['Fecha especial', c.fecha_especial ? c.fecha_especial_motivo + ' · ' + mesDiaTexto(c.fecha_especial) : '—'],
+        ['Preferencias', c.preferencias || '—'], ['Notas', c.notas || '—'], ['Primera compra', m.primera ? fechaLarga(m.primera) + (m.canal_origen ? ' · ' + m.canal_origen : '') : '—'],
+        ['Novedades', c.consentimiento_marketing ? 'Autorizadas' + (c.fecha_consentimiento ? ' el ' + fechaLarga(c.fecha_consentimiento) : '') : 'No autorizadas']];
+      $('ck-cuerpo').innerHTML = (c.fechas.filter(function (f) { return f.dias <= 30; }).map(function (f) {
+          return '<p class="aviso-suave">' + escapar(f.tipo) + ' · ' + mesDiaTexto(f.fecha) + ' · ' + cuandoTexto(f.dias) + (c.consentimiento_marketing ? '' : ' · No autorizó novedades: solo un saludo si ella escribe.') + '</p>';
+        }).join('')) +
+        '<div class="pie-form" style="margin:0 0 18px"><button class="enlace" type="button" data-editar-ficha>Editar ficha</button></div>' +
+        '<p class="titulo-seccion">Datos</p><dl>' + datos.map(function (d) { return '<div class="fila"><dt>' + d[0] + '</dt><dd>' + escapar(d[1]) + '</dd></div>'; }).join('') + '</dl>' +
+        (c.piezas.length ? '<p class="titulo-seccion">Lo que más compra</p><ul class="lista">' + c.piezas.map(function (x) { return '<li class="item"><div class="item-principal"><span class="item-nombre">' + escapar(x.nombre) + '</span></div><div class="item-precio"><span class="cifra">' + x.unidades + ' uds</span></div></li>'; }).join('') + '</ul>' : '') +
+        '<p class="titulo-seccion">Pedidos</p><ul class="lista">' + (c.pedidos.length ? c.pedidos.map(function (p) {
+          return '<li class="item enlazado" data-oid-cl="' + escapar(p.order_id) + '" tabindex="0"><div class="item-principal"><span class="item-nombre">' + escapar(p.numero) + ' · ' + escapar(fechaLarga(p.fecha)) + '</span><span class="item-meta">' + escapar(p.resumen) + ' · ' + escapar(p.canal) + '</span></div>' +
+            '<div class="item-precio"><span class="cifra">' + pesos(p.total) + '</span><span class="etiqueta ' + escapar(p.estado) + '">' + escapar(p.estado_texto) + '</span></div></li>';
+        }).join('') : '<li class="vacio">Aún no tiene pedidos.</li>') + '</ul>';
+    }
+    $('vista-clienta').addEventListener('click', function (ev) {
+      if (ev.target.closest('[data-editar-ficha]')) { pintarClienta(true); return; }
+      if (ev.target.closest('[data-cancelar-ficha]')) { pintarClienta(false); return; }
+      var o = ev.target.closest('[data-oid-cl]'); if (o) abrirPedido(o.dataset.oidCl);
+    });
+    $('vista-clienta').addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var btn = ev.target.querySelector('button[type="submit"]'); btn.disabled = true;
+      api('actualizarClienta', { customer_id: clienta.customer_id, nombre: $('fc-nombre').value, telefono: $('fc-tel').value, email: $('fc-email').value,
+        ciudad: $('fc-ciudad').value, barrio: $('fc-barrio').value, direccion: $('fc-dir').value, notas: $('fc-notas').value, preferencias: $('fc-pref').value,
+        cumpleanos: leerMesDia('fc-cumple'), fecha_especial: leerMesDia('fc-especial'), fecha_especial_motivo: $('fc-motivo').value,
+        consentimiento_marketing: $('fc-novedades').checked }).then(function (r) {
+        btn.disabled = false;
+        if (!r.ok) { manejarError(r); return; }
+        clienta = r.data; pintarClienta(false); avisar('Ficha actualizada.');
+      });
+    });
 
     /* ---------------- Finanzas ---------------- */
     var finMes = '', finVista = 'resultados', finDatos = null, claveGasto = null;
