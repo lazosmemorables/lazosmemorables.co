@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.10.0 · Panel administrativo -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.11.0 · Panel administrativo -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -1973,7 +1973,8 @@
           b.textContent = base + (n && b.dataset.f !== 'cerrados' && b.dataset.f !== 'entregados' ? ' · ' + n : '');
         });
         $('lista-ventas').innerHTML = d.pedidos.length ? d.pedidos.map(function (p) {
-          var extra = p.estado === 'pendiente_pago' && p.expira_en ? ' · Reserva hasta ' + horaCorta(p.expira_en) : '';
+          var extra = p.estado === 'pendiente_pago' && p.expira_en && !p.envio_por_cotizar ? ' · Reserva hasta ' + horaCorta(p.expira_en) : '';
+          if (p.envio_por_cotizar) extra += ' · <b>Envío por cotizar</b>';
           return '<li class="item enlazado" data-oid="' + escapar(p.order_id) + '" tabindex="0">' +
             '<div class="item-principal"><span class="item-nombre">' + escapar(p.numero) + ' · ' + escapar(p.clienta) + '</span>' +
             '<span class="item-meta">' + escapar(p.resumen) + ' · ' + p.unidades + ' uds · ' + escapar(p.canal) + ' · ' + escapar(fechaCorta(p.creado_en)) + extra + '</span></div>' +
@@ -2151,13 +2152,16 @@
       }).join('');
       var aviso = '';
       if (p.estado === 'pendiente_pago' && p.expira_en) aviso = 'Unidades reservadas hasta las ' + horaCorta(p.expira_en) + '. Si no se reporta el pago, el pedido expira y las libera.';
+      if (p.estado === 'pendiente_pago' && p.envio_por_cotizar) aviso = 'Pedido web con envío por cotizar. Escríbele a la clienta con el valor y fíjalo aquí; desde ese momento tiene ' + (p.reserva_minutos || 30) + ' minutos para pagar.';
       if (p.verificacion_atrasada) aviso = 'El pago se reportó hace más del tiempo configurado y aún no se verifica. Revisa la cuenta bancaria.';
       if (cerrado) aviso = p.estado_texto + (p.motivo_cierre ? ': ' + p.motivo_cierre : '') +
         (p.cobros.some(function (c) { return c.estado === 'por_reembolsar'; }) ? ' · Hay un pago por reembolsar a la clienta.' : '');
       $('pe-aviso').hidden = !aviso; $('pe-aviso').textContent = aviso;
 
       var acc = [];
-      if (p.estado === 'pendiente_pago') acc.push(['reportar', 'Registrar pago reportado'], ['verificar', 'Verificar pago']);
+      if (p.estado === 'pendiente_pago' && p.envio_por_cotizar) acc.push(['fijar_envio', 'Fijar costo del envío']);
+      else if (p.estado === 'pendiente_pago') acc.push(['reportar', 'Registrar pago reportado'], ['verificar', 'Verificar pago']);
+      if (p.seguimiento) acc.push(['copiar_enlace', 'Copiar enlace de la clienta']);
       if (p.estado === 'pago_reportado') acc.push(['verificar', 'Verificar pago'], ['rechazar', 'Rechazar pago']);
       if (p.estado === 'confirmado') acc.push(['preparar', 'Pasar a preparación']);
       if ((p.estado === 'confirmado' || p.estado === 'preparando') && p.tipo_entrega !== 'recoge') acc.push(['despachar', 'Registrar envío']);
@@ -2176,7 +2180,7 @@
       }).join('');
       $('pe-totales').innerHTML = '<div><span>Subtotal</span><span>' + pesos(p.subtotal) + '</span></div>' +
         (p.descuento ? '<div><span>Descuento</span><span>−' + pesos(p.descuento) + '</span></div>' : '') +
-        (p.envio_cobrado ? '<div><span>Envío cobrado</span><span>' + pesos(p.envio_cobrado) + '</span></div>' : '') +
+        (p.envio_por_cotizar ? '<div><span>Envío</span><span>Por cotizar</span></div>' : p.envio_cobrado ? '<div><span>Envío cobrado</span><span>' + pesos(p.envio_cobrado) + '</span></div>' : '') +
         '<div class="total"><span>Total</span><span>' + pesos(p.total) + '</span></div>';
       var res = $('pe-resultado');
       res.hidden = p.contribucion === null || cerrado;
@@ -2194,7 +2198,8 @@
       $('pe-cobros').innerHTML = p.cobros.length ? p.cobros.map(function (c) {
         return '<li class="item"><div class="item-principal"><span class="item-nombre">' + pesos(c.monto) + ' · ' + escapar(c.medio) + '</span>' +
           '<span class="item-meta">' + escapar(nombresCobro[c.estado] || c.estado) + (c.referencia ? ' · Ref. ' + escapar(c.referencia) : '') +
-          (c.verificado_por ? ' · Verificó ' + escapar(c.verificado_por) : ' · Registró ' + escapar(c.creado_por)) + (c.nota ? ' · ' + escapar(c.nota) : '') + '</span></div></li>';
+          (c.verificado_por ? ' · Verificó ' + escapar(c.verificado_por) : ' · Registró ' + escapar(c.creado_por)) + (c.nota ? ' · ' + escapar(c.nota) : '') + '</span></div>' +
+          (c.comprobante ? '<a class="enlace" href="' + escapar(c.comprobante) + '" target="_blank" rel="noopener">Ver comprobante</a>' : '') + '</li>';
       }).join('') : '<li class="vacio">Aún no hay pagos registrados.</li>';
     }
 
@@ -2203,6 +2208,8 @@
                   ayuda: 'Un comprobante no confirma el pago. Verifícalo en la cuenta antes de despachar.' },
       verificar: { titulo: 'Verificar pago', campos: ['medio_si_falta', 'referencia_si_falta'], accion: 'verificar_pago', boton: 'Confirmo que el dinero está en la cuenta',
                    ayuda: 'Al verificar, las unidades salen del inventario y se registra el costo de venta.' },
+      fijar_envio: { titulo: 'Fijar costo del envío', campos: ['envio'], accion: 'fijar_envio', boton: 'Fijar y avisar a la clienta',
+                     ayuda: 'Es lo que paga la clienta. Al fijarlo, empieza su tiempo de reserva y ya puede reportar el pago desde su enlace.' },
       rechazar: { titulo: 'Rechazar pago', campos: ['motivo'], accion: 'rechazar_pago', boton: 'Rechazar y volver a pendiente' },
       despachar: { titulo: 'Registrar envío', campos: ['transportadora', 'guia', 'costo'], accion: 'despachar', boton: 'Marcar como enviado' },
       cancelar: { titulo: 'Cancelar pedido', campos: ['motivo'], accion: 'cancelar', boton: 'Confirmar cancelación',
@@ -2216,11 +2223,18 @@
       motivo: '<div><label class="etq" for="pf-motivo">Motivo</label><input id="pf-motivo" class="campo" maxlength="200"></div>',
       transportadora: '<div><label class="etq" for="pf-trans">Transportadora o mensajero</label><input id="pf-trans" class="campo" maxlength="60"></div>',
       guia: '<div><label class="etq" for="pf-guia">Número de guía</label><input id="pf-guia" class="campo" maxlength="60"></div>',
+      envio: '<div><label class="etq" for="pf-envio">Valor del envío para la clienta</label><input id="pf-envio" class="campo" inputmode="numeric" data-precio placeholder="0"></div>',
       costo: '<div><label class="etq" for="pf-costo">Costo real del envío (lo que pagamos)</label><input id="pf-costo" class="campo" inputmode="numeric" data-precio placeholder="0"></div>'
     };
     $('pe-acciones').addEventListener('click', function (ev) {
       var b = ev.target.closest('button[data-acc]'); if (!b) return;
       var a = b.dataset.acc;
+      if (a === 'copiar_enlace') {
+        var txt = pedido.seguimiento;
+        (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () { avisar('Enlace copiado. Pégalo en el chat con la clienta.'); })
+          .catch(function () { window.prompt('Copia este enlace:', txt); });
+        return;
+      }
       if (a === 'preparar' || a === 'entregar') { ejecutarPedido({ accion: a === 'preparar' ? 'preparar' : 'entregar' }, b); return; }
       var f = FORMULARIOS[a];
       var tieneReporte = pedido.cobros.some(function (c) { return c.estado === 'reportado'; });
@@ -2240,7 +2254,7 @@
       var ok = ev.target.closest('[data-ok]'); if (!ok) return;
       var v = function (id) { return $(id) ? $(id).value : undefined; };
       ejecutarPedido({ accion: ok.dataset.ok, medio: v('pf-medio'), referencia: v('pf-ref'), nota: v('pf-nota'), motivo: v('pf-motivo'),
-        transportadora: v('pf-trans'), guia: v('pf-guia'), costo_envio_real: $('pf-costo') ? soloDigitos($('pf-costo').value) : undefined }, ok);
+        transportadora: v('pf-trans'), guia: v('pf-guia'), envio_cobrado: $('pf-envio') ? soloDigitos($('pf-envio').value) : undefined, costo_envio_real: $('pf-costo') ? soloDigitos($('pf-costo').value) : undefined }, ok);
     });
     function ejecutarPedido(datos, btn) {
       datos.order_id = pedido.order_id; btn.disabled = true;
@@ -2663,7 +2677,24 @@
         var traza = a.actualizado_por && a.actualizado_por !== 'sistema'
           ? '<span class="ajuste-traza">Cambiado por ' + escapar(a.actualizado_por) + ' · ' + escapar(fechaCorta(a.actualizado_en)) + '</span>' : '';
         var derecha;
-        if (editandoAjuste === a.clave) {
+        if (editandoAjuste === a.clave && a.tipo === 'texto_largo') {
+          derecha = '<textarea class="campo" data-campo="ajuste" rows="5" maxlength="400" style="width:100%;resize:vertical" aria-label="' + escapar(a.etiqueta) + '">' + escapar(a.valor) + '</textarea>' +
+            '<div class="acciones-edicion"><button class="enlace" data-acc="guardar" type="button">Guardar</button>' +
+            '<button class="enlace" data-acc="cancelar" type="button">Cancelar</button></div>';
+        } else if (editandoAjuste === a.clave && a.tipo === 'monto_opcional') {
+          derecha = '<input class="campo" data-campo="ajuste" value="' + escapar(a.valor) + '" inputmode="numeric" pattern="[0-9]*" maxlength="9" placeholder="Por confirmar" aria-label="' + escapar(a.etiqueta) + '">' +
+            '<div class="acciones-edicion"><button class="enlace" data-acc="guardar" type="button">Guardar</button>' +
+            '<button class="enlace" data-acc="cancelar" type="button">Cancelar</button></div>';
+        } else if (a.tipo === 'sino') {
+          var on = a.valor === 'SI';
+          derecha = '<span class="cifra">' + (on ? 'Activa' : 'Apagada') + '</span><br>' +
+            (a.editable ? '<button class="enlace' + (on ? ' peligro' : '') + '" data-acc="alternar" type="button">' + (on ? 'Apagar' : 'Activar') + '</button>' : '<span class="nota">' + escapar(a.motivo) + '</span>');
+        } else if (editandoAjuste !== a.clave && (a.tipo === 'monto_opcional' || a.tipo === 'texto_largo')) {
+          var vacio = a.valor === '';
+          derecha = '<span class="' + (a.tipo === 'texto_largo' ? 'nota' : 'cifra') + '" style="white-space:pre-line">' +
+            (vacio ? 'Por confirmar' : a.tipo === 'monto_opcional' ? pesos(a.valor) : escapar(a.valor)) + '</span><br>' +
+            (a.editable ? '<button class="enlace" data-acc="editar" type="button">Editar</button>' : '');
+        } else if (editandoAjuste === a.clave) {
           var esNum = a.tipo === 'numero';
           derecha = '<input class="campo" data-campo="ajuste" value="' + escapar(a.valor) + '"' +
             (esNum ? ' inputmode="numeric" pattern="[0-9]*"' : ' autocapitalize="characters"') +
@@ -2688,13 +2719,13 @@
     function guardarAjuste(clave) {
       var input = $('lista-config').querySelector('[data-campo="ajuste"]');
       var a = ajustes.filter(function (x) { return x.clave === clave; })[0];
-      var valor = input.value.trim();
+      var valor = a.tipo === 'monto_opcional' ? soloDigitos(input.value) : input.value.trim();
       if (valor === a.valor) { editandoAjuste = null; pintarConfiguracion(); return; }
       input.disabled = true;
       api('actualizarConfiguracion', { clave: clave, valor: valor }).then(function (r) {
         if (!r.ok) { input.disabled = false; manejarError(r); input.focus(); return; }
         editandoAjuste = null;
-        avisar(a.etiqueta + ': ' + r.data.valor + (a.unidad ? ' ' + a.unidad : '') + '.');
+        avisar(a.etiqueta + ': ' + (r.data.valor === '' ? 'por confirmar' : a.tipo === 'texto_largo' ? 'guardado' : r.data.valor === 'SI' ? 'activa' : r.data.valor === 'NO' ? 'apagada' : r.data.valor + (a.unidad ? ' ' + a.unidad : '')) + '.');
         cargarConfiguracion();
       });
     }
@@ -2706,6 +2737,15 @@
       if (b.dataset.acc === 'editar') { editandoAjuste = clave; pintarConfiguracion(); }
       else if (b.dataset.acc === 'cancelar') { editandoAjuste = null; pintarConfiguracion(); }
       else if (b.dataset.acc === 'guardar') guardarAjuste(clave);
+      else if (b.dataset.acc === 'alternar') {
+        var a = ajustes.filter(function (x) { return x.clave === clave; })[0];
+        if (a.valor !== 'SI' && !window.confirm('¿Activar la compra directa en la página? Antes deben estar listos los datos de pago, las tarifas y la política de datos.')) return;
+        b.disabled = true;
+        api('actualizarConfiguracion', { clave: clave, valor: a.valor === 'SI' ? 'NO' : 'SI' }).then(function (r) {
+          b.disabled = false; if (!r.ok) { manejarError(r); return; }
+          avisar(a.etiqueta + ': ' + (r.data.valor === 'SI' ? 'activa' : 'apagada') + '.'); cargarConfiguracion();
+        });
+      }
     });
 
     $('lista-config').addEventListener('keydown', function (ev) {
