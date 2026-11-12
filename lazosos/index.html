@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.6.1 · Panel administrativo -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.7.0 · Panel administrativo -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -464,6 +464,33 @@
     .form-variante .campo.precio { flex: 1 1 120px; }
     .pista { font-size: 12px; color: var(--texto-suave); margin: 10px 0 0; }
 
+    /* ---------- Inventario ---------- */
+    .cifras { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--linea); border-bottom: 1px solid var(--linea); margin: 8px 0 36px; }
+    .cifra-bloque { padding: 20px 16px 18px 0; }
+    .cifra-bloque + .cifra-bloque { padding-left: 18px; border-left: 1px solid var(--linea); }
+    .cifra-bloque .valor { display: block; font-family: var(--serif); font-size: 30px; line-height: 1.1; }
+    .cifra-bloque .rotulo { display: block; font-size: 10px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--texto-suave); margin-top: 6px; }
+    .item-stock { text-align: right; white-space: nowrap; }
+    .item-stock .cifra { font-family: var(--serif); font-size: 24px; line-height: 1.1; display: block; }
+    .item-stock .unidad { font-size: 11px; color: var(--texto-suave); }
+    .etiqueta.agotada { background: var(--rosa-claro); }
+    .etiqueta.bajo_minimo { background: var(--marfil); border: 1px solid var(--oro); }
+    .variante-bloque { border-bottom: 1px solid var(--linea); }
+    .variante-bloque > .item { border-bottom: 0; }
+    .panel-var { background: var(--marfil-suave); padding: 22px 20px; margin: 0 0 18px; }
+    .panel-var .formulario { gap: 18px; margin: 0; }
+    .panel-var .campo, .panel-var .selector { background: transparent; }
+    .panel-var .pildoras { margin-bottom: 22px; }
+    .linea-minimo { display: flex; gap: 12px; align-items: flex-end; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--linea); flex-wrap: wrap; }
+    .linea-minimo .campo { width: 90px; flex: none; }
+    .movs { list-style: none; margin: 0; padding: 0; }
+    .mov { display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; padding: 12px 0; border-bottom: 1px solid var(--linea); font-size: 13px; }
+    .mov:last-child { border-bottom: 0; }
+    .mov .que { font-weight: 500; }
+    .mov .cant { text-align: right; font-weight: 600; }
+    .mov .det { font-size: 11px; color: var(--texto-suave); grid-column: 1 / -1; }
+    .mov.anulado .que, .mov.anulado .cant { text-decoration: line-through; color: var(--texto-suave); }
+
     /* ---------- Aviso flotante ---------- */
     .toast {
       position: fixed;
@@ -511,6 +538,12 @@
       .item-precio { text-align: left; }
       .nav { gap: 18px; }
       .nav button { font-size: 10px; letter-spacing: .12em; }
+      .cifras { grid-template-columns: 1fr 1fr; }
+      .cifra-bloque:nth-child(3) { padding-left: 0; border-left: 0; }
+      .cifra-bloque:nth-child(n+3) { border-top: 1px solid var(--linea); }
+      .cifra-bloque .valor { font-size: 24px; }
+      .item-stock { text-align: left; }
+      .panel-var { padding: 18px 16px; }
       .encabezado-vista .boton { width: auto; padding: 12px 16px; font-size: 11px; }
     }
     @media (max-height: 640px) {
@@ -580,6 +613,7 @@
     <nav class="nav" aria-label="Secciones">
       <button type="button" data-vista="inicio" aria-current="page">Inicio</button>
       <button type="button" data-vista="productos">Productos</button>
+      <button type="button" data-vista="inventario">Inventario</button>
       <button type="button" data-vista="categorias">Categorías</button>
       <button type="button" data-vista="configuracion">Configuración</button>
     </nav>
@@ -711,6 +745,26 @@
           <button class="boton" type="submit">Agregar</button>
         </form>
         <p class="pista">Agrega variantes si el producto viene en varios colores, acabados o tallas. Cada una lleva su propio inventario.</p>
+      </section>
+
+      <!-- Inventario -->
+      <section id="vista-inventario" hidden>
+        <h2 class="titulo-vista">Inventario</h2>
+        <p class="intro">Existencias por variante, valoradas a costo promedio. Para registrar movimientos, abre el producto.</p>
+        <div class="cifras">
+          <div class="cifra-bloque"><span id="inv-valor" class="valor">—</span><span class="rotulo">Valor al costo</span></div>
+          <div class="cifra-bloque"><span id="inv-venta" class="valor">—</span><span class="rotulo">Valor a precio de venta</span></div>
+          <div class="cifra-bloque"><span id="inv-unidades" class="valor">—</span><span class="rotulo">Unidades</span></div>
+          <div class="cifra-bloque"><span id="inv-alertas" class="valor">—</span><span class="rotulo">Con alerta</span></div>
+        </div>
+        <div class="filtros">
+          <div class="pildoras" id="filtro-inv" role="group" aria-label="Filtro">
+            <button class="pildora" type="button" data-f="" aria-pressed="true">Todo</button>
+            <button class="pildora" type="button" data-f="alertas" aria-pressed="false">Agotadas o bajo mínimo</button>
+          </div>
+        </div>
+        <p id="inv-nota" class="pista" hidden></p>
+        <ul id="lista-inv" class="lista" aria-live="polite"></ul>
       </section>
 
       <!-- Categorías -->
@@ -934,9 +988,10 @@
       document.querySelectorAll('.nav button').forEach(function (b) {
         if (b.dataset.vista === navActiva) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
       });
-      ['inicio', 'productos', 'nuevo', 'producto', 'categorias', 'configuracion'].forEach(function (v) { $('vista-' + v).hidden = v !== vista; });
+      ['inicio', 'productos', 'nuevo', 'producto', 'inventario', 'categorias', 'configuracion'].forEach(function (v) { $('vista-' + v).hidden = v !== vista; });
       window.scrollTo(0, 0);
       if (vista === 'productos') cargarProductos();
+      if (vista === 'inventario') cargarInventario();
       if (vista === 'nuevo') prepararNuevo();
       if (vista === 'categorias') cargarCategorias();
       if (vista === 'configuracion') { cargarConfiguracion(); cargarRespaldo(); }
@@ -1117,6 +1172,7 @@
           '<div class="item-principal"><span class="item-nombre">' + escapar(p.nombre) + '</span>' +
           '<span class="item-meta"><b>' + escapar(p.sku) + '</b> · ' + escapar(p.categoria) + vars + '</span></div>' +
           '<div class="item-precio"><span class="cifra">' + pesos(p.precio) + '</span>' +
+          '<span class="item-sku" style="display:block;margin-bottom:4px">' + (p.stock > 0 ? p.stock + (p.stock === 1 ? ' unidad' : ' unidades') : 'Sin existencias') + '</span>' +
           '<span class="etiqueta ' + escapar(p.estado) + '">' + nombreEstado(p.estado) + '</span></div></li>';
       }).join('');
     }
@@ -1201,6 +1257,8 @@
     var editandoVar = null;
 
     function abrirProducto(id) {
+      panelVar = { id: null, modo: null };
+      editandoVar = null;
       irA('producto');
       $('pd-titulo').textContent = 'Cargando…';
       $('pd-sku').textContent = '';
@@ -1297,6 +1355,18 @@
     });
 
     /* ---------------- Variantes ---------------- */
+    var panelVar = { id: null, modo: null };   // modo: 'mov' | 'hist'
+    var movTipo = null;
+    var claveOperacion = null;
+    function nuevaClave() { return 'k' + Date.now().toString(36) + Math.random().toString(36).slice(2, 12); }
+
+    function precioVariante(v) { return v.precio_override || producto.precio; }
+    function margenTexto(v) {
+      if (v.costo_promedio === null) return '';
+      var precio = precioVariante(v);
+      return precio ? ' · Margen ' + Math.round((precio - v.costo_promedio) / precio * 100) + '%' : '';
+    }
+
     function pintarVariantes() {
       var ul = $('lista-var');
       ul.innerHTML = producto.variantes.map(function (v) {
@@ -1312,23 +1382,119 @@
         }
         var inactiva = v.estado === 'inactiva';
         var precio = v.precio_override ? ' · ' + pesos(v.precio_override) : '';
-        return '<li class="item' + (inactiva ? ' inactiva' : '') + '" data-id="' + id + '">' +
-          '<div class="item-principal"><span class="item-nombre">' + escapar(v.valor) + '</span>' +
-          '<span class="item-sku">' + escapar(v.sku_variante) + precio + '</span></div>' +
-          (inactiva ? '<span class="etiqueta">Inactiva</span>' : '') +
-          (unica ? '' : '<div class="item-acciones">' +
-            '<button class="enlace" data-acc="editar" type="button">Editar</button>' +
-            '<button class="enlace" data-acc="estado" type="button">' + (inactiva ? 'Activar' : 'Desactivar') + '</button></div>') +
+        var alerta = v.stock === 0 ? '<span class="etiqueta agotada">Agotada</span>'
+          : (v.stock_minimo !== null && v.stock <= v.stock_minimo ? '<span class="etiqueta bajo_minimo">Bajo mínimo</span>' : '');
+        var inv = v.stock + (v.stock === 1 ? ' unidad' : ' unidades') +
+          (v.costo_promedio !== null ? ' · Costo prom. ' + pesos(v.costo_promedio) : '') + margenTexto(v) +
+          (v.stock_minimo !== null ? ' · Mínimo ' + v.stock_minimo : '');
+        var abierto = panelVar.id === v.variant_id;
+        return '<li class="variante-bloque" data-id="' + id + '"><div class="item' + (inactiva ? ' inactiva' : '') + '">' +
+          '<div class="item-principal"><span class="item-nombre">' + escapar(unica ? 'Única' : v.valor) + '</span>' +
+          '<span class="item-sku">' + escapar(v.sku_variante) + precio + '</span>' +
+          '<span class="item-meta">' + inv + '</span></div>' +
+          (inactiva ? '<span class="etiqueta">Inactiva</span>' : alerta) +
+          '<div class="item-acciones">' +
+            '<button class="enlace" data-acc="mov" type="button"' + (abierto && panelVar.modo === 'mov' ? ' aria-expanded="true"' : '') + '>Movimiento</button>' +
+            '<button class="enlace" data-acc="hist" type="button">Historial</button>' +
+            (unica ? '' : '<button class="enlace" data-acc="editar" type="button">Editar</button>' +
+              '<button class="enlace" data-acc="estado" type="button">' + (inactiva ? 'Activar' : 'Desactivar') + '</button>') +
+          '</div></div>' +
+          (abierto ? '<div class="panel-var" id="panel-var">' + (panelVar.modo === 'mov' ? htmlMovimiento(v) : '<p class="vacio" style="padding:0">Cargando historial…</p>') + '</div>' : '') +
           '</li>';
       }).join('');
       var input = ul.querySelector('[data-campo="var-valor"]');
       if (input) input.focus();
+      if (panelVar.id && panelVar.modo === 'hist') cargarHistorial(panelVar.id);
+    }
+
+    function htmlMovimiento(v) {
+      var puedeInicial = !v.tiene_movimientos;
+      if (!movTipo) movTipo = puedeInicial ? 'INICIAL' : 'AJUSTE_ENTRADA';
+      var tipos = (puedeInicial ? [['INICIAL', 'Carga inicial']] : []).concat([['AJUSTE_ENTRADA', 'Entrada'], ['AJUSTE_SALIDA', 'Salida']]);
+      var motivos = {
+        AJUSTE_ENTRADA: [['conteo', 'Diferencia en conteo'], ['encontrado', 'Producto encontrado'], ['otro', 'Otro motivo']],
+        AJUSTE_SALIDA: [['conteo', 'Diferencia en conteo'], ['perdida', 'Pérdida'], ['dano', 'Daño'], ['muestra', 'Muestra o regalo'], ['uso_interno', 'Uso interno'], ['otro', 'Otro motivo']]
+      };
+      var pideCosto = movTipo === 'INICIAL' || (movTipo === 'AJUSTE_ENTRADA');
+      var costoObligatorio = movTipo === 'INICIAL' || v.costo_promedio === null;
+      var html = '<div class="pildoras" role="group" aria-label="Tipo de movimiento">' + tipos.map(function (t) {
+        return '<button class="pildora" type="button" data-tipo="' + t[0] + '" aria-pressed="' + (movTipo === t[0]) + '">' + t[1] + '</button>';
+      }).join('') + '</div>';
+      html += '<form class="formulario" data-form="mov" autocomplete="off"><div class="doble">' +
+        '<div><label class="etq" for="mv-cant">Cantidad</label><input id="mv-cant" class="campo" inputmode="numeric" placeholder="0"></div>' +
+        (pideCosto ? '<div><label class="etq" for="mv-costo">Costo unitario (COP)' + (costoObligatorio ? '' : ' · opcional') + '</label>' +
+          '<input id="mv-costo" class="campo" inputmode="numeric" data-precio placeholder="' +
+          (costoObligatorio ? 'Ej.: 12.000' : 'Usa el promedio: ' + pesos(v.costo_promedio)) + '"></div>' : '<div></div>') +
+        '</div>';
+      if (movTipo !== 'INICIAL') {
+        html += '<div><label class="etq" for="mv-motivo">Motivo</label><select id="mv-motivo" class="selector" style="width:100%">' +
+          '<option value="">Elige el motivo</option>' + motivos[movTipo].map(function (m) { return '<option value="' + m[0] + '">' + m[1] + '</option>'; }).join('') +
+          '</select></div>';
+      }
+      html += '<div><label class="etq" for="mv-nota">Nota (opcional)</label><input id="mv-nota" class="campo" maxlength="200" placeholder="Detalle que ayude a entender el movimiento"></div>' +
+        '<div class="pie-form" style="margin:0"><button class="boton" type="submit">Registrar</button>' +
+        '<button class="enlace" type="button" data-acc="cerrar">Cancelar</button>' +
+        '<span class="traza">Disponibles hoy: ' + v.stock + '</span></div></form>';
+      html += '<form class="linea-minimo" data-form="minimo" autocomplete="off">' +
+        '<div><label class="etq" for="mv-minimo">Stock mínimo</label><input id="mv-minimo" class="campo" inputmode="numeric" value="' +
+        (v.stock_minimo === null ? '' : v.stock_minimo) + '" placeholder="—"></div>' +
+        '<button class="enlace" type="submit">Guardar mínimo</button>' +
+        '<span class="traza">Avisa cuando las existencias lleguen a este número.</span></form>';
+      return html;
+    }
+
+    function cargarHistorial(id) {
+      api('historialVariante', { variant_id: id }).then(function (r) {
+        var cont = $('panel-var');
+        if (!cont || panelVar.id !== id || panelVar.modo !== 'hist') return;
+        if (!r.ok) { manejarError(r); return; }
+        var movs = r.data.movimientos;
+        cont.innerHTML = '<p class="titulo-seccion" style="margin-bottom:6px">Historial · ' + escapar(r.data.sku_variante) + '</p>' +
+          (movs.length ? '<ul class="movs">' + movs.map(function (m) {
+            var signo = m.cantidad > 0 ? '+' : '';
+            return '<li class="mov' + (m.anulado ? ' anulado' : '') + '" data-mov="' + escapar(m.movement_id) + '">' +
+              '<span class="que">' + escapar(m.etiqueta) + (m.motivo ? ' · ' + escapar(m.motivo) : '') + '</span>' +
+              '<span class="cant">' + signo + m.cantidad + ' → ' + m.stock_despues + '</span>' +
+              '<span class="det">' + escapar(fechaCorta(m.fecha)) + ' · ' + escapar(m.actor) +
+                (m.costo_unitario !== null && m.cantidad > 0 ? ' · Costo ' + pesos(m.costo_unitario) : '') +
+                (m.nota ? ' · ' + escapar(m.nota) : '') + (m.anulado ? ' · Anulado' : '') +
+                (m.anulable ? ' · <button class="enlace peligro" data-acc="anular" type="button">Anular</button>' : '') +
+              '</span></li>';
+          }).join('') + '</ul>' : '<p class="vacio" style="padding:0">Aún no hay movimientos.</p>') +
+          '<div class="pie-form" style="margin:16px 0 0"><button class="enlace" type="button" data-acc="cerrar">Cerrar</button></div>';
+      });
     }
 
     $('lista-var').addEventListener('click', function (ev) {
+      var pt = ev.target.closest('.pildora[data-tipo]');
+      if (pt) { movTipo = pt.dataset.tipo; claveOperacion = nuevaClave(); pintarVariantes(); return; }
       var b = ev.target.closest('button[data-acc]');
       if (!b) return;
-      var id = b.closest('.item').dataset.id;
+      var bloque = b.closest('[data-id]');
+      var id = bloque.dataset.id;
+      if (b.dataset.acc === 'mov' || b.dataset.acc === 'hist') {
+        var modo = b.dataset.acc;
+        if (panelVar.id === id && panelVar.modo === modo) { panelVar = { id: null, modo: null }; }
+        else { panelVar = { id: id, modo: modo }; movTipo = null; claveOperacion = nuevaClave(); editandoVar = null; }
+        pintarVariantes();
+        return;
+      }
+      if (b.dataset.acc === 'cerrar') { panelVar = { id: null, modo: null }; pintarVariantes(); return; }
+      if (b.dataset.acc === 'anular') {
+        var li = b.closest('.mov');
+        if (li.dataset.confirmar !== '1') {
+          li.dataset.confirmar = '1';
+          b.textContent = '¿Confirmas anular?';
+          return;
+        }
+        b.disabled = true;
+        api('anularMovimiento', { movement_id: li.dataset.mov, idempotency_key: nuevaClave() }).then(function (r) {
+          if (!r.ok) { b.disabled = false; manejarError(r); return; }
+          avisar('Movimiento anulado. Existencias: ' + r.data.stock_despues + '.');
+          recargarProducto(producto.product_id);
+        });
+        return;
+      }
       var v = producto.variantes.filter(function (x) { return x.variant_id === id; })[0];
       var acc = b.dataset.acc;
       if (acc === 'editar') { editandoVar = id; pintarVariantes(); }
@@ -1356,6 +1522,88 @@
           recargarProducto(producto.product_id);
         });
       }
+    });
+
+
+    $('lista-var').addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var f = ev.target;
+      var id = f.closest('[data-id]').dataset.id;
+      var btn = f.querySelector('button[type="submit"]');
+      if (f.dataset.form === 'minimo') {
+        btn.disabled = true;
+        api('actualizarStockMinimo', { variant_id: id, minimo: soloDigitos($('mv-minimo').value) }).then(function (r) {
+          btn.disabled = false;
+          if (!r.ok) { manejarError(r); return; }
+          avisar(r.data.stock_minimo === null ? 'Mínimo eliminado.' : 'Mínimo guardado: ' + r.data.stock_minimo + '.');
+          recargarProducto(producto.product_id);
+        });
+        return;
+      }
+      var datos = {
+        variant_id: id,
+        tipo: movTipo,
+        cantidad: soloDigitos($('mv-cant').value),
+        costo_unitario: $('mv-costo') ? soloDigitos($('mv-costo').value) : '',
+        motivo: $('mv-motivo') ? $('mv-motivo').value : '',
+        nota: $('mv-nota').value,
+        idempotency_key: claveOperacion || (claveOperacion = nuevaClave())
+      };
+      if (!datos.cantidad || Number(datos.cantidad) <= 0) { avisar('Escribe la cantidad.', true); return; }
+      btn.disabled = true; btn.textContent = 'Registrando…';
+      api('registrarMovimiento', datos).then(function (r) {
+        btn.disabled = false; btn.textContent = 'Registrar';
+        if (!r.ok) { manejarError(r); return; }
+        claveOperacion = nuevaClave();
+        panelVar = { id: null, modo: null };
+        avisar('Registrado. Existencias: ' + r.data.stock_despues +
+          (r.data.costo_promedio_despues !== null ? ' · Costo prom. ' + pesos(r.data.costo_promedio_despues) : '') + '.');
+        recargarProducto(producto.product_id);
+      });
+    });
+
+    /* ---------------- Inventario ---------------- */
+    var filtroInv = '';
+    function cargarInventario() {
+      $('lista-inv').innerHTML = '<li class="vacio">Cargando inventario…</li>';
+      api('listarInventario', { filtro: filtroInv }).then(function (r) {
+        if (!r.ok) { manejarError(r); return; }
+        var res = r.data.resumen;
+        $('inv-valor').textContent = pesos(res.valor_costo);
+        $('inv-venta').textContent = pesos(res.valor_venta);
+        $('inv-unidades').textContent = res.unidades.toLocaleString('es-CO');
+        $('inv-alertas').textContent = res.agotadas + res.bajo_minimo;
+        var nota = $('inv-nota');
+        nota.hidden = !res.sin_costo;
+        nota.textContent = res.sin_costo ? res.sin_costo + ' variante(s) con existencias sin costo registrado no suman al valor al costo.' : '';
+        var ul = $('lista-inv');
+        if (!r.data.filas.length) {
+          ul.innerHTML = '<li class="vacio">' + (filtroInv ? 'Sin alertas. Todo en orden.' : 'Aún no hay variantes activas.') + '</li>';
+          return;
+        }
+        ul.innerHTML = r.data.filas.map(function (f) {
+          var tag = f.alerta === 'agotada' ? '<span class="etiqueta agotada">Agotada</span>'
+            : (f.alerta === 'bajo_minimo' ? '<span class="etiqueta bajo_minimo">Bajo mínimo</span>' : '');
+          return '<li class="item enlazado" data-pid="' + escapar(f.product_id) + '" tabindex="0">' +
+            '<div class="item-principal"><span class="item-nombre">' + escapar(f.nombre) + '</span>' +
+            '<span class="item-meta"><b>' + escapar(f.sku) + '</b>' +
+              (f.costo_promedio !== null ? ' · Costo ' + pesos(f.costo_promedio) : ' · Sin costo') +
+              (f.margen !== null ? ' · Margen ' + f.margen + '%' : '') +
+              (f.minimo !== null ? ' · Mínimo ' + f.minimo : '') + '</span></div>' + tag +
+            '<div class="item-stock"><span class="cifra">' + f.stock + '</span><span class="unidad">' + (f.stock === 1 ? 'unidad' : 'unidades') + '</span></div></li>';
+        }).join('');
+      });
+    }
+    $('filtro-inv').addEventListener('click', function (ev) {
+      var b = ev.target.closest('.pildora');
+      if (!b) return;
+      this.querySelectorAll('.pildora').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      filtroInv = b.dataset.f;
+      cargarInventario();
+    });
+    $('lista-inv').addEventListener('click', function (ev) {
+      var li = ev.target.closest('[data-pid]');
+      if (li) abrirProducto(li.dataset.pid);
     });
 
     $('form-variante').addEventListener('submit', function (ev) {
