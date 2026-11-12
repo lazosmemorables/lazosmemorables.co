@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.13.0 · Panel administrativo -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.14.0 · Panel administrativo -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -538,13 +538,27 @@
     .etiqueta.en_riesgo { background: var(--rosa-claro); }
     .etiqueta.inactiva, .etiqueta.sin_compras { background: transparent; border: 1px solid var(--linea); }
 
+
+    /* ---------- Marketing ---------- */
+    .balance { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 0 0 30px; }
+    .balance div { font-size: 12px; line-height: 1.4; }
+    .balance i { display: block; height: 4px; background: var(--linea); margin: 8px 0 6px; position: relative; }
+    .balance i b { position: absolute; left: 0; top: 0; bottom: 0; background: var(--oro); }
+    .dia-mkt { font-size: 10px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--texto-suave); margin: 22px 0 4px; }
+    .estado-c { font-size: 10px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; padding: 4px 8px; border: 1px solid var(--linea); white-space: nowrap; }
+    .estado-c.publicado { background: var(--cacao); color: #fff; border-color: var(--cacao); }
+    .estado-c.listo { border-color: var(--oro); }
+    .estado-c.atrasado { background: var(--rosa-claro); }
+    textarea.campo { resize: vertical; min-height: 120px; line-height: 1.5; font-family: inherit; }
+    @media (max-width: 720px) { .balance { grid-template-columns: 1fr 1fr; } }
+
     /* ---------- Finanzas ---------- */
     .selector-mes { display: flex; align-items: center; gap: 14px; margin: 0 0 20px; }
     .selector-mes button { background: none; border: 1px solid var(--linea); width: 36px; height: 36px; cursor: pointer; color: var(--cacao); font-size: 16px; }
     .selector-mes span { font-family: var(--serif); font-size: 24px; min-width: 170px; text-align: center; }
     .estado-res { width: 100%; border-collapse: collapse; font-size: 14px; margin: 0 0 28px; }
     .estado-res td { padding: 11px 0; border-bottom: 1px solid var(--linea); }
-    .estado-res td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .estado-res td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; padding-left: 12px; }
     .estado-res td.pct { text-align: right; width: 64px; color: var(--texto-suave); font-size: 12px; }
     .estado-res tr.sub td { padding-left: 16px; color: var(--texto-suave); font-size: 13px; }
     .estado-res tr.total td { font-weight: 600; border-bottom: 1px solid var(--cacao); }
@@ -721,6 +735,7 @@
       <button type="button" data-vista="inventario">Inventario</button>
       <button type="button" data-vista="compras">Compras</button>
       <button type="button" data-vista="finanzas">Finanzas</button>
+      <button type="button" data-vista="marketing">Marketing</button>
       <button type="button" data-vista="categorias">Categorías</button>
       <button type="button" data-vista="configuracion">Configuración</button>
     </nav>
@@ -1157,6 +1172,24 @@
         <div id="ck-cuerpo"></div>
       </section>
 
+      <!-- Marketing -->
+      <section id="vista-marketing" hidden>
+        <div class="encabezado-vista">
+          <h2 class="titulo-vista">Marketing</h2>
+          <button id="btn-nueva-pieza" class="boton" type="button">Nueva pieza</button>
+        </div>
+        <p class="intro">Calendario de contenido por pilar. Anota cuántas consultas y ventas trajo cada pieza para saber qué funciona.</p>
+        <div class="selector-mes" id="mk-selector"><button type="button" data-mes-mk="-1" aria-label="Mes anterior">‹</button><span id="mk-mes">—</span><button type="button" data-mes-mk="1" aria-label="Mes siguiente">›</button></div>
+        <div class="cifras">
+          <div class="cifra-bloque"><span id="mk-planeadas" class="valor">—</span><span class="rotulo">Piezas del mes</span></div>
+          <div class="cifra-bloque"><span id="mk-publicadas" class="valor">—</span><span class="rotulo">Publicadas</span></div>
+          <div class="cifra-bloque"><span id="mk-consultas" class="valor">—</span><span class="rotulo">Consultas generadas</span></div>
+          <div class="cifra-bloque"><span id="mk-ventas" class="valor">—</span><span class="rotulo">Ventas atribuidas</span></div>
+        </div>
+        <div id="mk-form-caja" hidden></div>
+        <div id="mk-contenido"><p class="vacio">Cargando…</p></div>
+      </section>
+
       <!-- Finanzas -->
       <section id="vista-finanzas" hidden>
         <div class="encabezado-vista">
@@ -1414,12 +1447,13 @@
       document.querySelectorAll('.nav button').forEach(function (b) {
         if (b.dataset.vista === navActiva) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
       });
-      ['inicio', 'ventas', 'clientas', 'clienta', 'nueva-venta', 'pedido', 'productos', 'nuevo', 'producto', 'inventario', 'compras', 'nueva-compra', 'compra', 'finanzas', 'categorias', 'configuracion'].forEach(function (v) { $('vista-' + v).hidden = v !== vista; });
+      ['inicio', 'ventas', 'clientas', 'clienta', 'nueva-venta', 'pedido', 'productos', 'nuevo', 'producto', 'inventario', 'compras', 'nueva-compra', 'compra', 'finanzas', 'marketing', 'categorias', 'configuracion'].forEach(function (v) { $('vista-' + v).hidden = v !== vista; });
       window.scrollTo(0, 0);
       if (vista === 'productos') cargarProductos();
       if (vista === 'inventario') cargarInventario();
       if (vista === 'compras') cargarCompras();
       if (vista === 'finanzas') cargarFinanzas();
+      if (vista === 'marketing') cargarMarketing();
       if (vista === 'clientas') cargarClientas();
       if (vista === 'ventas') cargarVentas();
       if (vista === 'nueva-venta') prepararVenta();
@@ -2477,6 +2511,101 @@
         btn.disabled = false;
         if (!r.ok) { manejarError(r); return; }
         clienta = r.data; pintarClienta(false); avisar('Ficha actualizada.');
+      });
+    });
+
+
+    /* ---------------- Marketing ---------------- */
+    var mkMes = '', mkDatos = null, clavePieza = null;
+    var DIAS_SEM = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+    function diaTexto(f) { var d = new Date(f + 'T12:00:00Z'); return DIAS_SEM[d.getUTCDay()] + ' ' + d.getUTCDate() + ' ' + MESES_CORTOS[d.getUTCMonth()]; }
+    function cargarMarketing() {
+      if (!mkMes) mkMes = hoyBogota().slice(0, 7);
+      $('mk-mes').textContent = mesTexto(mkMes);
+      api('listarContenidos', { mes: mkMes }).then(function (r) {
+        if (!r.ok) { manejarError(r); return; }
+        mkDatos = r.data; var R = r.data.resumen;
+        $('mk-planeadas').textContent = R.planeadas;
+        $('mk-publicadas').textContent = R.publicadas;
+        $('mk-consultas').textContent = R.consultas;
+        $('mk-ventas').textContent = R.ventas;
+        pintarMarketing();
+      });
+    }
+    function pintarMarketing() {
+      var d = mkDatos, html = '';
+      if (d.fechas.length) html += '<p class="titulo-seccion" style="margin-top:0">Fechas comerciales cercanas</p><ul class="proximas">' + d.fechas.map(function (f) {
+        return '<li style="cursor:default"><span><b>' + escapar(f.nombre) + '</b> · ' + escapar(diaTexto(f.fecha)) + '</span><span>' + cuandoTexto(f.dias) + ' · ' + f.planeadas + (f.planeadas === 1 ? ' pieza' : ' piezas') + ' en las 3 semanas previas</span></li>';
+      }).join('') + '</ul>';
+      html += '<p class="titulo-seccion">Balance de pilares del mes</p><div class="balance">' + d.balance.map(function (b) {
+        return '<div><b style="font-weight:600">' + escapar(b.nombre) + '</b><i><b style="width:' + b.pct + '%"></b></i>' + b.piezas + (b.piezas === 1 ? ' pieza' : ' piezas') + ' · ' + b.pct + '%</div>';
+      }).join('') + '</div>';
+      var dias = {}; d.contenidos.forEach(function (c) { (dias[c.fecha] = dias[c.fecha] || []).push(c); });
+      var claves = Object.keys(dias).sort();
+      html += '<p class="titulo-seccion">Calendario</p>' + (claves.length ? claves.map(function (f) {
+        return '<p class="dia-mkt">' + escapar(diaTexto(f)) + (f === hoyBogota() ? ' · hoy' : '') + '</p><ul class="lista" style="margin:0">' + dias[f].map(function (c) {
+          var est = c.atrasado ? 'atrasado' : c.estado;
+          return '<li class="item enlazado" data-pieza="' + escapar(c.contenido_id) + '" tabindex="0"' + (c.estado === 'descartado' ? ' style="opacity:.5"' : '') + '><div class="item-principal"><span class="item-nombre">' + escapar(c.titulo) + '</span>' +
+            '<span class="item-meta">' + escapar(c.pilar_texto) + ' · ' + escapar(c.formato_texto) + (c.producto ? ' · ' + escapar(c.producto) : '') +
+            (c.estado === 'publicado' ? ' · ' + c.consultas + ' consultas · ' + c.ventas + ' ventas' : '') + '</span></div>' +
+            '<div class="item-precio"><span class="estado-c ' + est + '">' + (c.atrasado ? 'Atrasada' : escapar(c.estado_texto)) + '</span></div></li>';
+        }).join('') + '</ul>';
+      }).join('') : '<p class="vacio">Aún no hay piezas este mes. Empieza por una de cada pilar.</p>');
+      var hayDatos = d.rendimiento.some(function (x) { return x.publicadas; });
+      if (hayDatos) html += '<p class="titulo-seccion" style="margin-top:36px">Qué funciona · últimos 90 días</p><table class="estado-res"><tbody><tr class="total"><td>Pilar</td><td class="num">Piezas</td><td class="num">Consultas c/u</td><td class="num">Ventas</td></tr>' +
+        d.rendimiento.map(function (x) { return '<tr><td>' + escapar(x.nombre) + '</td><td class="num">' + x.publicadas + '</td><td class="num">' + String(x.consultas_por_pieza).replace('.', ',') + '</td><td class="num">' + x.ventas + '</td></tr>'; }).join('') + '</tbody></table>';
+      $('mk-contenido').innerHTML = html;
+    }
+    function abrirFormPieza(c) {
+      var d = mkDatos, nuevo = !c;
+      if (nuevo) { clavePieza = nuevaClave(); c = { fecha: hoyBogota(), pilar: '', formato: 'post', titulo: '', texto: '', product_id: '', estado: 'idea', enlace: '', consultas: 0, ventas: 0, notas: '' }; }
+      var sel = function (obj, val, vacio) { return (vacio ? '<option value="">' + vacio + '</option>' : '') + Object.keys(obj).map(function (k) { return '<option value="' + k + '"' + (k === val ? ' selected' : '') + '>' + escapar(typeof obj[k] === 'string' ? obj[k] : obj[k].nombre) + '</option>'; }).join(''); };
+      var caja = $('mk-form-caja');
+      caja.innerHTML = '<form id="form-pieza" class="formulario panel-var" autocomplete="off" data-id="' + (nuevo ? '' : escapar(c.contenido_id)) + '">' +
+        '<p class="titulo-seccion" style="margin:0">' + (nuevo ? 'Nueva pieza' : 'Editar pieza') + '</p>' +
+        '<div class="doble"><div><label class="etq" for="pz-fecha">Fecha</label><input id="pz-fecha" class="campo" type="date" value="' + escapar(c.fecha) + '"></div>' +
+        '<div><label class="etq" for="pz-estado">Estado</label><select id="pz-estado" class="selector" style="width:100%">' + sel(d.estados, c.estado) + '</select></div></div>' +
+        '<div class="doble"><div><label class="etq" for="pz-pilar">Pilar</label><select id="pz-pilar" class="selector" style="width:100%">' + sel(d.pilares, c.pilar, 'Elige…') + '</select><p class="pista" id="pz-pilar-ayuda" style="margin:6px 0 0">' + (c.pilar ? escapar(d.pilares[c.pilar].ayuda) : '') + '</p></div>' +
+        '<div><label class="etq" for="pz-formato">Formato</label><select id="pz-formato" class="selector" style="width:100%">' + sel(d.formatos, c.formato) + '</select></div></div>' +
+        '<div><label class="etq" for="pz-titulo">Tema</label><input id="pz-titulo" class="campo" maxlength="120" placeholder="Ej.: tres formas de llevar perlas" value="' + escapar(c.titulo) + '"></div>' +
+        '<div><label class="etq" for="pz-producto">Producto (opcional, solo piezas reales del inventario)</label><select id="pz-producto" class="selector" style="width:100%"><option value="">Sin producto</option>' +
+          d.productos.map(function (p) { return '<option value="' + escapar(p.product_id) + '"' + (p.product_id === c.product_id ? ' selected' : '') + '>' + escapar(p.nombre + ' · ' + p.sku) + '</option>'; }).join('') + '</select></div>' +
+        '<div><label class="etq" for="pz-texto">Texto de la publicación</label><textarea id="pz-texto" class="campo" maxlength="2200">' + escapar(c.texto) + '</textarea></div>' +
+        '<div id="pz-resultados"' + (c.estado === 'publicado' ? '' : ' hidden') + '><div class="doble"><div><label class="etq" for="pz-enlace">Enlace en Instagram</label><input id="pz-enlace" class="campo" maxlength="200" placeholder="https://www.instagram.com/p/…" value="' + escapar(c.enlace) + '"></div>' +
+          '<div class="doble" style="gap:12px"><div><label class="etq" for="pz-consultas">Consultas</label><input id="pz-consultas" class="campo" inputmode="numeric" value="' + (c.consultas || '') + '"></div>' +
+          '<div><label class="etq" for="pz-ventas">Ventas</label><input id="pz-ventas" class="campo" inputmode="numeric" value="' + (c.ventas || '') + '"></div></div></div></div>' +
+        '<div><label class="etq" for="pz-notas">Notas</label><input id="pz-notas" class="campo" maxlength="300" value="' + escapar(c.notas) + '"></div>' +
+        '<div class="pie-form" style="margin:0"><button class="boton" type="submit">Guardar</button>' + (c.texto ? '<button class="enlace" type="button" data-copiar-texto>Copiar texto</button>' : '') + '<button class="enlace" type="button" data-cerrar-pieza>Cerrar</button></div></form>';
+      caja.hidden = false; caja.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    $('btn-nueva-pieza').addEventListener('click', function () { if (mkDatos) abrirFormPieza(null); });
+    $('vista-marketing').addEventListener('click', function (ev) {
+      var m = ev.target.closest('[data-mes-mk]');
+      if (m) { mkMes = moverMes(mkMes, Number(m.dataset.mesMk)); $('mk-form-caja').hidden = true; cargarMarketing(); return; }
+      var it = ev.target.closest('[data-pieza]');
+      if (it) { abrirFormPieza(mkDatos.contenidos.filter(function (c) { return c.contenido_id === it.dataset.pieza; })[0]); return; }
+      if (ev.target.closest('[data-cerrar-pieza]')) { $('mk-form-caja').hidden = true; return; }
+      if (ev.target.closest('[data-copiar-texto]')) {
+        var t = $('pz-texto').value;
+        (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () { avisar('Texto copiado.'); }).catch(function () { $('pz-texto').select(); });
+      }
+    });
+    $('vista-marketing').addEventListener('change', function (ev) {
+      if (ev.target.id === 'pz-estado') $('pz-resultados').hidden = ev.target.value !== 'publicado';
+      if (ev.target.id === 'pz-pilar') $('pz-pilar-ayuda').textContent = ev.target.value ? mkDatos.pilares[ev.target.value].ayuda : '';
+    });
+    $('vista-marketing').addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var f = ev.target, btn = f.querySelector('button[type="submit"]'); btn.disabled = true;
+      var pub = $('pz-estado').value === 'publicado';
+      api('guardarContenido', { contenido_id: f.dataset.id || undefined, idempotency_key: clavePieza, fecha: $('pz-fecha').value, estado: $('pz-estado').value,
+        pilar: $('pz-pilar').value, formato: $('pz-formato').value, titulo: $('pz-titulo').value, product_id: $('pz-producto').value, texto: $('pz-texto').value,
+        enlace: pub ? $('pz-enlace').value : '', consultas: pub ? $('pz-consultas').value : '', ventas: pub ? $('pz-ventas').value : '', notas: $('pz-notas').value
+      }).then(function (r) {
+        btn.disabled = false;
+        if (!r.ok) { manejarError(r); return; }
+        clavePieza = null; $('mk-form-caja').hidden = true; avisar('Pieza guardada.');
+        var mesPieza = $('pz-fecha').value.slice(0, 7); if (mesPieza) mkMes = mesPieza; cargarMarketing();
       });
     });
 
