@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.3.1 · Panel administrativo -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.4.0 · Panel administrativo -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -306,6 +306,125 @@
       padding: 0 32px 48px;
     }
 
+    /* ---------- Navegación ---------- */
+    .nav {
+      display: flex;
+      gap: 32px;
+      padding: 0 32px;
+      border-bottom: 1px solid var(--linea);
+      background: var(--blanco);
+      position: sticky;
+      top: 89px;
+      z-index: 1;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav::-webkit-scrollbar { display: none; }
+    .nav button {
+      background: none;
+      border: 0;
+      padding: 16px 0 14px;
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--texto-suave);
+      border-bottom: 1px solid transparent;
+      margin-bottom: -1px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .nav button[aria-current="page"] { color: var(--cacao); border-bottom-color: var(--cacao); }
+    .nav button:focus-visible { outline: 1px solid var(--oro); outline-offset: 2px; }
+
+    /* ---------- Listas (categorías) ---------- */
+    .titulo-vista {
+      font-family: var(--serif);
+      font-size: 40px;
+      font-weight: 400;
+      line-height: 1.1;
+      margin: 0 0 10px;
+    }
+    .form-linea {
+      display: flex;
+      gap: 12px;
+      margin: 0 0 36px;
+    }
+    .campo {
+      flex: 1;
+      min-width: 0;
+      font-family: var(--sans);
+      font-size: 15px;
+      color: var(--cacao);
+      background: var(--blanco);
+      border: 0;
+      border-bottom: 1px solid rgba(53, 39, 44, .35);
+      padding: 12px 2px;
+      border-radius: 0;
+      -webkit-appearance: none;
+    }
+    .campo::placeholder { color: rgba(53, 39, 44, .45); }
+    .campo:focus { outline: none; border-bottom-color: var(--cacao); }
+    .lista { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--linea); }
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--linea);
+    }
+    .item-principal { flex: 1; min-width: 0; }
+    .item-nombre {
+      display: block;
+      font-family: var(--serif);
+      font-size: 22px;
+      line-height: 1.25;
+    }
+    .item.inactiva .item-nombre { color: var(--texto-suave); }
+    .item-meta { display: block; font-size: 12px; color: var(--texto-suave); margin-top: 2px; }
+    .item-meta b { font-weight: 600; color: var(--cacao); letter-spacing: .04em; }
+    .etiqueta {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--cacao);
+      background: var(--marfil);
+      padding: 4px 8px;
+      white-space: nowrap;
+    }
+    .item-acciones { display: flex; gap: 18px; flex-wrap: wrap; justify-content: flex-end; }
+    /* Rosa como acento (subrayado): el texto se mantiene en cacao para contraste AA */
+    .enlace.peligro { color: var(--cacao); border-bottom-color: var(--rosa-alterno); }
+    .enlace.peligro:hover { border-bottom-color: var(--cacao); }
+    .confirmar { flex: 1; font-size: 13px; }
+    .confirmar p { margin: 0 0 10px; }
+    .vacio { color: var(--texto-suave); padding: 24px 0; font-size: 14px; }
+
+    /* ---------- Aviso flotante ---------- */
+    .toast {
+      position: fixed;
+      left: 20px;
+      right: 20px;
+      bottom: 28px;
+      margin: 0 auto;
+      max-width: 440px;
+      text-align: center;
+      transform: translateY(16px);
+      background: var(--cacao);
+      color: var(--blanco);
+      font-size: 13px;
+      padding: 14px 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s var(--suave), transform .3s var(--suave);
+      z-index: 20;
+    }
+    .toast.visible { opacity: 1; transform: none; }
+    .toast.error { background: var(--cacao); border-left: 3px solid var(--rosa-alterno); }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
     @media (max-width: 560px) {
       header { padding: 14px 20px; }
       .cab-logo { height: 50px; }
@@ -317,6 +436,11 @@
       .boton { width: 100%; }
       .teclado { grid-template-columns: repeat(3, 68px); gap: 14px 24px; }
       .tecla { width: 68px; height: 68px; }
+      .nav { padding: 0 20px; gap: 28px; top: 79px; }
+      .titulo-vista { font-size: 34px; }
+      .item { flex-wrap: wrap; }
+      .item-acciones { width: 100%; justify-content: flex-start; }
+      .form-linea .boton { width: auto; padding: 14px 18px; }
     }
     @media (max-height: 640px) {
       .acceso-logo { width: 104px; margin-bottom: 20px; }
@@ -382,27 +506,47 @@
       </div>
     </header>
 
+    <nav class="nav" aria-label="Secciones">
+      <button type="button" data-vista="inicio" aria-current="page">Inicio</button>
+      <button type="button" data-vista="categorias">Categorías</button>
+    </nav>
+
     <main>
-      <h2 id="saludo" class="saludo">Hola.</h2>
-      <p class="intro">Este es el punto de partida de Lazos OS. Aquí verificamos que el entorno, la hoja y el acceso funcionan.</p>
+      <!-- Inicio -->
+      <section id="vista-inicio">
+        <h2 id="saludo" class="saludo">Hola.</h2>
+        <p class="intro">Bienvenida a Lazos OS. Desde aquí administraremos catálogo, inventario, pedidos y finanzas.</p>
 
-      <p class="titulo-seccion">Estado del entorno</p>
-      <dl>
-        <div class="fila"><dt>Versión</dt><dd id="v-version">—</dd></div>
-        <div class="fila"><dt>Entorno</dt><dd id="v-entorno">—</dd></div>
-        <div class="fila"><dt>Sesión de</dt><dd id="v-usuario">—</dd></div>
-        <div class="fila"><dt>Hoja vinculada</dt><dd id="v-hoja">—</dd></div>
-        <div class="fila"><dt>Hora del servidor</dt><dd id="v-hora">—</dd></div>
-        <div class="fila"><dt>Tu sesión vence</dt><dd id="v-expira">—</dd></div>
-      </dl>
+        <p class="titulo-seccion">Estado del entorno</p>
+        <dl>
+          <div class="fila"><dt>Versión</dt><dd id="v-version">—</dd></div>
+          <div class="fila"><dt>Entorno</dt><dd id="v-entorno">—</dd></div>
+          <div class="fila"><dt>Sesión de</dt><dd id="v-usuario">—</dd></div>
+          <div class="fila"><dt>Hoja vinculada</dt><dd id="v-hoja">—</dd></div>
+          <div class="fila"><dt>Hora del servidor</dt><dd id="v-hora">—</dd></div>
+          <div class="fila"><dt>Tu sesión vence</dt><dd id="v-expira">—</dd></div>
+        </dl>
+      </section>
 
-      <p class="titulo-seccion">Prueba de escritura</p>
-      <button id="btn-prueba" class="boton" type="button">Registrar evento de prueba</button>
-      <div id="mensaje" class="mensaje" role="status" aria-live="polite" hidden></div>
+      <!-- Categorías -->
+      <section id="vista-categorias" hidden>
+        <h2 class="titulo-vista">Categorías</h2>
+        <p class="intro">Cada categoría asigna su SKU de forma automática y en orden. El código no cambia aunque cambies el nombre.</p>
+
+        <form id="form-cat" class="form-linea" autocomplete="off">
+          <label for="nueva-cat" class="sr-only">Nueva categoría</label>
+          <input id="nueva-cat" class="campo" type="text" maxlength="40" placeholder="Nueva categoría" enterkeyhint="done">
+          <button class="boton" type="submit">Agregar</button>
+        </form>
+
+        <ul id="lista-cat" class="lista" aria-live="polite"></ul>
+      </section>
     </main>
 
     <footer>Transmitiendo amor</footer>
   </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script>
   (function () {
@@ -532,6 +676,7 @@
           return;
         }
         pintarEstado(r.data);
+        irA('inicio');
         mostrar('app');
       });
     }
@@ -548,14 +693,6 @@
       var badge = $('entorno');
       badge.textContent = e.entorno === 'prod' ? 'Producción' : 'Pruebas';
       badge.className = 'entorno ' + e.entorno;
-    }
-
-    function mensaje(texto, esError) {
-      var m = $('mensaje');
-      m.textContent = '';
-      m.innerHTML = texto;
-      m.className = 'mensaje' + (esError ? ' error' : '');
-      m.hidden = false;
     }
 
     function escapar(s) {
@@ -581,20 +718,148 @@
       api('logout').then(function () { irAlAcceso('Sesión cerrada. Hasta pronto.'); });
     });
 
-    $('btn-prueba').addEventListener('click', function () {
-      var btn = this;
-      btn.disabled = true;
-      btn.textContent = 'Registrando…';
-      api('registrarPrueba').then(function (r) {
-        btn.disabled = false;
-        btn.textContent = 'Registrar evento de prueba';
-        if (r.ok) {
-          mensaje('Evento registrado en la fila ' + r.data.fila + ' · <code>' + escapar(r.data.event_id) + '</code>');
-        } else if (r.error && r.error.code === 'SESION_INVALIDA') {
-          irAlAcceso('Tu sesión terminó. Ingresa de nuevo.');
-        } else {
-          mensaje(escapar((r.error && r.error.message) || 'No se pudo registrar.'), true);
+    /* ---------------- Navegación ---------------- */
+    var vistaActual = 'inicio';
+    function irA(vista) {
+      vistaActual = vista;
+      document.querySelectorAll('.nav button').forEach(function (b) {
+        if (b.dataset.vista === vista) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+      });
+      ['inicio', 'categorias'].forEach(function (v) { $('vista-' + v).hidden = v !== vista; });
+      window.scrollTo(0, 0);
+      if (vista === 'categorias') cargarCategorias();
+    }
+    document.querySelector('.nav').addEventListener('click', function (ev) {
+      var b = ev.target.closest('button[data-vista]');
+      if (b) irA(b.dataset.vista);
+    });
+
+    /* ---------------- Aviso flotante ---------------- */
+    var toastTimer;
+    function avisar(texto, esError) {
+      var t = $('toast');
+      t.textContent = texto;
+      t.className = 'toast visible' + (esError ? ' error' : '');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { t.className = 'toast'; }, 3600);
+    }
+
+    function manejarError(r) {
+      if (r.error && r.error.code === 'SESION_INVALIDA') { irAlAcceso('Tu sesión terminó. Ingresa de nuevo.'); return; }
+      avisar((r.error && r.error.message) || 'Algo no salió bien. Intenta de nuevo.', true);
+    }
+
+    /* ---------------- Categorías ---------------- */
+    var categorias = [];
+    var editando = null;     // id en edición
+    var confirmando = null;  // id pendiente de eliminar
+
+    function cargarCategorias() {
+      if (!categorias.length) $('lista-cat').innerHTML = '<li class="vacio">Cargando categorías…</li>';
+      api('listarCategorias').then(function (r) {
+        if (!r.ok) { manejarError(r); return; }
+        categorias = r.data;
+        pintarCategorias();
+      });
+    }
+
+    function pintarCategorias() {
+      var ul = $('lista-cat');
+      if (!categorias.length) { ul.innerHTML = '<li class="vacio">Aún no hay categorías. Agrega la primera.</li>'; return; }
+      ul.innerHTML = categorias.map(function (c) {
+        var id = escapar(c.categoria_id);
+        var inactiva = c.estado === 'inactiva';
+        if (editando === c.categoria_id) {
+          return '<li class="item" data-id="' + id + '">' +
+            '<div class="item-principal"><input class="campo" data-campo="renombrar" maxlength="40" value="' + escapar(c.nombre) + '" aria-label="Nuevo nombre"></div>' +
+            '<div class="item-acciones"><button class="enlace" data-acc="guardar" type="button">Guardar</button>' +
+            '<button class="enlace" data-acc="cancelar" type="button">Cancelar</button></div></li>';
         }
+        if (confirmando === c.categoria_id) {
+          return '<li class="item" data-id="' + id + '"><div class="confirmar">' +
+            '<p>¿Eliminar <b>' + escapar(c.nombre) + '</b>? Su código ' + escapar(c.codigo) + ' no se volverá a usar.</p>' +
+            '<div class="item-acciones" style="justify-content:flex-start">' +
+            '<button class="enlace peligro" data-acc="eliminar-si" type="button">Sí, eliminar</button>' +
+            '<button class="enlace" data-acc="cancelar" type="button">Cancelar</button></div></div></li>';
+        }
+        var meta = '<b>' + escapar(c.codigo) + '</b> · Próximo SKU ' + escapar(c.proximo_sku) +
+                   ' · ' + c.productos + (c.productos === 1 ? ' producto' : ' productos');
+        return '<li class="item' + (inactiva ? ' inactiva' : '') + '" data-id="' + id + '">' +
+          '<div class="item-principal"><span class="item-nombre">' + escapar(c.nombre) + '</span>' +
+          '<span class="item-meta">' + meta + '</span></div>' +
+          (inactiva ? '<span class="etiqueta">Inactiva</span>' : '') +
+          '<div class="item-acciones">' +
+            '<button class="enlace" data-acc="renombrar" type="button">Renombrar</button>' +
+            '<button class="enlace" data-acc="estado" type="button">' + (inactiva ? 'Activar' : 'Desactivar') + '</button>' +
+            (c.productos === 0 ? '<button class="enlace peligro" data-acc="eliminar" type="button">Eliminar</button>' : '') +
+          '</div></li>';
+      }).join('');
+      var input = ul.querySelector('[data-campo="renombrar"]');
+      if (input) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
+    }
+
+    function buscarCat(id) { return categorias.filter(function (c) { return c.categoria_id === id; })[0]; }
+
+    function ejecutar(accion, datos, exito) {
+      return api(accion, datos).then(function (r) {
+        if (!r.ok) { manejarError(r); return; }
+        editando = null; confirmando = null;
+        avisar(exito(r.data));
+        cargarCategorias();
+      });
+    }
+
+    $('lista-cat').addEventListener('click', function (ev) {
+      var b = ev.target.closest('button[data-acc]');
+      if (!b) return;
+      var id = b.closest('.item').dataset.id;
+      var c = buscarCat(id);
+      var acc = b.dataset.acc;
+      if (acc === 'renombrar') { editando = id; confirmando = null; pintarCategorias(); }
+      else if (acc === 'cancelar') { editando = null; confirmando = null; pintarCategorias(); }
+      else if (acc === 'guardar') { guardarNombre(id); }
+      else if (acc === 'eliminar') { confirmando = id; editando = null; pintarCategorias(); }
+      else if (acc === 'eliminar-si') {
+        b.disabled = true;
+        ejecutar('eliminarCategoria', { categoria_id: id }, function () { return c.nombre + ' fue eliminada.'; });
+      } else if (acc === 'estado') {
+        var nuevo = c.estado === 'activa' ? 'inactiva' : 'activa';
+        b.disabled = true;
+        ejecutar('cambiarEstadoCategoria', { categoria_id: id, estado: nuevo }, function () {
+          return c.nombre + (nuevo === 'activa' ? ' está activa.' : ' quedó inactiva.');
+        });
+      }
+    });
+
+    $('lista-cat').addEventListener('keydown', function (ev) {
+      if (ev.target.dataset.campo !== 'renombrar') return;
+      if (ev.key === 'Enter') { ev.preventDefault(); guardarNombre(ev.target.closest('.item').dataset.id); }
+      if (ev.key === 'Escape') { editando = null; pintarCategorias(); }
+    });
+
+    function guardarNombre(id) {
+      var input = $('lista-cat').querySelector('[data-campo="renombrar"]');
+      var nombre = input.value.trim();
+      var c = buscarCat(id);
+      if (nombre === c.nombre) { editando = null; pintarCategorias(); return; }
+      input.disabled = true;
+      ejecutar('renombrarCategoria', { categoria_id: id, nombre: nombre }, function (d) { return 'Ahora se llama ' + d.nombre + '.'; })
+        .then(function () { if (input) input.disabled = false; });
+    }
+
+    $('form-cat').addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var input = $('nueva-cat');
+      var nombre = input.value.trim();
+      if (nombre.length < 2) { avisar('Escribe un nombre de al menos 2 letras.', true); return; }
+      var btn = this.querySelector('button');
+      btn.disabled = true; input.disabled = true;
+      api('crearCategoria', { nombre: nombre }).then(function (r) {
+        btn.disabled = false; input.disabled = false;
+        if (!r.ok) { manejarError(r); return; }
+        input.value = '';
+        avisar(r.data.nombre + ' creada · código ' + r.data.codigo + ' · primer SKU ' + r.data.proximo_sku);
+        cargarCategorias();
       });
     });
 
