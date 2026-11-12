@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.9.0 · Panel administrativo -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.10.0 · Panel administrativo -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -23,6 +23,7 @@
       --champagne: #9C7A64;
       --cacao: #35272C;
       --rosa-claro: #F2E5E7;
+      --rosa-empolvado: #E5C1CB;
       --rosa-alterno: #C16478;
       --texto-suave: rgba(53, 39, 44, 0.72);
       --linea: rgba(53, 39, 44, 0.10);
@@ -528,6 +529,30 @@
     .bloque-pago { background: var(--marfil-suave); padding: 22px 20px; margin: 18px 0 0; }
     .cifras.tres { grid-template-columns: repeat(3, 1fr); }
 
+    /* ---------- Ventas ---------- */
+    .buscador-clienta { position: relative; }
+    .sugerencias { list-style: none; margin: 0; padding: 0; border: 1px solid var(--linea); border-top: 0; background: var(--blanco); }
+    .sugerencias li { padding: 12px 14px; cursor: pointer; font-size: 13px; border-top: 1px solid var(--linea); }
+    .sugerencias li:hover { background: var(--marfil-suave); }
+    .clienta-elegida { display: flex; justify-content: space-between; gap: 16px; align-items: center; padding: 14px 16px; background: var(--marfil-suave); }
+    .linea-venta { display: grid; grid-template-columns: minmax(0, 3fr) 90px 120px auto; gap: 12px; align-items: end; padding: 14px 0; border-bottom: 1px solid var(--linea); }
+    .linea-venta .info { grid-column: 1 / -1; font-size: 11px; color: var(--texto-suave); margin-top: -4px; }
+    .linea-tiempo { list-style: none; margin: 0 0 40px; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 0; }
+    .linea-tiempo li { font-size: 10px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: rgba(53, 39, 44, .38); padding-right: 14px; }
+    .linea-tiempo li::after { content: '—'; margin-left: 14px; color: rgba(53, 39, 44, .25); }
+    .linea-tiempo li:last-child::after { content: ''; }
+    .linea-tiempo li.hecho { color: var(--cacao); }
+    .linea-tiempo li.actual { color: var(--cacao); }
+    .linea-tiempo li.actual span { border-bottom: 1px solid var(--cacao); padding-bottom: 3px; }
+    .acciones-pedido { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin: 0 0 18px; }
+    .resultado { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--linea); border-bottom: 1px solid var(--linea); margin: 32px 0; }
+    .aviso-linea { font-size: 12px; padding: 12px 14px; background: var(--rosa-claro); margin: 0 0 24px; }
+    .etiqueta.pendiente_pago, .etiqueta.pago_reportado { background: var(--marfil); border: 1px solid var(--oro); }
+    .etiqueta.confirmado, .etiqueta.preparando { background: var(--cacao); color: var(--blanco); }
+    .etiqueta.despachado { background: var(--rosa-empolvado); }
+    .etiqueta.entregado { background: var(--marfil); }
+    .etiqueta.cancelado, .etiqueta.expirado, .etiqueta.devuelto { background: transparent; border: 1px solid var(--linea); color: var(--texto-suave); }
+
     /* ---------- Aviso flotante ---------- */
     .toast {
       position: fixed;
@@ -585,6 +610,10 @@
       .linea-compra { grid-template-columns: 1fr 1fr; }
       .linea-compra > :first-child { grid-column: 1 / -1; }
       .tabla-lineas .ocultar-movil { display: none; }
+      .linea-venta { grid-template-columns: 1fr 1fr; }
+      .linea-venta > :first-child { grid-column: 1 / -1; }
+      .resultado { grid-template-columns: 1fr; }
+      .resultado .cifra-bloque + .cifra-bloque { border-left: 0; padding-left: 0; border-top: 1px solid var(--linea); }
       .encabezado-vista .boton { width: auto; padding: 12px 16px; font-size: 11px; }
     }
     @media (max-height: 640px) {
@@ -653,6 +682,7 @@
 
     <nav class="nav" aria-label="Secciones">
       <button type="button" data-vista="inicio" aria-current="page">Inicio</button>
+      <button type="button" data-vista="ventas">Ventas</button>
       <button type="button" data-vista="productos">Productos</button>
       <button type="button" data-vista="inventario">Inventario</button>
       <button type="button" data-vista="compras">Compras</button>
@@ -676,6 +706,120 @@
           <div class="fila"><dt>Tu sesión vence</dt><dd id="v-expira">—</dd></div>
           <div class="fila"><dt>Último respaldo</dt><dd id="v-respaldo">—</dd></div>
         </dl>
+      </section>
+
+      <!-- Ventas: lista -->
+      <section id="vista-ventas" hidden>
+        <div class="encabezado-vista">
+          <h2 class="titulo-vista">Ventas</h2>
+          <button id="btn-nueva-venta" class="boton" type="button">Nueva venta</button>
+        </div>
+        <p class="intro">Pedidos de Instagram, WhatsApp, presenciales y web. El inventario se descuenta al verificar el pago.</p>
+        <div class="cifras tres">
+          <div class="cifra-bloque"><span id="vt-mes" class="valor">—</span><span class="rotulo">Ventas del mes</span></div>
+          <div class="cifra-bloque"><span id="vt-pedidos" class="valor">—</span><span class="rotulo">Pedidos pagados</span></div>
+          <div class="cifra-bloque"><span id="vt-ticket" class="valor">—</span><span class="rotulo">Ticket promedio</span></div>
+        </div>
+        <div class="filtros">
+          <div class="pildoras" id="filtro-ventas" role="group" aria-label="Estado">
+            <button class="pildora" type="button" data-f="por_cobrar" aria-pressed="true">Por cobrar</button>
+            <button class="pildora" type="button" data-f="por_despachar" aria-pressed="false">Por despachar</button>
+            <button class="pildora" type="button" data-f="en_camino" aria-pressed="false">En camino</button>
+            <button class="pildora" type="button" data-f="entregados" aria-pressed="false">Entregados</button>
+            <button class="pildora" type="button" data-f="cerrados" aria-pressed="false">Cancelados</button>
+            <button class="pildora" type="button" data-f="" aria-pressed="false">Todos</button>
+          </div>
+        </div>
+        <ul id="lista-ventas" class="lista" aria-live="polite"></ul>
+      </section>
+
+      <!-- Ventas: nueva -->
+      <section id="vista-nueva-venta" hidden>
+        <button class="enlace volver" type="button" data-ir="ventas">← Ventas</button>
+        <h2 class="titulo-vista">Nueva venta</h2>
+        <p class="intro">Registra la venta como la acuerdas por mensaje. Si aún no paga, las unidades quedan reservadas por <span id="nv-minutos">30</span> minutos.</p>
+        <form id="form-venta" class="formulario" autocomplete="off">
+          <div>
+            <p class="titulo-seccion" style="margin:0 0 6px">Clienta</p>
+            <div id="nv-clienta-elegida" class="clienta-elegida" hidden></div>
+            <div id="nv-clienta-buscar" class="buscador-clienta">
+              <input id="nv-buscar" class="campo" style="width:100%" placeholder="Busca por nombre o celular">
+              <ul id="nv-sugerencias" class="sugerencias"></ul>
+              <button class="enlace" type="button" id="nv-nueva-clienta" style="margin-top:12px">+ Nueva clienta</button>
+            </div>
+            <div id="nv-form-clienta" class="panel-var formulario" hidden style="margin-top:14px">
+              <div class="doble">
+                <div><label class="etq" for="cl-nombre">Nombre</label><input id="cl-nombre" class="campo" maxlength="80"></div>
+                <div><label class="etq" for="cl-tel">Celular</label><input id="cl-tel" class="campo" inputmode="tel" maxlength="16" placeholder="300 123 4567"></div>
+              </div>
+              <div class="doble">
+                <div><label class="etq" for="cl-ciudad">Ciudad</label><input id="cl-ciudad" class="campo" maxlength="40" value="Cartagena"></div>
+                <div><label class="etq" for="cl-barrio">Barrio</label><input id="cl-barrio" class="campo" maxlength="60"></div>
+              </div>
+              <div><label class="etq" for="cl-dir">Dirección</label><input id="cl-dir" class="campo" maxlength="120"></div>
+              <label class="confirmacion"><input type="checkbox" id="cl-consiente"> Acepta recibir novedades de Lazos Memorables (consentimiento aparte, opcional)</label>
+              <div class="pie-form" style="margin:0"><button class="boton" type="button" id="cl-guardar">Guardar clienta</button>
+                <button class="enlace" type="button" id="cl-cancelar">Cancelar</button></div>
+            </div>
+          </div>
+
+          <div class="doble">
+            <div><label class="etq" for="nv-canal">Canal</label><select id="nv-canal" class="selector" style="width:100%"></select></div>
+            <div><label class="etq" for="nv-entrega">Entrega</label><select id="nv-entrega" class="selector" style="width:100%"></select></div>
+          </div>
+
+          <div>
+            <p class="titulo-seccion" style="margin:18px 0 0">Productos</p>
+            <div id="nv-lineas"></div>
+            <button class="enlace" type="button" id="nv-agregar" style="margin-top:14px">+ Agregar producto</button>
+          </div>
+
+          <div class="doble">
+            <div><label class="etq" for="nv-desc">Descuento (opcional)</label><input id="nv-desc" class="campo" inputmode="numeric" data-precio placeholder="0"></div>
+            <div id="nv-envio-caja"><label class="etq" for="nv-envio">Envío cobrado a la clienta</label><input id="nv-envio" class="campo" inputmode="numeric" data-precio placeholder="0"></div>
+          </div>
+          <div id="nv-dir-caja" class="doble">
+            <div><label class="etq" for="nv-dir">Dirección de entrega</label><input id="nv-dir" class="campo" maxlength="160"></div>
+            <div><label class="etq" for="nv-ciudad">Ciudad</label><input id="nv-ciudad" class="campo" maxlength="40"></div>
+          </div>
+
+          <div class="doble">
+            <div><label class="etq" for="nv-pago">Pago</label>
+              <select id="nv-pago" class="selector" style="width:100%">
+                <option value="pendiente">Aún no paga · reservar</option>
+                <option value="verificado">Ya pagó y lo verifiqué</option>
+              </select></div>
+            <div id="nv-medio-caja" hidden><label class="etq" for="nv-medio">Medio</label><select id="nv-medio" class="selector" style="width:100%"></select></div>
+          </div>
+          <div><label class="etq" for="nv-nota">Nota (opcional)</label><input id="nv-nota" class="campo" maxlength="300" placeholder="Ej.: es un regalo, empacar con tarjeta"></div>
+
+          <div class="totales" id="nv-totales"></div>
+          <div class="pie-form"><button class="boton" type="submit">Registrar venta</button></div>
+        </form>
+      </section>
+
+      <!-- Ventas: detalle -->
+      <section id="vista-pedido" hidden>
+        <button class="enlace volver" type="button" data-ir="ventas">← Ventas</button>
+        <p id="pe-sub" class="sku-grande"></p>
+        <h2 id="pe-titulo" class="titulo-vista"></h2>
+        <div class="estado-linea"><span id="pe-estado" class="etiqueta"></span><span id="pe-meta" class="traza"></span></div>
+        <ul id="pe-tiempo" class="linea-tiempo"></ul>
+        <p id="pe-aviso" class="aviso-linea" hidden></p>
+        <div id="pe-acciones" class="acciones-pedido"></div>
+        <div id="pe-form" class="bloque-pago formulario" hidden></div>
+
+        <table class="tabla-lineas" style="margin-top:32px">
+          <thead><tr><th>Producto</th><th class="num">Cant.</th><th class="num">Precio</th><th class="num ocultar-movil">Costo</th></tr></thead>
+          <tbody id="pe-lineas"></tbody>
+        </table>
+        <div class="totales" id="pe-totales"></div>
+        <div id="pe-resultado" class="resultado cifras" hidden></div>
+
+        <p class="titulo-seccion" style="margin-top:44px">Clienta y entrega</p>
+        <dl id="pe-datos"></dl>
+        <p class="titulo-seccion">Pagos</p>
+        <ul id="pe-cobros" class="lista"></ul>
       </section>
 
       <!-- Productos: lista -->
@@ -1165,15 +1309,18 @@
         if (b.dataset.vista === vista) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
       });
       var navActiva = (vista === 'nuevo' || vista === 'producto') ? 'productos'
-        : (vista === 'nueva-compra' || vista === 'compra') ? 'compras' : vista;
+        : (vista === 'nueva-compra' || vista === 'compra') ? 'compras'
+        : (vista === 'nueva-venta' || vista === 'pedido') ? 'ventas' : vista;
       document.querySelectorAll('.nav button').forEach(function (b) {
         if (b.dataset.vista === navActiva) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
       });
-      ['inicio', 'productos', 'nuevo', 'producto', 'inventario', 'compras', 'nueva-compra', 'compra', 'categorias', 'configuracion'].forEach(function (v) { $('vista-' + v).hidden = v !== vista; });
+      ['inicio', 'ventas', 'nueva-venta', 'pedido', 'productos', 'nuevo', 'producto', 'inventario', 'compras', 'nueva-compra', 'compra', 'categorias', 'configuracion'].forEach(function (v) { $('vista-' + v).hidden = v !== vista; });
       window.scrollTo(0, 0);
       if (vista === 'productos') cargarProductos();
       if (vista === 'inventario') cargarInventario();
       if (vista === 'compras') cargarCompras();
+      if (vista === 'ventas') cargarVentas();
+      if (vista === 'nueva-venta') prepararVenta();
       if (vista === 'nueva-compra') prepararCompra();
       if (vista === 'nuevo') prepararNuevo();
       if (vista === 'categorias') cargarCategorias();
@@ -1808,6 +1955,302 @@
     });
 
 
+
+
+    /* ---------------- Ventas ---------------- */
+    var filtroVentas = 'por_cobrar';
+    function cargarVentas() {
+      $('lista-ventas').innerHTML = '<li class="vacio">Cargando ventas…</li>';
+      api('listarPedidos', { filtro: filtroVentas }).then(function (r) {
+        if (!r.ok) { manejarError(r); return; }
+        var d = r.data;
+        $('vt-mes').textContent = pesos(d.resumen.ventas_mes);
+        $('vt-pedidos').textContent = d.resumen.pedidos_mes;
+        $('vt-ticket').textContent = pesos(d.resumen.ticket_promedio);
+        document.querySelectorAll('#filtro-ventas .pildora').forEach(function (b) {
+          var n = d.conteo[b.dataset.f];
+          var base = b.textContent.replace(/ · \d+$/, '');
+          b.textContent = base + (n && b.dataset.f !== 'cerrados' && b.dataset.f !== 'entregados' ? ' · ' + n : '');
+        });
+        $('lista-ventas').innerHTML = d.pedidos.length ? d.pedidos.map(function (p) {
+          var extra = p.estado === 'pendiente_pago' && p.expira_en ? ' · Reserva hasta ' + horaCorta(p.expira_en) : '';
+          return '<li class="item enlazado" data-oid="' + escapar(p.order_id) + '" tabindex="0">' +
+            '<div class="item-principal"><span class="item-nombre">' + escapar(p.numero) + ' · ' + escapar(p.clienta) + '</span>' +
+            '<span class="item-meta">' + escapar(p.resumen) + ' · ' + p.unidades + ' uds · ' + escapar(p.canal) + ' · ' + escapar(fechaCorta(p.creado_en)) + extra + '</span></div>' +
+            (p.verificacion_atrasada ? '<span class="etiqueta agotada">Verificación atrasada</span>' : '') +
+            '<div class="item-precio"><span class="cifra">' + pesos(p.total) + '</span><span class="etiqueta ' + escapar(p.estado) + '">' + escapar(p.estado_texto) + '</span></div></li>';
+        }).join('') : '<li class="vacio">No hay pedidos en este grupo.</li>';
+      });
+    }
+    function horaCorta(iso) {
+      var d = new Date(iso); if (isNaN(d)) return '';
+      return d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/Bogota' });
+    }
+    $('filtro-ventas').addEventListener('click', function (ev) {
+      var b = ev.target.closest('.pildora'); if (!b) return;
+      this.querySelectorAll('.pildora').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      filtroVentas = b.dataset.f; cargarVentas();
+    });
+    $('lista-ventas').addEventListener('click', function (ev) { var li = ev.target.closest('[data-oid]'); if (li) abrirPedido(li.dataset.oid); });
+    $('btn-nueva-venta').addEventListener('click', function () { irA('nueva-venta'); });
+
+    /* Nueva venta */
+    var datosVenta = null, clienta = null, claveVenta = null, buscarTimer;
+    function prepararVenta() {
+      $('form-venta').reset(); clienta = null; claveVenta = nuevaClave();
+      pintarClienta();
+      $('nv-lineas').innerHTML = '<p class="vacio" style="padding:12px 0">Cargando productos…</p>';
+      api('datosNuevaVenta').then(function (r) {
+        if (!r.ok) { manejarError(r); return; }
+        datosVenta = r.data;
+        $('nv-minutos').textContent = datosVenta.reserva_minutos;
+        $('nv-canal').innerHTML = opciones(datosVenta.canales);
+        $('nv-entrega').innerHTML = opciones(datosVenta.entregas);
+        $('nv-medio').innerHTML = opciones(datosVenta.medios);
+        $('nv-lineas').innerHTML = '';
+        if (!datosVenta.variantes.length) { $('nv-lineas').innerHTML = '<p class="vacio" style="padding:12px 0">Aún no hay productos activos.</p>'; return; }
+        agregarLineaVenta(); cambiosEntrega(); recalcularVenta();
+      });
+    }
+    function pintarClienta() {
+      var el = $('nv-clienta-elegida');
+      el.hidden = !clienta; $('nv-clienta-buscar').hidden = !!clienta; $('nv-form-clienta').hidden = true;
+      if (clienta) {
+        el.innerHTML = '<div><span class="item-nombre" style="font-size:20px">' + escapar(clienta.nombre) + '</span><span class="item-meta">' + escapar(clienta.telefono) +
+          (clienta.ciudad ? ' · ' + escapar(clienta.ciudad) : '') + (clienta.compras ? ' · ' + clienta.compras + (clienta.compras === 1 ? ' compra anterior' : ' compras anteriores') : ' · Clienta nueva') + '</span></div>' +
+          '<button class="enlace" type="button" id="nv-cambiar">Cambiar</button>';
+        $('nv-dir').value = clienta.direccion || ''; $('nv-ciudad').value = clienta.ciudad || '';
+      }
+      $('nv-sugerencias').innerHTML = ''; $('nv-buscar').value = '';
+    }
+    $('nv-clienta-elegida').addEventListener('click', function (ev) { if (ev.target.id === 'nv-cambiar') { clienta = null; pintarClienta(); $('nv-buscar').focus(); } });
+    var sugeridas = [];
+    $('nv-buscar').addEventListener('input', function () {
+      clearTimeout(buscarTimer); var q = this.value.trim();
+      if (q.length < 2) { $('nv-sugerencias').innerHTML = ''; return; }
+      buscarTimer = setTimeout(function () {
+        api('buscarClientas', { q: q }).then(function (r) {
+          if (!r.ok) { manejarError(r); return; }
+          sugeridas = r.data;
+          $('nv-sugerencias').innerHTML = sugeridas.length ? sugeridas.map(function (c, i) {
+            return '<li data-i="' + i + '"><b>' + escapar(c.nombre) + '</b> · ' + escapar(c.telefono) + (c.ciudad ? ' · ' + escapar(c.ciudad) : '') + '</li>';
+          }).join('') : '<li style="cursor:default;color:var(--texto-suave)">Sin resultados. Crea una clienta nueva.</li>';
+        });
+      }, 300);
+    });
+    $('nv-sugerencias').addEventListener('click', function (ev) {
+      var li = ev.target.closest('[data-i]'); if (!li) return;
+      clienta = sugeridas[Number(li.dataset.i)]; pintarClienta();
+    });
+    $('nv-nueva-clienta').addEventListener('click', function () {
+      $('nv-form-clienta').hidden = false; $('nv-clienta-buscar').hidden = true;
+      var q = $('nv-buscar').value.trim();
+      if (/\d{4,}/.test(q)) $('cl-tel').value = q; else $('cl-nombre').value = q;
+      $('cl-nombre').focus();
+    });
+    $('cl-cancelar').addEventListener('click', function () { $('nv-form-clienta').hidden = true; $('nv-clienta-buscar').hidden = false; });
+    $('cl-guardar').addEventListener('click', function () {
+      var btn = this; btn.disabled = true;
+      api('guardarClienta', { nombre: $('cl-nombre').value, telefono: $('cl-tel').value, ciudad: $('cl-ciudad').value,
+        barrio: $('cl-barrio').value, direccion: $('cl-dir').value, consentimiento_marketing: $('cl-consiente').checked }).then(function (r) {
+        btn.disabled = false;
+        if (!r.ok) { manejarError(r); return; }
+        clienta = r.data; pintarClienta(); avisar('Clienta guardada: ' + clienta.nombre);
+      });
+    });
+    function agregarLineaVenta() {
+      var div = document.createElement('div'); div.className = 'linea-venta';
+      div.innerHTML = '<div><label class="etq">Producto</label><select class="selector" data-l="var"><option value="">Elige</option>' +
+        datosVenta.variantes.map(function (v) {
+          return '<option value="' + escapar(v.variant_id) + '"' + (v.disponible ? '' : ' disabled') + '>' + escapar(v.nombre) + ' · ' + pesos(v.precio) +
+            (v.disponible ? ' · ' + v.disponible + ' disp.' : ' · agotado') + '</option>';
+        }).join('') + '</select></div>' +
+        '<div><label class="etq">Cant.</label><input class="campo" data-l="cant" inputmode="numeric" value="1"></div>' +
+        '<div><label class="etq">Valor</label><span data-l="valor" style="display:block;padding:12px 2px">—</span></div>' +
+        '<div><button class="enlace peligro" type="button" data-l="quitar">Quitar</button></div><div class="info" data-l="info"></div>';
+      $('nv-lineas').appendChild(div);
+    }
+    $('nv-agregar').addEventListener('click', function () { if (datosVenta) agregarLineaVenta(); });
+    $('nv-lineas').addEventListener('click', function (ev) {
+      var b = ev.target.closest('[data-l="quitar"]'); if (!b) return;
+      if ($('nv-lineas').children.length > 1) { b.closest('.linea-venta').remove(); recalcularVenta(); }
+    });
+    ['input', 'change'].forEach(function (t) { $('form-venta').addEventListener(t, recalcularVenta); });
+    $('nv-entrega').addEventListener('change', cambiosEntrega);
+    $('nv-pago').addEventListener('change', function () { $('nv-medio-caja').hidden = this.value !== 'verificado'; });
+    function cambiosEntrega() {
+      var recoge = $('nv-entrega').value === 'recoge';
+      $('nv-envio-caja').hidden = recoge; $('nv-dir-caja').hidden = recoge;
+      if (recoge) $('nv-envio').value = '';
+    }
+    function lineasVenta() {
+      return Array.prototype.map.call($('nv-lineas').querySelectorAll('.linea-venta'), function (el) {
+        var id = el.querySelector('[data-l="var"]').value;
+        return { el: el, v: datosVenta.variantes.filter(function (x) { return x.variant_id === id; })[0], cantidad: Number(soloDigitos(el.querySelector('[data-l="cant"]').value)) || 0 };
+      });
+    }
+    function recalcularVenta() {
+      if (!datosVenta || !$('nv-lineas').children.length) return;
+      var ls = lineasVenta(), sub = 0, costo = 0, costoCompleto = true;
+      ls.forEach(function (l) {
+        var info = l.el.querySelector('[data-l="info"]'), valor = l.el.querySelector('[data-l="valor"]');
+        if (!l.v) { valor.textContent = '—'; info.textContent = ''; return; }
+        sub += l.v.precio * l.cantidad;
+        if (l.v.costo_promedio !== null) costo += l.v.costo_promedio * l.cantidad; else costoCompleto = false;
+        valor.textContent = pesos(l.v.precio * l.cantidad);
+        info.textContent = l.cantidad > l.v.disponible ? 'Solo hay ' + l.v.disponible + ' disponibles.' : l.v.sku + ' · ' + l.v.disponible + ' disponibles';
+      });
+      var desc = Number(soloDigitos($('nv-desc').value)) || 0, envio = $('nv-entrega').value === 'recoge' ? 0 : (Number(soloDigitos($('nv-envio').value)) || 0);
+      var neto = sub - desc, margen = neto > 0 && costoCompleto && costo ? Math.round((neto - costo) / neto * 100) : null;
+      $('nv-totales').innerHTML = '<div><span>Subtotal</span><span>' + pesos(sub) + '</span></div>' +
+        (desc ? '<div><span>Descuento</span><span>−' + pesos(desc) + '</span></div>' : '') +
+        (envio ? '<div><span>Envío</span><span>' + pesos(envio) + '</span></div>' : '') +
+        '<div class="total"><span>Total</span><span>' + pesos(neto + envio) + '</span></div>' +
+        (margen !== null ? '<div><span>Margen bruto estimado</span><span>' + margen + '%</span></div>' : '') +
+        (margen !== null && margen < 0 ? '<div style="color:var(--rosa-alterno)"><span>Atención: este descuento deja pérdida.</span></div>' : '');
+    }
+    $('form-venta').addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      if (!clienta) { avisar('Elige o crea la clienta.', true); return; }
+      var ls = lineasVenta().filter(function (l) { return l.v; });
+      if (!ls.length) { avisar('Agrega al menos un producto.', true); return; }
+      var btn = this.querySelector('button[type="submit"]'); btn.disabled = true; btn.textContent = 'Registrando…';
+      api('crearPedido', {
+        customer_id: clienta.customer_id, canal: $('nv-canal').value, tipo_entrega: $('nv-entrega').value,
+        descuento: soloDigitos($('nv-desc').value), envio_cobrado: soloDigitos($('nv-envio').value),
+        direccion_entrega: $('nv-dir').value, ciudad_entrega: $('nv-ciudad').value, nota: $('nv-nota').value,
+        pago: $('nv-pago').value, medio: $('nv-medio').value, idempotency_key: claveVenta,
+        lineas: ls.map(function (l) { return { variant_id: l.v.variant_id, cantidad: l.cantidad }; })
+      }).then(function (r) {
+        btn.disabled = false; btn.textContent = 'Registrar venta';
+        if (!r.ok) { manejarError(r); return; }
+        avisar('Pedido ' + r.data.numero + ' registrado' + (r.data.estado === 'confirmado' ? ' y pagado.' : '. Unidades reservadas.'));
+        abrirPedido(r.data.order_id);
+      });
+    });
+
+    /* Detalle del pedido */
+    var pedido = null;
+    var PASOS = [['pendiente_pago', 'Pendiente de pago'], ['pago_reportado', 'Pago reportado'], ['confirmado', 'Pago verificado'],
+                 ['preparando', 'En preparación'], ['despachado', 'Enviado'], ['entregado', 'Entregado']];
+    function abrirPedido(id) {
+      irA('pedido'); $('pe-titulo').textContent = 'Cargando…'; $('pe-form').hidden = true;
+      api('obtenerPedido', { order_id: id }).then(function (r) { if (!r.ok) { manejarError(r); return; } pedido = r.data; pintarPedido(); });
+    }
+    function pintarPedido() {
+      var p = pedido;
+      $('pe-sub').textContent = p.numero + ' · ' + p.canal + ' · ' + fechaCorta(p.fechas.creado);
+      $('pe-titulo').textContent = p.clienta.nombre || 'Pedido';
+      $('pe-estado').className = 'etiqueta ' + p.estado; $('pe-estado').textContent = p.estado_texto;
+      $('pe-meta').textContent = p.entrega_texto + ' · Registrado por ' + p.creado_por + (p.nota ? ' · ' + p.nota : '');
+      var idx = PASOS.map(function (x) { return x[0]; }).indexOf(p.estado);
+      var cerrado = ['cancelado', 'expirado', 'devuelto'].indexOf(p.estado) >= 0;
+      $('pe-tiempo').innerHTML = PASOS.filter(function (x) { return !(p.tipo_entrega === 'recoge' && x[0] === 'despachado'); }).map(function (x) {
+        var i = PASOS.map(function (y) { return y[0]; }).indexOf(x[0]);
+        return '<li class="' + (cerrado ? '' : i < idx ? 'hecho' : i === idx ? 'actual' : '') + '"><span>' + x[1] + '</span></li>';
+      }).join('');
+      var aviso = '';
+      if (p.estado === 'pendiente_pago' && p.expira_en) aviso = 'Unidades reservadas hasta las ' + horaCorta(p.expira_en) + '. Si no se reporta el pago, el pedido expira y las libera.';
+      if (p.verificacion_atrasada) aviso = 'El pago se reportó hace más del tiempo configurado y aún no se verifica. Revisa la cuenta bancaria.';
+      if (cerrado) aviso = p.estado_texto + (p.motivo_cierre ? ': ' + p.motivo_cierre : '') +
+        (p.cobros.some(function (c) { return c.estado === 'por_reembolsar'; }) ? ' · Hay un pago por reembolsar a la clienta.' : '');
+      $('pe-aviso').hidden = !aviso; $('pe-aviso').textContent = aviso;
+
+      var acc = [];
+      if (p.estado === 'pendiente_pago') acc.push(['reportar', 'Registrar pago reportado'], ['verificar', 'Verificar pago']);
+      if (p.estado === 'pago_reportado') acc.push(['verificar', 'Verificar pago'], ['rechazar', 'Rechazar pago']);
+      if (p.estado === 'confirmado') acc.push(['preparar', 'Pasar a preparación']);
+      if ((p.estado === 'confirmado' || p.estado === 'preparando') && p.tipo_entrega !== 'recoge') acc.push(['despachar', 'Registrar envío']);
+      if ((p.estado === 'confirmado' || p.estado === 'preparando') && p.tipo_entrega === 'recoge') acc.push(['entregar', 'Marcar entregado']);
+      if (p.estado === 'despachado') acc.push(['entregar', 'Marcar entregado']);
+      if (['pendiente_pago', 'pago_reportado', 'confirmado', 'preparando'].indexOf(p.estado) >= 0) acc.push(['cancelar', 'Cancelar pedido']);
+      if (p.estado === 'despachado' || p.estado === 'entregado') acc.push(['devolver', 'Registrar devolución']);
+      $('pe-acciones').innerHTML = acc.map(function (a, i) {
+        var peligro = a[0] === 'cancelar' || a[0] === 'devolver' || a[0] === 'rechazar';
+        return '<button class="' + (i === 0 && !peligro ? 'boton' : 'enlace' + (peligro ? ' peligro' : '')) + '" type="button" data-acc="' + a[0] + '">' + a[1] + '</button>';
+      }).join('');
+
+      $('pe-lineas').innerHTML = p.lineas.map(function (l) {
+        return '<tr><td><span style="display:block">' + escapar(l.nombre) + '</span><span class="item-sku">' + escapar(l.sku) + '</span></td><td class="num">' + l.cantidad +
+          '</td><td class="num">' + pesos(l.precio * l.cantidad) + '</td><td class="num ocultar-movil">' + (l.costo !== null ? pesos(l.costo * l.cantidad) : '—') + '</td></tr>';
+      }).join('');
+      $('pe-totales').innerHTML = '<div><span>Subtotal</span><span>' + pesos(p.subtotal) + '</span></div>' +
+        (p.descuento ? '<div><span>Descuento</span><span>−' + pesos(p.descuento) + '</span></div>' : '') +
+        (p.envio_cobrado ? '<div><span>Envío cobrado</span><span>' + pesos(p.envio_cobrado) + '</span></div>' : '') +
+        '<div class="total"><span>Total</span><span>' + pesos(p.total) + '</span></div>';
+      var res = $('pe-resultado');
+      res.hidden = p.contribucion === null || cerrado;
+      if (!res.hidden) {
+        res.innerHTML = '<div class="cifra-bloque"><span class="valor">' + pesos(p.costo_venta) + '</span><span class="rotulo">Costo de la mercancía</span></div>' +
+          '<div class="cifra-bloque"><span class="valor">' + (p.costo_envio_real === null ? '—' : pesos(p.costo_envio_real)) + '</span><span class="rotulo">Costo real del envío</span></div>' +
+          '<div class="cifra-bloque"><span class="valor">' + pesos(p.contribucion) + '</span><span class="rotulo">Contribución · ' + p.margen_contribucion + '%</span></div>';
+      }
+      var datos = [['Celular', p.clienta.telefono], ['Entrega', p.entrega_texto]];
+      if (p.tipo_entrega !== 'recoge') datos.push(['Dirección', [p.direccion_entrega, p.ciudad_entrega].filter(Boolean).join(', ') || '—']);
+      if (p.transportadora) datos.push(['Transportadora', p.transportadora + (p.guia ? ' · Guía ' + p.guia : '')]);
+      datos.push(['Novedades', p.clienta.consentimiento_marketing ? 'Acepta recibirlas' : 'No autorizadas']);
+      $('pe-datos').innerHTML = datos.map(function (d) { return '<div class="fila"><dt>' + d[0] + '</dt><dd>' + escapar(d[1]) + '</dd></div>'; }).join('');
+      var nombresCobro = { reportado: 'Reportado', verificado: 'Verificado', rechazado: 'Rechazado', por_reembolsar: 'Por reembolsar' };
+      $('pe-cobros').innerHTML = p.cobros.length ? p.cobros.map(function (c) {
+        return '<li class="item"><div class="item-principal"><span class="item-nombre">' + pesos(c.monto) + ' · ' + escapar(c.medio) + '</span>' +
+          '<span class="item-meta">' + escapar(nombresCobro[c.estado] || c.estado) + (c.referencia ? ' · Ref. ' + escapar(c.referencia) : '') +
+          (c.verificado_por ? ' · Verificó ' + escapar(c.verificado_por) : ' · Registró ' + escapar(c.creado_por)) + (c.nota ? ' · ' + escapar(c.nota) : '') + '</span></div></li>';
+      }).join('') : '<li class="vacio">Aún no hay pagos registrados.</li>';
+    }
+
+    var FORMULARIOS = {
+      reportar: { titulo: 'La clienta envió el comprobante', campos: ['medio', 'referencia', 'nota'], accion: 'reportar_pago', boton: 'Registrar como reportado',
+                  ayuda: 'Un comprobante no confirma el pago. Verifícalo en la cuenta antes de despachar.' },
+      verificar: { titulo: 'Verificar pago', campos: ['medio_si_falta', 'referencia_si_falta'], accion: 'verificar_pago', boton: 'Confirmo que el dinero está en la cuenta',
+                   ayuda: 'Al verificar, las unidades salen del inventario y se registra el costo de venta.' },
+      rechazar: { titulo: 'Rechazar pago', campos: ['motivo'], accion: 'rechazar_pago', boton: 'Rechazar y volver a pendiente' },
+      despachar: { titulo: 'Registrar envío', campos: ['transportadora', 'guia', 'costo'], accion: 'despachar', boton: 'Marcar como enviado' },
+      cancelar: { titulo: 'Cancelar pedido', campos: ['motivo'], accion: 'cancelar', boton: 'Confirmar cancelación',
+                  ayuda: 'Las unidades vuelven al inventario. Si ya pagó, queda pendiente el reembolso.' },
+      devolver: { titulo: 'Registrar devolución', campos: ['motivo'], accion: 'devolver', boton: 'Confirmar devolución', ayuda: 'Las unidades vuelven al inventario a su costo.' }
+    };
+    var CAMPOS = {
+      medio: '<div><label class="etq" for="pf-medio">Medio</label><select id="pf-medio" class="selector" style="width:100%"></select></div>',
+      referencia: '<div><label class="etq" for="pf-ref">Referencia o número de comprobante</label><input id="pf-ref" class="campo" maxlength="60"></div>',
+      nota: '<div><label class="etq" for="pf-nota">Nota</label><input id="pf-nota" class="campo" maxlength="200"></div>',
+      motivo: '<div><label class="etq" for="pf-motivo">Motivo</label><input id="pf-motivo" class="campo" maxlength="200"></div>',
+      transportadora: '<div><label class="etq" for="pf-trans">Transportadora o mensajero</label><input id="pf-trans" class="campo" maxlength="60"></div>',
+      guia: '<div><label class="etq" for="pf-guia">Número de guía</label><input id="pf-guia" class="campo" maxlength="60"></div>',
+      costo: '<div><label class="etq" for="pf-costo">Costo real del envío (lo que pagamos)</label><input id="pf-costo" class="campo" inputmode="numeric" data-precio placeholder="0"></div>'
+    };
+    $('pe-acciones').addEventListener('click', function (ev) {
+      var b = ev.target.closest('button[data-acc]'); if (!b) return;
+      var a = b.dataset.acc;
+      if (a === 'preparar' || a === 'entregar') { ejecutarPedido({ accion: a === 'preparar' ? 'preparar' : 'entregar' }, b); return; }
+      var f = FORMULARIOS[a];
+      var tieneReporte = pedido.cobros.some(function (c) { return c.estado === 'reportado'; });
+      var campos = f.campos.map(function (c) {
+        if (c === 'medio_si_falta') return tieneReporte ? '' : CAMPOS.medio;
+        if (c === 'referencia_si_falta') return tieneReporte ? '' : CAMPOS.referencia;
+        return CAMPOS[c];
+      }).join('');
+      $('pe-form').innerHTML = '<p class="titulo-seccion" style="margin:0">' + f.titulo + '</p>' + (f.ayuda ? '<p class="pista" style="margin:0">' + f.ayuda + '</p>' : '') +
+        campos + '<div class="pie-form" style="margin:0"><button class="boton" type="button" data-ok="' + f.accion + '">' + f.boton + '</button>' +
+        '<button class="enlace" type="button" data-cerrar>Cancelar</button></div>';
+      if ($('pf-medio')) $('pf-medio').innerHTML = opciones(pedido.medios);
+      $('pe-form').hidden = false;
+    });
+    $('pe-form').addEventListener('click', function (ev) {
+      if (ev.target.closest('[data-cerrar]')) { this.hidden = true; return; }
+      var ok = ev.target.closest('[data-ok]'); if (!ok) return;
+      var v = function (id) { return $(id) ? $(id).value : undefined; };
+      ejecutarPedido({ accion: ok.dataset.ok, medio: v('pf-medio'), referencia: v('pf-ref'), nota: v('pf-nota'), motivo: v('pf-motivo'),
+        transportadora: v('pf-trans'), guia: v('pf-guia'), costo_envio_real: $('pf-costo') ? soloDigitos($('pf-costo').value) : undefined }, ok);
+    });
+    function ejecutarPedido(datos, btn) {
+      datos.order_id = pedido.order_id; btn.disabled = true;
+      api('accionPedido', datos).then(function (r) {
+        btn.disabled = false;
+        if (!r.ok) { manejarError(r); return; }
+        pedido = r.data; $('pe-form').hidden = true; pintarPedido();
+        avisar('Pedido ' + pedido.numero + ': ' + pedido.estado_texto.toLowerCase() + '.');
+      });
+    }
 
     /* ---------------- Compras ---------------- */
     var filtroCompras = '';
