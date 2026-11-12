@@ -2,11 +2,11 @@
 <html lang="es-CO">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS MEMORABLES — index.html · Vitrina v2.0.0 (Fase 5 · checkout) -->
+  <!-- LAZOS MEMORABLES — index.html · Vitrina v2.1.0 (tema rosa) -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Lazos Memorables · Accesorios femeninos · Cartagena</title>
   <meta name="description" content="Aretes, collares y pulseras que reflejan tu esencia y acompañan momentos significativos. Desde Cartagena para toda Colombia.">
-  <meta name="theme-color" content="#FFFFFF">
+  <meta name="theme-color" content="#F2E5E7">
   <link rel="canonical" href="https://lazosmemorables.co/">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_CO">
@@ -212,6 +212,36 @@
       .bolsa-enlace { margin-left: 18px; }
     }
 
+    /* ---------- Tema rosa (v2.1 · decisión de la fundadora) ----------
+       Fondo general rosa claro #F2E5E7. Títulos grandes en rosa histórico
+       #C2556A (contraste 3,6:1, solo tamaños grandes). Textos y botones en
+       cacao para mantener la lectura. */
+    :root { --rosa-alterno: #C16478; --rosa-historico: #C2556A; --linea: rgba(193, 100, 120, .22); }
+    body { background: var(--rosa-claro); }
+    header { background: rgba(242, 229, 231, .96); border-bottom-color: rgba(193, 100, 120, .25); }
+    .anuncio { background: var(--rosa-empolvado); color: var(--cacao); text-align: center; font-size: 10px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; padding: 10px 16px; }
+    .anuncio span + span::before { content: '·'; margin: 0 14px; }
+    @media (max-width: 720px) { .anuncio span + span { display: none; } }
+    .portada h1 em { color: var(--rosa-historico); }
+    .cabecera-seccion h2, .detalle h1, .pagina h1, .vacio p.titular, .historia blockquote, .caja h2 { color: var(--rosa-historico); }
+    .seccion.marfil { background: var(--rosa-claro); border-top: 1px solid var(--linea); }
+    .tarjeta .marco, .galeria .principal, .linea-bolsa img { background: var(--rosa-empolvado); }
+    .boton.claro { border-color: var(--rosa-historico); color: var(--cacao); }
+    .barra nav a:hover, .enlace-sup:hover { border-bottom-color: var(--rosa-historico); }
+    .filtro[aria-pressed="true"] { color: var(--rosa-historico); border-bottom-color: var(--rosa-historico); }
+    .opcion { background: var(--marfil-suave); border-color: rgba(193, 100, 120, .3); }
+    .opcion[aria-pressed="true"], .opcion-entrega.activa { border-color: var(--rosa-historico); box-shadow: inset 0 0 0 1px var(--rosa-historico); }
+    .opcion-entrega { background: var(--marfil-suave); border-color: rgba(193, 100, 120, .3); border-radius: 14px; }
+    .cantidad { background: var(--marfil-suave); border-color: rgba(193, 100, 120, .3); border-radius: 999px; }
+    .campo, .selector { background: var(--marfil-suave); border: 1px solid rgba(193, 100, 120, .45); border-radius: 14px; padding: 13px 16px; }
+    .campo:focus, .selector:focus { border-color: var(--rosa-historico); box-shadow: 0 0 0 3px rgba(194, 85, 106, .12); }
+    .check input { accent-color: var(--rosa-historico); }
+    .estado-pedido { background: var(--rosa-empolvado); }
+    .caja, .error-form { background: var(--marfil-suave); border-radius: 18px; }
+    .error-form { border-left: 3px solid var(--rosa-historico); border-radius: 10px; }
+    .resumen .total { border-top-color: var(--rosa-historico); }
+    footer { background: var(--rosa-claro); border-top: 1px solid var(--linea); }
+
     /* ---------- Aviso ---------- */
     .toast {
       position: fixed; left: 20px; right: 20px; bottom: 28px; margin: 0 auto; max-width: 440px; text-align: center;
@@ -248,6 +278,7 @@
 </head>
 <body>
 
+  <div class="anuncio"><span>Lazos que permanecen</span><span>Envíos desde Cartagena a toda Colombia</span></div>
   <header>
     <div class="contenedor barra">
       <nav class="izquierda" aria-label="Principal">
