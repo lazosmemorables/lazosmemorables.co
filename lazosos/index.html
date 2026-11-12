@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.6.0 · Panel administrativo -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.6.1 · Panel administrativo -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -1157,8 +1157,24 @@
           return '<option value="' + escapar(c.categoria_id) + '">' + escapar(c.nombre) + ' · ' + escapar(c.codigo) + '</option>';
         }).join('');
       };
-      if (categoriasActivas.length) pintar();
-      else api('listarProductos', {}).then(function (r) { if (r.ok) { categoriasActivas = r.data.categorias; pintar(); } });
+      if (categoriasActivas.length) { pintar(); }
+      else {
+        $('np-cat').innerHTML = '<option value="">Cargando categorías…</option>';
+        api('listarProductos', {}).then(function (r) {
+          if (!r.ok) {
+            $('np-cat').innerHTML = '<option value="">No se pudieron cargar las categorías</option>';
+            manejarError(r);
+            return;
+          }
+          categoriasActivas = r.data.categorias;
+          if (!categoriasActivas.length) {
+            $('np-cat').innerHTML = '<option value="">No hay categorías activas</option>';
+            avisar('Activa o crea una categoría primero, en la pestaña Categorías.', true);
+            return;
+          }
+          pintar();
+        });
+      }
       setTimeout(function () { $('np-cat').focus(); }, 50);
     }
 
