@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.14.0 · Panel administrativo -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.15.0 · Panel administrativo -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -529,6 +529,44 @@
     .bloque-pago { background: var(--marfil-suave); padding: 22px 20px; margin: 18px 0 0; }
     .cifras.tres { grid-template-columns: repeat(3, 1fr); }
 
+
+    /* ---------- Tablero de inicio (v0.15) ---------- */
+    .nav { display: none !important; }
+    .app-fecha { font-size: 11px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: var(--texto-suave); margin: 0 0 6px; }
+    #vista-inicio .saludo { margin: 0 0 26px; }
+    .app-principal, .app-tarjeta, .app-ancha {
+      font-family: var(--sans); color: var(--cacao); text-align: left; cursor: pointer; position: relative;
+      border: 1px solid rgba(53, 39, 44, .1); border-radius: 18px; background: #FBF8F3;
+      transition: transform .15s ease, border-color .2s ease, box-shadow .2s ease; -webkit-tap-highlight-color: transparent;
+    }
+    .app-principal:active, .app-tarjeta:active, .app-ancha:active { transform: scale(.98); }
+    .app-principal:hover, .app-tarjeta:hover, .app-ancha:hover { border-color: #B89B7B; box-shadow: 0 10px 28px -18px rgba(53, 39, 44, .35); }
+    .app-principal svg, .app-tarjeta svg, .app-ancha svg { width: 28px; height: 28px; fill: none; stroke: #B89B7B; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+    .app-principal { width: 100%; display: flex; align-items: center; gap: 18px; padding: 22px 22px; background: var(--cacao); color: #fff; border-color: var(--cacao); margin-bottom: 14px; }
+    .app-principal svg { stroke: #E5C1CB; width: 30px; height: 30px; }
+    .app-principal .app-sub { color: rgba(255, 255, 255, .78); }
+    .app-rejilla { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .app-tarjeta { display: flex; flex-direction: column; justify-content: flex-end; gap: 4px; min-height: 168px; padding: 20px; }
+    .app-tarjeta svg { position: absolute; top: 20px; left: 20px; }
+    .app-titulo { display: block; font-family: var(--serif); font-size: 26px; line-height: 1.1; }
+    .app-sub { display: block; font-size: 12.5px; line-height: 1.45; color: var(--texto-suave); }
+    .app-sub b { font-weight: 600; color: var(--cacao); }
+    .app-alerta { position: absolute; top: 18px; right: 18px; min-width: 22px; height: 22px; padding: 0 7px; border-radius: 11px; background: #C2556A; color: #fff; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+    .app-alerta[hidden] { display: none; }
+    .app-ancha { width: 100%; display: flex; align-items: center; gap: 18px; padding: 20px 22px; margin-top: 14px; }
+    .estado-sistema { margin-top: 40px; border-top: 1px solid var(--linea); padding-top: 16px; }
+    .estado-sistema summary { cursor: pointer; font-size: 11px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--texto-suave); list-style: none; }
+    .estado-sistema summary::-webkit-details-marker { display: none; }
+    .estado-sistema summary::after { content: ' +'; }
+    .estado-sistema[open] summary::after { content: ' −'; }
+    .volver-inicio { display: inline-flex; align-items: center; gap: 6px; margin: 0 0 18px; }
+    @media (max-width: 900px) { .app-rejilla { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 720px) {
+      .app-tarjeta { min-height: 150px; padding: 18px; }
+      .app-tarjeta svg { top: 18px; left: 18px; }
+      .app-titulo { font-size: 23px; }
+    }
+
     /* ---------- Clientas ---------- */
     .proximas { list-style: none; margin: 0 0 28px; padding: 0; display: grid; gap: 8px; }
     .proximas li { display: flex; justify-content: space-between; gap: 12px; background: var(--marfil-suave, #FBF8F3); padding: 12px 14px; font-size: 13px; cursor: pointer; }
@@ -743,19 +781,35 @@
     <main>
       <!-- Inicio -->
       <section id="vista-inicio">
+        <p class="app-fecha" id="app-fecha"></p>
         <h2 id="saludo" class="saludo">Hola.</h2>
-        <p class="intro">Bienvenida a Lazos OS. Desde aquí administraremos catálogo, inventario, pedidos y finanzas.</p>
+        <button class="app-principal" type="button" data-ir-app="nueva-venta">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span><span class="app-titulo">Nueva venta</span><span class="app-sub">Instagram, WhatsApp o en persona</span></span>
+        </button>
+        <div class="app-rejilla">
+          <button class="app-tarjeta" type="button" data-ir-app="ventas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16l-1.5 9H5.5z"/><path d="M8 6l1-3h6l1 3"/><circle cx="8" cy="19" r="1.2"/><circle cx="16" cy="19" r="1.2"/></svg><span class="app-titulo">Ventas</span><span class="app-sub" id="ti-ventas">Pedidos y cobros</span><span class="app-alerta" id="al-ventas" hidden></span></button>
+          <button class="app-tarjeta" type="button" data-ir-app="clientas"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg><span class="app-titulo">Clientas</span><span class="app-sub" id="ti-clientas">Historial y fechas</span><span class="app-alerta" id="al-clientas" hidden></span></button>
+          <button class="app-tarjeta" type="button" data-ir-app="productos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg><span class="app-titulo">Productos</span><span class="app-sub" id="ti-productos">Catálogo y fotos</span><span class="app-alerta" id="al-productos" hidden></span></button>
+          <button class="app-tarjeta" type="button" data-ir-app="inventario"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l9-5 9 5-9 5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg><span class="app-titulo">Inventario</span><span class="app-sub" id="ti-inventario">Existencias y costos</span><span class="app-alerta" id="al-inventario" hidden></span></button>
+          <button class="app-tarjeta" type="button" data-ir-app="compras"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h4"/></svg><span class="app-titulo">Compras</span><span class="app-sub" id="ti-compras">Facturas y proveedores</span><span class="app-alerta" id="al-compras" hidden></span></button>
+          <button class="app-tarjeta" type="button" data-ir-app="finanzas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span class="app-titulo">Finanzas</span><span class="app-sub" id="ti-finanzas">Resultados y caja</span><span class="app-alerta" id="al-finanzas" hidden></span></button>
+          <button class="app-tarjeta" type="button" data-ir-app="marketing"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="1"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span class="app-titulo">Marketing</span><span class="app-sub" id="ti-marketing">Calendario de contenido</span><span class="app-alerta" id="al-marketing" hidden></span></button>
+          <button class="app-tarjeta" type="button" data-ir-app="categorias"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg><span class="app-titulo">Categorías</span><span class="app-sub" id="ti-categorias">Familias y SKU</span><span class="app-alerta" id="al-categorias" hidden></span></button>
+        </div>
+        <button class="app-ancha" type="button" data-ir-app="configuracion"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg><span><span class="app-titulo">Configuración</span><span class="app-sub" id="ti-configuracion">Tienda, envíos, pagos y respaldos</span></span><span class="app-alerta" id="al-configuracion" hidden></span></button>
 
-        <p class="titulo-seccion">Estado del entorno</p>
-        <dl>
-          <div class="fila"><dt>Versión</dt><dd id="v-version">—</dd></div>
-          <div class="fila"><dt>Entorno</dt><dd id="v-entorno">—</dd></div>
-          <div class="fila"><dt>Sesión de</dt><dd id="v-usuario">—</dd></div>
-          <div class="fila"><dt>Hoja vinculada</dt><dd id="v-hoja">—</dd></div>
-          <div class="fila"><dt>Hora del servidor</dt><dd id="v-hora">—</dd></div>
-          <div class="fila"><dt>Tu sesión vence</dt><dd id="v-expira">—</dd></div>
-          <div class="fila"><dt>Último respaldo</dt><dd id="v-respaldo">—</dd></div>
-        </dl>
+        <details class="estado-sistema">
+          <summary>Estado del sistema</summary>
+          <dl>
+            <div class="fila"><dt>Versión</dt><dd id="v-version">—</dd></div>
+            <div class="fila"><dt>Entorno</dt><dd id="v-entorno">—</dd></div>
+            <div class="fila"><dt>Sesión de</dt><dd id="v-usuario">—</dd></div>
+            <div class="fila"><dt>Hoja vinculada</dt><dd id="v-hoja">—</dd></div>
+            <div class="fila"><dt>Hora del servidor</dt><dd id="v-hora">—</dd></div>
+            <div class="fila"><dt>Tu sesión vence</dt><dd id="v-expira">—</dd></div>
+            <div class="fila"><dt>Último respaldo</dt><dd id="v-respaldo">—</dd></div>
+          </dl>
+        </details>
       </section>
 
       <!-- Ventas: lista -->
@@ -920,6 +974,15 @@
             <label class="etq" for="np-desc">Descripción (opcional)</label>
             <textarea id="np-desc" class="campo" maxlength="600" placeholder="Cómo es, cómo se usa, qué la hace especial."></textarea>
           </div>
+          <div>
+            <span class="etq">Foto principal (opcional)</span>
+            <div class="fotos" style="max-width:280px">
+              <label class="foto-agregar" for="np-foto" id="np-foto-btn"><span class="mas">+</span>Agregar foto</label>
+              <div class="foto" id="np-foto-vista" hidden><img alt="Vista previa de la foto"><div class="acciones-foto"><button class="enlace peligro" type="button" id="np-foto-quitar">Quitar</button></div></div>
+            </div>
+            <input id="np-foto" type="file" accept="image/*" hidden>
+            <p class="pista" style="margin:6px 0 0">Se recorta en formato 4:5. Puedes agregar más fotos después, desde la ficha.</p>
+          </div>
           <div class="pie-form"><button class="boton" type="submit">Crear producto</button></div>
         </form>
       </section>
@@ -1060,7 +1123,14 @@
         <p class="intro">Copia los datos de la factura. Al guardar, las unidades entran al inventario y el costo promedio se actualiza.</p>
         <form id="form-compra" class="formulario" autocomplete="off">
           <div class="doble">
-            <div><label class="etq" for="nc-prov">Proveedor</label><select id="nc-prov" class="selector" style="width:100%"></select></div>
+            <div><label class="etq" for="nc-prov">Proveedor</label><select id="nc-prov" class="selector" style="width:100%"></select>
+              <div id="nc-prov-nuevo" class="panel-var" style="margin-top:12px;display:grid;gap:14px" hidden>
+                <div><label class="etq" for="ncp-nombre">Nombre del proveedor</label><input id="ncp-nombre" class="campo" maxlength="80"></div>
+                <div class="doble" style="gap:14px"><div><label class="etq" for="ncp-tel">Teléfono (opcional)</label><input id="ncp-tel" class="campo" maxlength="30" inputmode="tel"></div>
+                <div><label class="etq" for="ncp-dias">Días de crédito (opcional)</label><input id="ncp-dias" class="campo" inputmode="numeric" maxlength="3"></div></div>
+                <div class="pie-form" style="margin:0"><button class="boton" type="button" id="ncp-crear">Crear proveedor</button><button class="enlace" type="button" id="ncp-cancelar">Cancelar</button></div>
+              </div>
+            </div>
             <div><label class="etq" for="nc-fecha">Fecha de la compra</label><input id="nc-fecha" class="campo" type="date"></div>
           </div>
           <div class="doble">
@@ -1398,7 +1468,10 @@
 
     function pintarEstado(e) {
       var nombre = e.usuario || '';
-      $('saludo').textContent = 'Hola, ' + nombre + '.';
+      var h = Number(new Date(Date.now() - 5 * 3600000).toISOString().slice(11, 13));
+      $('saludo').textContent = (h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches') + ', ' + nombre;
+      var fd = new Date(Date.now() - 5 * 3600000);
+      $('app-fecha').textContent = DIAS_SEM[fd.getUTCDay()] + ', ' + fd.getUTCDate() + ' de ' + MESES[fd.getUTCMonth()];
       $('v-version').textContent = e.version;
       $('v-entorno').textContent = e.entorno;
       $('v-usuario').textContent = nombre;
@@ -1449,6 +1522,7 @@
       });
       ['inicio', 'ventas', 'clientas', 'clienta', 'nueva-venta', 'pedido', 'productos', 'nuevo', 'producto', 'inventario', 'compras', 'nueva-compra', 'compra', 'finanzas', 'marketing', 'categorias', 'configuracion'].forEach(function (v) { $('vista-' + v).hidden = v !== vista; });
       window.scrollTo(0, 0);
+      if (vista === 'inicio') cargarInicio();
       if (vista === 'productos') cargarProductos();
       if (vista === 'inventario') cargarInventario();
       if (vista === 'compras') cargarCompras();
@@ -1673,8 +1747,21 @@
     $('btn-nuevo-producto').addEventListener('click', function () { irA('nuevo'); });
 
     /* ---------------- Productos: nuevo ---------------- */
+    var fotoNueva = null;
+    function limpiarFotoNueva() { fotoNueva = null; $('np-foto-vista').hidden = true; $('np-foto-btn').hidden = false; }
+    $('np-foto').addEventListener('change', function () {
+      var archivo = this.files && this.files[0]; this.value = '';
+      if (!archivo) return;
+      $('np-foto-btn').classList.add('cargando');
+      prepararFoto(archivo).then(function (f) {
+        fotoNueva = f;
+        $('np-foto-vista').querySelector('img').src = 'data:image/jpeg;base64,' + f.mini;
+        $('np-foto-vista').hidden = false; $('np-foto-btn').hidden = true;
+      }).catch(function (e) { avisar(e.message, true); }).then(function () { $('np-foto-btn').classList.remove('cargando'); });
+    });
+    $('np-foto-quitar').addEventListener('click', limpiarFotoNueva);
     function prepararNuevo() {
-      $('form-nuevo').reset();
+      $('form-nuevo').reset(); limpiarFotoNueva();
       var pintar = function () {
         $('np-cat').innerHTML = '<option value="">Elige una categoría</option>' + categoriasActivas.map(function (c) {
           return '<option value="' + escapar(c.categoria_id) + '">' + escapar(c.nombre) + ' · ' + escapar(c.codigo) + '</option>';
@@ -1712,10 +1799,18 @@
         precio: soloDigitos($('np-precio').value),
         descripcion: $('np-desc').value
       }).then(function (r) {
-        btn.disabled = false; btn.textContent = 'Crear producto';
-        if (!r.ok) { manejarError(r); return; }
-        avisar(r.data.nombre + ' creado · SKU ' + r.data.sku);
-        abrirProducto(r.data.product_id);
+        if (!r.ok) { btn.disabled = false; btn.textContent = 'Crear producto'; manejarError(r); return; }
+        var creado = r.data;
+        if (!fotoNueva) {
+          btn.disabled = false; btn.textContent = 'Crear producto';
+          avisar(creado.nombre + ' creado · SKU ' + creado.sku); abrirProducto(creado.product_id); return;
+        }
+        btn.textContent = 'Subiendo foto…';
+        api('subirFoto', { product_id: creado.product_id, web: fotoNueva.web, mini: fotoNueva.mini }).then(function (rf) {
+          btn.disabled = false; btn.textContent = 'Crear producto';
+          avisar(creado.nombre + ' creado · SKU ' + creado.sku + (rf.ok ? ' · con foto' : ' · la foto no se guardó, agrégala desde la ficha'), !rf.ok);
+          limpiarFotoNueva(); abrirProducto(creado.product_id);
+        });
       });
     });
 
@@ -2405,6 +2500,42 @@
 
 
 
+
+    /* ---------------- Tablero de inicio ---------------- */
+    function plural(n, uno, varios) { return n + ' ' + (n === 1 ? uno : varios); }
+    function alerta(id, n) { var a = $('al-' + id); if (!a) return; a.hidden = !n; a.textContent = n; }
+    function cargarInicio() {
+      api('resumenInicio').then(function (r) {
+        if (!r.ok) return;
+        var d = r.data, txt = function (id, html) { $('ti-' + id).innerHTML = html; };
+        var v = d.ventas;
+        txt('ventas', v.por_cobrar || v.por_despachar ? '<b>' + plural(v.por_cobrar, 'por cobrar', 'por cobrar') + '</b> · ' + plural(v.por_despachar, 'por despachar', 'por despachar') : 'Al día · ' + pesos(v.mes) + ' este mes');
+        alerta('ventas', v.por_verificar + v.por_despachar);
+        txt('clientas', d.clientas.fechas_semana ? '<b>' + plural(d.clientas.fechas_semana, 'fecha especial', 'fechas especiales') + '</b> esta semana' : 'Historial y fechas');
+        alerta('clientas', d.clientas.fechas_semana);
+        var p = d.productos;
+        txt('productos', plural(p.publicados, 'publicado', 'publicados') + (p.sin_foto ? ' · <b>' + plural(p.sin_foto, 'sin foto', 'sin foto') + '</b>' : ''));
+        alerta('productos', p.sin_foto);
+        var i = d.inventario;
+        txt('inventario', plural(i.unidades, 'unidad', 'unidades') + (i.agotadas || i.bajo_minimo ? ' · <b>' + (i.agotadas ? plural(i.agotadas, 'agotada', 'agotadas') : '') + (i.agotadas && i.bajo_minimo ? ', ' : '') + (i.bajo_minimo ? i.bajo_minimo + ' bajo mínimo' : '') + '</b>' : ''));
+        alerta('inventario', i.agotadas + i.bajo_minimo);
+        txt('compras', d.compras.por_pagar ? '<b>' + pesos(d.compras.por_pagar) + '</b> por pagar' + (d.compras.vencidas ? ' · ' + plural(d.compras.vencidas, 'vencida', 'vencidas') : '') : 'Sin deudas pendientes');
+        alerta('compras', d.compras.vencidas);
+        txt('finanzas', '<b>' + pesos(v.mes) + '</b> vendido este mes');
+        var m = d.marketing;
+        txt('marketing', m.semana || m.atrasadas ? plural(m.semana, 'pieza', 'piezas') + ' esta semana' + (m.atrasadas ? ' · <b>' + plural(m.atrasadas, 'atrasada', 'atrasadas') + '</b>' : '') : 'Calendario de contenido');
+        alerta('marketing', m.atrasadas);
+        txt('configuracion', 'Compra directa en la web: <b>' + (d.tienda.checkout_activo ? 'activa' : 'apagada') + '</b> · envíos, pagos y respaldos');
+      });
+    }
+    document.addEventListener('click', function (ev) { var b = ev.target.closest('[data-ir-app]'); if (b) irA(b.dataset.irApp); });
+    ['ventas', 'clientas', 'productos', 'inventario', 'compras', 'finanzas', 'marketing', 'categorias', 'configuracion'].forEach(function (v) {
+      var sec = $('vista-' + v); if (!sec) return;
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'enlace volver volver-inicio'; b.dataset.ir = 'inicio'; b.textContent = '← Inicio';
+      sec.insertBefore(b, sec.firstChild);
+    });
+
     /* ---------------- Clientas ---------------- */
     var filtroClientas = '', clienta = null, buscarClTimer;
     var MESES_CORTOS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
@@ -2890,6 +3021,32 @@
     /* Nueva compra */
     var datosCompra = null, claveCompra = null;
     function opciones(obj) { return Object.keys(obj).map(function (k) { return '<option value="' + k + '">' + escapar(obj[k]) + '</option>'; }).join(''); }
+    function pintarProveedoresCompra(elegido) {
+      $('nc-prov').innerHTML = '<option value="">' + (datosCompra.proveedores.length ? 'Elige el proveedor' : 'Aún no hay proveedores') + '</option>' +
+        datosCompra.proveedores.map(function (p) { return '<option value="' + escapar(p.supplier_id) + '"' + (p.supplier_id === elegido ? ' selected' : '') + '>' + escapar(p.nombre) + '</option>'; }).join('') +
+        '<option value="__nuevo">+ Crear proveedor nuevo</option>';
+      $('nc-prov-nuevo').hidden = true;
+      if (!datosCompra.proveedores.length && !elegido) { $('nc-prov').value = '__nuevo'; $('nc-prov-nuevo').hidden = false; }
+    }
+    $('nc-prov').addEventListener('change', function () {
+      var nuevo = this.value === '__nuevo';
+      $('nc-prov-nuevo').hidden = !nuevo;
+      if (nuevo) { $('ncp-nombre').value = ''; $('ncp-tel').value = ''; $('ncp-dias').value = ''; $('ncp-nombre').focus(); }
+    });
+    $('ncp-cancelar').addEventListener('click', function () { $('nc-prov').value = ''; $('nc-prov-nuevo').hidden = true; });
+    $('ncp-crear').addEventListener('click', function () {
+      var b = this; b.disabled = true;
+      api('guardarProveedor', { nombre: $('ncp-nombre').value, telefono: $('ncp-tel').value, dias_credito: soloDigitos($('ncp-dias').value) }).then(function (r) {
+        b.disabled = false;
+        if (!r.ok) { manejarError(r); return; }
+        var dias = soloDigitos($('ncp-dias').value);
+        datosCompra.proveedores.push({ supplier_id: r.data.supplier_id, nombre: r.data.nombre, dias_credito: dias === '' ? '' : Number(dias) });
+        datosCompra.proveedores.sort(function (a, b) { return a.nombre < b.nombre ? -1 : 1; });
+        pintarProveedoresCompra(r.data.supplier_id);
+        $('nc-prov').dispatchEvent(new Event('change'));
+        avisar('Proveedor ' + r.data.nombre + ' creado.');
+      });
+    });
     function prepararCompra() {
       $('form-compra').reset();
       $('nc-lineas').innerHTML = '<p class="vacio" style="padding:12px 0">Cargando productos…</p>';
@@ -2897,8 +3054,7 @@
       api('datosNuevaCompra').then(function (r) {
         if (!r.ok) { manejarError(r); return; }
         datosCompra = r.data;
-        $('nc-prov').innerHTML = '<option value="">' + (datosCompra.proveedores.length ? 'Elige el proveedor' : 'Primero crea un proveedor') + '</option>' +
-          datosCompra.proveedores.map(function (p) { return '<option value="' + escapar(p.supplier_id) + '">' + escapar(p.nombre) + '</option>'; }).join('');
+        pintarProveedoresCompra('');
         $('nc-tipo').innerHTML = opciones(datosCompra.documentos);
         $('nc-medio').innerHTML = opciones(datosCompra.medios);
         $('nc-fecha').value = datosCompra.hoy; $('nc-fecha').max = datosCompra.hoy;
