@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.3.0 · Panel administrativo -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="theme-color" content="#FFFFFF">
+  <meta name="referrer" content="no-referrer">
+  <title>Lazos OS</title>
+
+  <link rel="preload" href="/assets/logo-lazos-memorables.webp" as="image" type="image/webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --blanco: #FFFFFF;
+      --oro: #B89B7B;
+      --marfil: #F5F1E9;
+      --marfil-suave: #FBF8F3;
+      --champagne: #9C7A64;
+      --cacao: #35272C;
+      --rosa-claro: #F2E5E7;
+      --rosa-alterno: #C16478;
+      --texto-suave: rgba(53, 39, 44, 0.72);
+      --linea: rgba(53, 39, 44, 0.10);
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Montserrat', Arial, sans-serif;
+      --suave: cubic-bezier(.22, .61, .36, 1);
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: var(--blanco);
+      color: var(--cacao);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    [hidden] { display: none !important; }
+
+    .pantalla {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: var(--blanco);
+      opacity: 0;
+      transition: opacity .6s var(--suave);
+    }
+    .pantalla.visible { opacity: 1; }
+
+    /* ---------- Splash ---------- */
+    .splash-logo {
+      width: min(220px, 58vw);
+      height: auto;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 1s var(--suave), transform 1s var(--suave);
+    }
+    .splash-logo.listo { opacity: 1; transform: none; }
+    .cargando {
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .cargando-texto {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .32em;
+      text-transform: uppercase;
+      color: var(--texto-suave);
+      padding-left: .32em; /* compensa el tracking para centrar */
+    }
+    .barra {
+      width: 96px;
+      height: 1px;
+      background: var(--linea);
+      overflow: hidden;
+      position: relative;
+    }
+    .barra::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -40%;
+      width: 40%;
+      height: 100%;
+      background: var(--oro);
+      animation: recorrer 1.6s var(--suave) infinite;
+    }
+    @keyframes recorrer { to { left: 100%; } }
+
+    /* ---------- Acceso ---------- */
+    .acceso {
+      width: 100%;
+      max-width: 320px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .acceso-logo { width: 132px; height: auto; margin-bottom: 36px; }
+    .acceso h1 {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: 30px;
+      line-height: 1.2;
+      margin: 0 0 6px;
+      text-align: center;
+    }
+    .acceso .sub {
+      margin: 0 0 30px;
+      font-size: 12px;
+      letter-spacing: .04em;
+      color: var(--texto-suave);
+      text-align: center;
+    }
+    .puntos {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+    .punto {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      border: 1px solid rgba(53, 39, 44, .45);
+      transition: background .18s ease, border-color .18s ease, transform .18s ease;
+    }
+    .punto.lleno { background: var(--cacao); border-color: var(--cacao); transform: scale(1.06); }
+    .puntos.verificando .punto { animation: latir 1s ease-in-out infinite; }
+    .puntos.verificando .punto:nth-child(2) { animation-delay: .08s; }
+    .puntos.verificando .punto:nth-child(3) { animation-delay: .16s; }
+    .puntos.verificando .punto:nth-child(4) { animation-delay: .24s; }
+    .puntos.verificando .punto:nth-child(5) { animation-delay: .32s; }
+    .puntos.verificando .punto:nth-child(6) { animation-delay: .40s; }
+    @keyframes latir { 50% { opacity: .35; } }
+    .puntos.error { animation: negar .42s var(--suave); }
+    .puntos.error .punto { border-color: var(--rosa-alterno); background: transparent; }
+    @keyframes negar {
+      20% { transform: translateX(-8px); } 40% { transform: translateX(7px); }
+      60% { transform: translateX(-5px); } 80% { transform: translateX(3px); }
+    }
+    .aviso {
+      min-height: 40px;
+      font-size: 12px;
+      line-height: 1.5;
+      text-align: center;
+      color: var(--cacao);
+      margin: 0 0 18px;
+    }
+    .teclado {
+      display: grid;
+      grid-template-columns: repeat(3, 72px);
+      gap: 16px 26px;
+    }
+    .tecla {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 1px solid var(--linea);
+      background: transparent;
+      color: var(--cacao);
+      font-family: var(--sans);
+      font-size: 24px;
+      font-weight: 300;
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease;
+      user-select: none;
+    }
+    .tecla:hover { background: var(--marfil-suave); border-color: rgba(53,39,44,.18); }
+    .tecla:active { background: var(--marfil); }
+    .tecla:focus-visible { outline: 1px solid var(--oro); outline-offset: 3px; }
+    .tecla.texto {
+      border-color: transparent;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--texto-suave);
+    }
+    .tecla.texto:hover { background: transparent; color: var(--cacao); }
+    .teclado.inactivo { opacity: .4; pointer-events: none; }
+
+    /* ---------- Panel ---------- */
+    #app { position: static; opacity: 0; transition: opacity .6s var(--suave); }
+    #app.visible { opacity: 1; }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 32px;
+      border-bottom: 1px solid var(--linea);
+      background: var(--blanco);
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    .cab-izq { display: flex; align-items: center; gap: 18px; }
+    .cab-logo { height: 60px; width: auto; }
+    .cab-sep { width: 1px; height: 26px; background: var(--linea); }
+    .cab-titulo {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      color: var(--texto-suave);
+    }
+    .cab-der { display: flex; align-items: center; gap: 20px; font-size: 13px; }
+    .entorno {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      padding-bottom: 2px;
+      border-bottom: 1px solid var(--oro);
+    }
+    .entorno.dev { border-bottom-color: var(--rosa-alterno); }
+    .enlace {
+      background: none;
+      border: 0;
+      padding: 0;
+      font-family: var(--sans);
+      font-size: 12px;
+      letter-spacing: .06em;
+      color: var(--texto-suave);
+      cursor: pointer;
+      border-bottom: 1px solid transparent;
+    }
+    .enlace:hover { color: var(--cacao); border-bottom-color: var(--cacao); }
+
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 56px 32px 72px;
+    }
+    .saludo {
+      font-family: var(--serif);
+      font-size: 44px;
+      font-weight: 400;
+      line-height: 1.1;
+      margin: 0 0 10px;
+    }
+    .intro { color: var(--texto-suave); margin: 0 0 48px; max-width: 520px; }
+    .titulo-seccion {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      color: var(--texto-suave);
+      margin: 0 0 12px;
+    }
+    dl { margin: 0 0 48px; border-top: 1px solid var(--linea); }
+    .fila {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 15px 0;
+      border-bottom: 1px solid var(--linea);
+    }
+    dt { color: var(--texto-suave); }
+    dd { margin: 0; font-weight: 500; text-align: right; word-break: break-word; }
+
+    .boton {
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--blanco);
+      background: var(--cacao);
+      border: 0;
+      padding: 16px 26px;
+      cursor: pointer;
+      transition: opacity .2s ease;
+    }
+    .boton:hover { opacity: .88; }
+    .boton:disabled { opacity: .5; cursor: default; }
+    .boton:focus-visible { outline: 1px solid var(--oro); outline-offset: 3px; }
+    .mensaje {
+      margin-top: 20px;
+      padding: 14px 16px;
+      border-left: 2px solid var(--oro);
+      background: var(--marfil-suave);
+      font-size: 13px;
+    }
+    .mensaje.error { border-left-color: var(--rosa-alterno); background: var(--rosa-claro); }
+    .mensaje code { font-size: 11px; word-break: break-all; }
+    footer {
+      text-align: center;
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 15px;
+      color: var(--texto-suave);
+      padding: 0 32px 48px;
+    }
+
+    @media (max-width: 560px) {
+      header { padding: 14px 20px; }
+      .cab-logo { height: 50px; }
+      .cab-sep, .cab-titulo { display: none; }
+      main { padding: 40px 20px 56px; }
+      .saludo { font-size: 36px; }
+      .fila { flex-direction: column; gap: 2px; }
+      dd { text-align: left; }
+      .boton { width: 100%; }
+      .teclado { grid-template-columns: repeat(3, 68px); gap: 14px 24px; }
+      .tecla { width: 68px; height: 68px; }
+    }
+    @media (max-height: 640px) {
+      .acceso-logo { width: 104px; margin-bottom: 20px; }
+      .acceso .sub { margin-bottom: 20px; }
+      .teclado { gap: 10px 22px; }
+      .tecla { width: 62px; height: 62px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. Splash -->
+  <section id="splash" class="pantalla visible" aria-live="polite">
+    <img id="splash-logo" class="splash-logo" src="/assets/logo-lazos-memorables.webp" alt="Lazos Memorables" width="437" height="310" decoding="async">
+    <div class="cargando">
+      <span id="splash-texto" class="cargando-texto">Cargando</span>
+      <span class="barra" aria-hidden="true"></span>
+    </div>
+  </section>
+
+  <!-- 2. Acceso con clave -->
+  <section id="acceso" class="pantalla" hidden>
+    <div class="acceso">
+      <img class="acceso-logo" src="/assets/logo-lazos-memorables.webp" alt="Lazos Memorables" width="437" height="310">
+      <h1>Ingresa tu clave</h1>
+      <p class="sub">Espacio privado de administración</p>
+      <div id="puntos" class="puntos" role="img" aria-label="Clave de 6 dígitos">
+        <span class="punto"></span><span class="punto"></span><span class="punto"></span>
+        <span class="punto"></span><span class="punto"></span><span class="punto"></span>
+      </div>
+      <p id="aviso" class="aviso" role="status" aria-live="assertive"></p>
+      <div id="teclado" class="teclado">
+        <button class="tecla" type="button" data-d="1">1</button>
+        <button class="tecla" type="button" data-d="2">2</button>
+        <button class="tecla" type="button" data-d="3">3</button>
+        <button class="tecla" type="button" data-d="4">4</button>
+        <button class="tecla" type="button" data-d="5">5</button>
+        <button class="tecla" type="button" data-d="6">6</button>
+        <button class="tecla" type="button" data-d="7">7</button>
+        <button class="tecla" type="button" data-d="8">8</button>
+        <button class="tecla" type="button" data-d="9">9</button>
+        <span></span>
+        <button class="tecla" type="button" data-d="0">0</button>
+        <button class="tecla texto" type="button" data-accion="borrar" aria-label="Borrar">Borrar</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Panel -->
+  <div id="app" hidden>
+    <header>
+      <div class="cab-izq">
+        <img class="cab-logo" src="/assets/logo-lazos-memorables.webp" alt="Lazos Memorables" width="437" height="310">
+        <span class="cab-sep" aria-hidden="true"></span>
+        <span class="cab-titulo">Lazos OS</span>
+      </div>
+      <div class="cab-der">
+        <span id="entorno" class="entorno"></span>
+        <button id="btn-salir" class="enlace" type="button">Salir</button>
+      </div>
+    </header>
+
+    <main>
+      <h2 id="saludo" class="saludo">Hola.</h2>
+      <p class="intro">Este es el punto de partida de Lazos OS. Aquí verificamos que el entorno, la hoja y el acceso funcionan.</p>
+
+      <p class="titulo-seccion">Estado del entorno</p>
+      <dl>
+        <div class="fila"><dt>Versión</dt><dd id="v-version">—</dd></div>
+        <div class="fila"><dt>Entorno</dt><dd id="v-entorno">—</dd></div>
+        <div class="fila"><dt>Sesión de</dt><dd id="v-usuario">—</dd></div>
+        <div class="fila"><dt>Hoja vinculada</dt><dd id="v-hoja">—</dd></div>
+        <div class="fila"><dt>Hora del servidor</dt><dd id="v-hora">—</dd></div>
+        <div class="fila"><dt>Tu sesión vence</dt><dd id="v-expira">—</dd></div>
+      </dl>
+
+      <p class="titulo-seccion">Prueba de escritura</p>
+      <button id="btn-prueba" class="boton" type="button">Registrar evento de prueba</button>
+      <div id="mensaje" class="mensaje" role="status" aria-live="polite" hidden></div>
+    </main>
+
+    <footer>Transmitiendo amor</footer>
+  </div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    /* ======================================================
+     * CONFIGURACIÓN — pega aquí la URL /exec de Apps Script
+     * (no es un secreto: la seguridad está en la clave).
+     * ====================================================== */
+    var API_URL = 'PEGA_AQUI_LA_URL_EXEC_DE_APPS_SCRIPT';
+    var LARGO_PIN = 6;
+    var SPLASH_MINIMO_MS = 1400;
+
+    var $ = function (id) { return document.getElementById(id); };
+    var pin = '';
+    var ocupado = false;
+
+    /* ---------------- API ---------------- */
+    function api(action, data) {
+      var ctrl = new AbortController();
+      var t = setTimeout(function () { ctrl.abort(); }, 25000);
+      return fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: action, token: sessionStorage.getItem('lazos_token'), data: data || {} }),
+        signal: ctrl.signal
+      })
+        .then(function (r) { return r.json(); })
+        .catch(function () {
+          return { ok: false, error: { code: 'SIN_CONEXION', message: 'No pudimos conectar. Revisa tu internet e intenta de nuevo.' } };
+        })
+        .finally(function () { clearTimeout(t); });
+    }
+
+    /* ---------------- Pantallas ---------------- */
+    function mostrar(id) {
+      ['splash', 'acceso', 'app'].forEach(function (p) {
+        var el = $(p);
+        if (p === id) {
+          el.hidden = false;
+          requestAnimationFrame(function () { requestAnimationFrame(function () { el.classList.add('visible'); }); });
+        } else if (!el.hidden) {
+          el.classList.remove('visible');
+          setTimeout(function () { if (!el.classList.contains('visible')) el.hidden = true; }, 600);
+        }
+      });
+    }
+
+    function splash(texto) {
+      $('splash-texto').textContent = texto || 'Cargando';
+      mostrar('splash');
+    }
+
+    function esperar(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+    /* ---------------- Clave ---------------- */
+    function pintarPuntos() {
+      var puntos = $('puntos').children;
+      for (var i = 0; i < puntos.length; i++) puntos[i].classList.toggle('lleno', i < pin.length);
+    }
+
+    function teclear(d) {
+      if (ocupado || pin.length >= LARGO_PIN) return;
+      $('puntos').classList.remove('error');
+      if (pin.length === 0) $('aviso').textContent = '';
+      pin += d;
+      pintarPuntos();
+      if (pin.length === LARGO_PIN) setTimeout(verificar, 120); // ingreso automático
+    }
+
+    function borrar() {
+      if (ocupado) return;
+      pin = pin.slice(0, -1);
+      pintarPuntos();
+    }
+
+    function verificar() {
+      ocupado = true;
+      $('teclado').classList.add('inactivo');
+      $('puntos').classList.add('verificando');
+
+      api('login', { pin: pin }).then(function (r) {
+        $('puntos').classList.remove('verificando');
+        if (r.ok) {
+          sessionStorage.setItem('lazos_token', r.data.token);
+          pin = '';
+          pintarPuntos();
+          entrar('Preparando tu espacio');
+          return;
+        }
+        pin = '';
+        pintarPuntos();
+        $('puntos').classList.add('error');
+        var e = r.error || {};
+        if (e.code === 'CLAVE_INCORRECTA') {
+          var n = e.extra && e.extra.intentosRestantes;
+          $('aviso').textContent = 'La clave no es correcta.' + (n ? ' Te quedan ' + n + (n === 1 ? ' intento.' : ' intentos.') : '');
+        } else if (e.code === 'ACCESO_PAUSADO') {
+          var m = (e.extra && e.extra.minutos) || 15;
+          $('aviso').textContent = 'Por seguridad pausamos el acceso. Intenta de nuevo en ' + m + (m === 1 ? ' minuto.' : ' minutos.');
+        } else {
+          $('aviso').textContent = e.message || 'Algo no salió bien. Intenta de nuevo.';
+        }
+        ocupado = false;
+        $('teclado').classList.remove('inactivo');
+      });
+    }
+
+    function irAlAcceso(aviso) {
+      sessionStorage.removeItem('lazos_token');
+      pin = '';
+      pintarPuntos();
+      $('puntos').classList.remove('error', 'verificando');
+      $('aviso').textContent = aviso || '';
+      ocupado = false;
+      $('teclado').classList.remove('inactivo');
+      mostrar('acceso');
+    }
+
+    /* ---------------- Panel ---------------- */
+    function entrar(texto) {
+      splash(texto);
+      Promise.all([api('estado'), esperar(SPLASH_MINIMO_MS)]).then(function (res) {
+        var r = res[0];
+        if (!r.ok) {
+          irAlAcceso(r.error && r.error.code === 'SESION_INVALIDA' ? '' : (r.error && r.error.message));
+          return;
+        }
+        pintarEstado(r.data);
+        mostrar('app');
+      });
+    }
+
+    function pintarEstado(e) {
+      var nombre = e.usuario || '';
+      $('saludo').textContent = 'Hola, ' + nombre + '.';
+      $('v-version').textContent = e.version;
+      $('v-entorno').textContent = e.entorno;
+      $('v-usuario').textContent = nombre;
+      $('v-hoja').textContent = e.hoja;
+      $('v-hora').textContent = e.hora + ' · Bogotá';
+      $('v-expira').textContent = e.sesionExpira;
+      var badge = $('entorno');
+      badge.textContent = e.entorno === 'prod' ? 'Producción' : 'Pruebas';
+      badge.className = 'entorno ' + e.entorno;
+    }
+
+    function mensaje(texto, esError) {
+      var m = $('mensaje');
+      m.textContent = '';
+      m.innerHTML = texto;
+      m.className = 'mensaje' + (esError ? ' error' : '');
+      m.hidden = false;
+    }
+
+    function escapar(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    /* ---------------- Eventos ---------------- */
+    $('teclado').addEventListener('click', function (ev) {
+      var b = ev.target.closest('.tecla');
+      if (!b) return;
+      if (b.dataset.accion === 'borrar') borrar(); else teclear(b.dataset.d);
+    });
+
+    document.addEventListener('keydown', function (ev) {
+      if ($('acceso').hidden) return;
+      if (/^[0-9]$/.test(ev.key)) { teclear(ev.key); ev.preventDefault(); }
+      else if (ev.key === 'Backspace') { borrar(); ev.preventDefault(); }
+    });
+
+    $('btn-salir').addEventListener('click', function () {
+      api('logout').then(function () { irAlAcceso('Sesión cerrada. Hasta pronto.'); });
+    });
+
+    $('btn-prueba').addEventListener('click', function () {
+      var btn = this;
+      btn.disabled = true;
+      btn.textContent = 'Registrando…';
+      api('registrarPrueba').then(function (r) {
+        btn.disabled = false;
+        btn.textContent = 'Registrar evento de prueba';
+        if (r.ok) {
+          mensaje('Evento registrado en la fila ' + r.data.fila + ' · <code>' + escapar(r.data.event_id) + '</code>');
+        } else if (r.error && r.error.code === 'SESION_INVALIDA') {
+          irAlAcceso('Tu sesión terminó. Ingresa de nuevo.');
+        } else {
+          mensaje(escapar((r.error && r.error.message) || 'No se pudo registrar.'), true);
+        }
+      });
+    });
+
+    /* ---------------- Inicio ---------------- */
+    var logo = $('splash-logo');
+    function logoListo() { logo.classList.add('listo'); }
+    if (logo.complete) logoListo(); else { logo.addEventListener('load', logoListo); logo.addEventListener('error', logoListo); }
+
+    if (sessionStorage.getItem('lazos_token')) {
+      entrar('Cargando');
+    } else {
+      esperar(SPLASH_MINIMO_MS).then(function () { irAlAcceso(); });
+    }
+  })();
+  </script>
+</body>
+</html>
