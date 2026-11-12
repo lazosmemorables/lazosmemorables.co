@@ -2,14 +2,14 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.3.0 · Panel administrativo -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.3.1 · Panel administrativo -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
   <meta name="referrer" content="no-referrer">
   <title>Lazos OS</title>
 
-  <link rel="preload" href="/assets/logo-lazos-memorables.webp" as="image" type="image/webp">
+  <link rel="preload" href="/assets/logo-lazos-memorables.png" as="image" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -56,6 +56,9 @@
       transition: opacity .6s var(--suave);
     }
     .pantalla.visible { opacity: 1; }
+    .pantalla:not(.visible) { pointer-events: none; }
+    #splash { z-index: 10; }
+    #acceso { z-index: 5; }
 
     /* ---------- Splash ---------- */
     .splash-logo {
@@ -330,7 +333,7 @@
 
   <!-- 1. Splash -->
   <section id="splash" class="pantalla visible" aria-live="polite">
-    <img id="splash-logo" class="splash-logo" src="/assets/logo-lazos-memorables.webp" alt="Lazos Memorables" width="437" height="310" decoding="async">
+    <img id="splash-logo" class="splash-logo" src="/assets/logo-lazos-memorables.png" alt="Lazos Memorables" width="437" height="310" decoding="async">
     <div class="cargando">
       <span id="splash-texto" class="cargando-texto">Cargando</span>
       <span class="barra" aria-hidden="true"></span>
@@ -340,7 +343,7 @@
   <!-- 2. Acceso con clave -->
   <section id="acceso" class="pantalla" hidden>
     <div class="acceso">
-      <img class="acceso-logo" src="/assets/logo-lazos-memorables.webp" alt="Lazos Memorables" width="437" height="310">
+      <img class="acceso-logo" src="/assets/logo-lazos-memorables.png" alt="Lazos Memorables" width="437" height="310">
       <h1>Ingresa tu clave</h1>
       <p class="sub">Espacio privado de administración</p>
       <div id="puntos" class="puntos" role="img" aria-label="Clave de 6 dígitos">
@@ -369,7 +372,7 @@
   <div id="app" hidden>
     <header>
       <div class="cab-izq">
-        <img class="cab-logo" src="/assets/logo-lazos-memorables.webp" alt="Lazos Memorables" width="437" height="310">
+        <img class="cab-logo" src="/assets/logo-lazos-memorables.png" alt="Lazos Memorables" width="437" height="310">
         <span class="cab-sep" aria-hidden="true"></span>
         <span class="cab-titulo">Lazos OS</span>
       </div>
