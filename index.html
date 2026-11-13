@@ -2,7 +2,7 @@
 <html lang="es-CO">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS MEMORABLES — index.html · Vitrina v2.5.0 (pago seguro visible) -->
+  <!-- LAZOS MEMORABLES — index.html · Vitrina v2.6.0 (medios de pago con logos) -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Lazos Memorables · Accesorios femeninos · Cartagena</title>
   <meta name="description" content="Aretes, collares y pulseras que reflejan tu esencia y acompañan momentos significativos. Desde Cartagena para toda Colombia.">
@@ -377,6 +377,24 @@
     .sello-mini { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12px; color: var(--texto-suave); margin: 12px 0 0; }
     .sello-mini svg { width: 14px; height: 14px; fill: none; stroke: var(--cacao); stroke-width: 1.7; }
 
+    /* ---------- v2.6 · Opciones de pago con logos ---------- */
+    .opcion-pago { padding: 18px; }
+    .op-cab { display: grid; grid-template-columns: 22px 1fr auto; gap: 12px; align-items: center; }
+    .op-radio { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid rgba(53, 39, 44, .35); display: grid; place-items: center; background: #fff; }
+    .op-cab .op-radio { display: grid; }
+    .opcion-entrega.activa .op-radio { border-color: var(--rosa-historico); }
+    .opcion-entrega.activa .op-radio::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--rosa-historico); }
+    .op-cab strong { display: block; }
+    .op-cab span { display: block; font-size: 12px; color: var(--texto-suave); }
+    .op-wompi { height: 22px; width: auto; }
+    .logos-pago { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 14px 0 0 34px; }
+    .logos-pago img { height: 22px; width: auto; display: block; }
+    .logos-pago img.lg-redondo { height: 26px; }
+    .logos-pago img.lg-tarjetas { height: 22px; }
+    .conf-pegada { margin: -4px 0 12px; border-top-left-radius: 0; border-top-right-radius: 0; border-top: 0; }
+    .sello-mini .mini-logos { display: inline-flex; gap: 6px; align-items: center; margin-left: 4px; }
+    .sello-mini .mini-logos img { height: 14px; width: auto; }
+
     /* ---------- Aviso ---------- */
     .toast {
       position: fixed; left: 20px; right: 20px; bottom: 28px; margin: 0 auto; max-width: 440px; text-align: center;
@@ -497,7 +515,7 @@
             <button id="btn-agregar" class="boton claro" type="button" hidden>Agregar al carrito</button>
             <button id="btn-pedir" class="boton" type="button">Pedir por Instagram</button>
           </div>
-          <p class="sello-mini" id="sello-producto" hidden><svg viewBox="0 0 24 24"><path d="M12 3 5 6v5.5c0 4.3 2.9 8 7 9.5 4.1-1.5 7-5.2 7-9.5V6l-7-3Z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg>Pago seguro con Wompi · respaldado por Bancolombia</p>
+          <p class="sello-mini" id="sello-producto" hidden><svg viewBox="0 0 24 24"><path d="M12 3 5 6v5.5c0 4.3 2.9 8 7 9.5 4.1-1.5 7-5.2 7-9.5V6l-7-3Z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg>Pago seguro con Wompi<span class="mini-logos"><img src="/assets/pagos/pago-tarjetas.png" alt="Tarjetas"><img src="/assets/pagos/pago-pse.png" alt="PSE"><img src="/assets/pagos/pago-nequi.png" alt="Nequi"></span></p>
           <p class="nota-pedido" id="nota-pedido">Te confirmamos disponibilidad, costo de envío y forma de pago por mensaje directo.</p>
           <dl id="p-datos" class="datos"></dl>
         </div>
@@ -547,11 +565,11 @@
 
           <div id="ck-caja-pago" hidden>
             <span class="rotulo" style="display:block;margin:6px 0 12px">¿Cómo quieres pagar?</span>
-            <div class="opciones-entrega" id="ck-pagos">
-              <label class="opcion-entrega activa"><input type="radio" name="pago" value="wompi" checked><strong>Pagar en línea · seguro</strong><span>Tarjeta, PSE, Nequi, Bancolombia, Daviplata</span></label>
-              <label class="opcion-entrega" id="ck-op-transf"><input type="radio" name="pago" value="transferencia"><strong>Transferencia o QR</strong><span>Pagas desde tu banco y envías el comprobante</span></label>
+            <div id="ck-pagos" style="display:grid;gap:12px">
+              <label class="opcion-entrega opcion-pago activa"><input type="radio" name="pago" value="wompi" checked><div class="op-cab"><span class="op-radio"></span><div><strong>Pagar en línea seguro</strong><span>Tarjeta, PSE, Nequi, Bancolombia o Daviplata · confirmación inmediata</span></div><img class="op-wompi" src="/assets/pagos/pago-wompi.png" alt="Wompi"></div><div class="logos-pago"><img src="/assets/pagos/pago-tarjetas.png" alt="American Express, Mastercard y Visa" class="lg-tarjetas"><img src="/assets/pagos/pago-pse.png" alt="PSE" class="lg-redondo"><img src="/assets/pagos/pago-nequi.png" alt="Nequi"><img src="/assets/pagos/pago-bancolombia.png" alt="Botón Bancolombia" class="lg-redondo"><img src="/assets/pagos/pago-daviplata.png" alt="Daviplata"></div></label>
+              <div class="confianza conf-pegada" id="ck-confianza"><div class="conf-top"><span class="conf-escudo"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3 5 6v5.5c0 4.3 2.9 8 7 9.5 4.1-1.5 7-5.2 7-9.5V6l-7-3Z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg></span><div><strong>Pagos seguros con Wompi</strong><span>Plataforma de pagos respaldada por Bancolombia.</span></div></div><ul><li>Tus datos de tarjeta o de tu banco los recibe Wompi directamente: nunca pasan por nuestra tienda.</li><li>Conexión cifrada y confirmación inmediata de tu pedido.</li><li>Si el pago no se aprueba, no se hace ningún cobro.</li></ul></div>
+              <label class="opcion-entrega opcion-pago" id="ck-op-transf"><input type="radio" name="pago" value="transferencia"><div class="op-cab"><span class="op-radio"></span><div><strong>Transferencia, QR o llave</strong><span>Pagas desde tu banco y nos envías el comprobante</span></div></div></label>
             </div>
-            <div class="confianza" id="ck-confianza"><div class="conf-top"><span class="conf-escudo"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3 5 6v5.5c0 4.3 2.9 8 7 9.5 4.1-1.5 7-5.2 7-9.5V6l-7-3Z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg></span><div><strong>Pago 100% seguro con Wompi</strong><span>Plataforma de pagos respaldada por Bancolombia.</span></div><img class="logo-pago" src="/assets/pagos/sello-wompi.png" alt="Wompi" onerror="this.remove()"></div><ul><li>Tus datos de tarjeta o de tu banco los recibe Wompi directamente: nunca pasan por nuestra tienda.</li><li>Conexión cifrada y confirmación inmediata de tu pedido.</li><li>Si el pago no se aprueba, no se hace ningún cobro.</li></ul><div class="medios-txt"><span>Visa</span><span>Mastercard</span><span>American Express</span><span>PSE</span><span>Nequi</span><span>Botón Bancolombia</span><span>Daviplata</span></div></div>
           </div>
 
           <div id="ck-resumen" class="resumen" style="margin:8px 0 0;max-width:none"></div>
@@ -1091,13 +1109,13 @@
             (u && ['DECLINED', 'ERROR', 'VOIDED'].indexOf(u.estado) >= 0 ? '<div class="aviso-pago"><strong>Tu pago no fue aprobado</strong>' + (u.metodo ? 'El pago con ' + esc(u.metodo) + ' no fue autorizado. ' : '') + 'No se hizo ningún cobro. Puedes intentarlo de nuevo o elegir otro medio.</div>' : '') +
             '<button class="forma-pago" type="button" id="btn-wompi">' +
               '<span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 10h18M7 15h4"/></svg></span>' +
-              '<span><strong>Pagar en línea</strong><span class="det">Tarjeta débito o crédito, PSE, Nequi y más</span>' +
-              '<span class="medios"><span>Tarjeta</span><span>PSE</span><span>Nequi</span><span>Bancolombia</span><span>Daviplata</span></span></span>' +
+              '<span><strong>Pagar en línea seguro</strong><span class="det">Tarjeta, PSE, Nequi, Bancolombia o Daviplata</span>' +
+              '<span class="logos-pago" style="margin-left:0"><img src="/assets/pagos/pago-tarjetas.png" alt="American Express, Mastercard y Visa" class="lg-tarjetas"><img src="/assets/pagos/pago-pse.png" alt="PSE" class="lg-redondo"><img src="/assets/pagos/pago-nequi.png" alt="Nequi"><img src="/assets/pagos/pago-bancolombia.png" alt="Botón Bancolombia" class="lg-redondo"><img src="/assets/pagos/pago-daviplata.png" alt="Daviplata"></span></span>' +
               '<span class="flecha">›</span></button>' +
             htmlConfianza(d.wompi_ambiente === 'pruebas') +
             '<button class="forma-pago" type="button" id="btn-transferencia" aria-expanded="false">' +
               '<span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 9h13l-3-3M20 15H7l3 3"/></svg></span>' +
-              '<span><strong>Transferencia o QR</strong><span class="det">Pagas desde tu banco y nos envías el comprobante</span></span>' +
+              '<span><strong>Transferencia, QR o llave</strong><span class="det">Pagas desde tu banco y nos envías el comprobante</span></span>' +
               '<span class="flecha">›</span></button>' +
             '<div id="panel-transferencia" class="panel-transferencia" hidden><div class="caja" style="margin-top:6px">' + datosTransferencia + '</div>' + formReporte + '</div></div>';
         } else {
@@ -1136,6 +1154,7 @@
     /* ---------- Pago en línea con Wompi (v2.3) ---------- */
     function htmlConfianza(pruebas) {
       var h = $('ck-confianza').outerHTML.replace('id="ck-confianza"', '').replace(' hidden=""', '');
+      h = h.replace(' conf-pegada', '');
       return pruebas ? h.replace('Plataforma de pagos respaldada por Bancolombia.', 'Plataforma de pagos respaldada por Bancolombia · modo de pruebas.') : h;
     }
     var sondeo = null, sondeos = 0, widgetCargado = null;

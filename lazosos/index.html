@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.24.0 · Panel administrativo (rápido y tipo tablero) -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.25.0 · Panel administrativo (memoria en el celular y precarga) -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -1803,20 +1803,61 @@
      * Lectura instantánea (v0.24): pinta enseguida lo último que se vio de esta pantalla
      * y, en paralelo, trae lo nuevo del servidor y vuelve a pintar si cambió.
      */
+    /*
+     * Memoria en el celular (v0.25): lo último de cada pantalla queda guardado en este
+     * dispositivo hasta 7 días. Al abrir, se ve al instante y se actualiza en segundo plano.
+     * Se borra al salir.
+     */
+    var MEMORIA_DIAS = 7;
+    var LECTURAS = /^(listar|obtener|datos|resumen|estado|historial|cierreCaja|probarWompi|login$)/;
+    function ultimaEscritura() { return Number(localStorage.getItem('lzc__escritura') || 0); }
+    function claveMemoria(action, data) { return 'lzc_' + action + ':' + JSON.stringify(data || {}); }
+    function leerMemoria(clave) {
+      try {
+        var m = JSON.parse(localStorage.getItem(clave) || 'null');
+        if (!m || !m.t || Date.now() - m.t > MEMORIA_DIAS * 86400000) return null;
+        return m;
+      } catch (x) { return null; }
+    }
+    function guardarMemoria(clave, datos) {
+      var valor = JSON.stringify({ t: Date.now(), d: datos });
+      try { localStorage.setItem(clave, valor); }
+      catch (x) {   // lleno: se borra lo más viejo y se intenta otra vez
+        try {
+          Object.keys(localStorage).filter(function (k) { return k.indexOf('lzc_') === 0; })
+            .map(function (k) { var m = leerMemoria(k); return { k: k, t: m ? m.t : 0 }; })
+            .sort(function (a, b) { return a.t - b.t; }).slice(0, 10).forEach(function (o) { localStorage.removeItem(o.k); });
+          localStorage.setItem(clave, valor);
+        } catch (y) { /* sin espacio: se sigue sin memoria */ }
+      }
+    }
     function apiRapido(action, data, pintar) {
-      var clave = 'lzc_' + action + ':' + JSON.stringify(data || {}), guardado = null;
-      try { guardado = sessionStorage.getItem(clave); } catch (x) { /* sin almacenamiento */ }
-      if (guardado) { try { pintar({ ok: true, data: JSON.parse(guardado), desdeMemoria: true }); } catch (x) { guardado = null; } }
-      return api(action, data).then(function (r) {
+      var clave = claveMemoria(action, data), m = leerMemoria(clave), guardado = m ? JSON.stringify(m.d) : null;
+      if (m) { try { pintar({ ok: true, data: m.d, desdeMemoria: true }); } catch (x) { guardado = null; } }
+      var vieja = m && m.t < ultimaEscritura();   // después de un cambio: se muestra la barra mientras se actualiza
+      return api(action, data, !!m && !vieja).then(function (r) {   // con memoria al día, la actualización va en silencio
         if (r.ok) {
           var nuevo = JSON.stringify(r.data);
-          try { sessionStorage.setItem(clave, nuevo); } catch (x) { /* lleno: se ignora */ }
+          guardarMemoria(clave, r.data);
           if (nuevo !== guardado) pintar(r);
         } else if (!guardado) pintar(r);
-        else avisar('No pudimos actualizar. Te mostramos la última información.', true);
+        else if (r.error && r.error.code === 'SESION_INVALIDA') pintar(r);
       });
     }
-    function olvidarMemoria() { try { Object.keys(sessionStorage).forEach(function (k) { if (k.indexOf('lzc_') === 0) sessionStorage.removeItem(k); }); } catch (x) { /* nada */ } }
+    /** Precarga en segundo plano lo que más se usa, una vez por sesión. */
+    var precargado = false;
+    function precargar() {
+      if (precargado) return; precargado = true;
+      var cola = [['listarPedidos', { filtro: 'por_cobrar' }], ['listarProductos', { estado: 'todos' }], ['datosNuevaVenta', undefined],
+                  ['listarInventario', { filtro: '' }], ['listarClientas', { filtro: '', q: '' }], ['listarCartera', { filtro: 'pendientes', q: '' }]];
+      (function siguiente() {
+        var item = cola.shift(); if (!item || !sessionStorage.getItem('lazos_token')) return;
+        api(item[0], item[1], true).then(function (r) { if (r.ok) guardarMemoria(claveMemoria(item[0], item[1]), r.data); setTimeout(siguiente, 150); });
+      })();
+    }
+    function olvidarMemoria() {
+      [localStorage, sessionStorage].forEach(function (s) { try { Object.keys(s).forEach(function (k) { if (k.indexOf('lzc_') === 0) s.removeItem(k); }); } catch (x) { /* nada */ } });
+    }
     function esqueleto(n) { var h = ''; for (var i = 0; i < (n || 5); i++) h += '<li class="esq"><i class="foto"></i><div><i></i><i class="corta"></i></div><i></i></li>'; return h; }
     function api(action, data, silencioso) {
       if (!silencioso) barra(1);
@@ -1829,6 +1870,7 @@
         signal: ctrl.signal
       })
         .then(function (r) { return r.json(); })
+        .then(function (j) { if (j && j.ok && !LECTURAS.test(action)) { try { localStorage.setItem('lzc__escritura', String(Date.now())); } catch (x) { /* nada */ } } return j; })
         .catch(function () {
           return { ok: false, error: { code: 'SIN_CONEXION', message: 'No pudimos conectar. Revisa tu internet e intenta de nuevo.' } };
         })
@@ -3387,6 +3429,7 @@
     function plural(n, uno, varios) { return n + ' ' + (n === 1 ? uno : varios); }
     function alerta(id, n) { var a = $('al-' + id); if (!a) return; a.hidden = !n; a.textContent = n; }
     function cargarInicio() {
+      setTimeout(precargar, 1500);
       apiRapido('resumenInicio', undefined, function (r) {
         if (!r.ok) return;
         var d = r.data, txt = function (id, html) { $('ti-' + id).innerHTML = html; };
