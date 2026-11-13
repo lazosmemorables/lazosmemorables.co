@@ -2,7 +2,7 @@
 <html lang="es-CO">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS MEMORABLES — index.html · Vitrina v2.3.0 (pago en línea con Wompi) -->
+  <!-- LAZOS MEMORABLES — index.html · Vitrina v2.4.0 (carrito, búsqueda y compra ágil) -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Lazos Memorables · Accesorios femeninos · Cartagena</title>
   <meta name="description" content="Aretes, collares y pulseras que reflejan tu esencia y acompañan momentos significativos. Desde Cartagena para toda Colombia.">
@@ -296,6 +296,61 @@
     @keyframes gira { to { transform: rotate(360deg); } }
     @media (max-width: 720px) { .forma-pago { grid-template-columns: 40px 1fr auto; padding: 16px; gap: 12px; } .forma-pago .ico { width: 40px; height: 40px; } }
 
+    /* ---------- v2.4 · Íconos, carrito, búsqueda y compra rápida ---------- */
+    .icono-btn { position: relative; display: inline-grid; place-items: center; width: 44px; height: 44px; border: 0; background: none; color: var(--cacao); cursor: pointer; border-radius: 50%; text-decoration: none; margin-left: 4px; }
+    .icono-btn:hover { background: rgba(194, 85, 106, .08); }
+    .icono-btn svg { width: 23px; height: 23px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+    .burbuja { position: absolute; top: 3px; right: 1px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--rosa-historico); color: #fff; font-size: 10px; font-weight: 600; display: grid; place-items: center; line-height: 1; }
+    .burbuja.cero { display: none; }
+    .burbuja.salta { animation: salta .5s var(--suave); }
+    @keyframes salta { 40% { transform: scale(1.35); } }
+    .buscador { position: fixed; inset: 0; z-index: 40; background: rgba(53, 39, 44, .35); backdrop-filter: blur(3px); }
+    .buscador-caja { background: var(--rosa-claro); max-height: 100%; overflow: auto; padding-top: 18px; padding-bottom: 36px; border-bottom-left-radius: 22px; border-bottom-right-radius: 22px; animation: baja .28s var(--suave); }
+    @keyframes baja { from { transform: translateY(-14px); opacity: 0; } }
+    .buscador-barra { display: flex; align-items: center; gap: 10px; background: var(--marfil-suave); border: 1px solid rgba(193, 100, 120, .45); border-radius: 999px; padding: 4px 6px 4px 18px; }
+    .buscador-barra svg { width: 20px; height: 20px; fill: none; stroke: var(--cacao); stroke-width: 1.6; flex: none; }
+    .buscador-barra input { flex: 1; border: 0; background: transparent; font-family: var(--sans); font-size: 16px; color: var(--cacao); padding: 12px 0; min-width: 0; }
+    .buscador-barra input:focus { outline: none; }
+    .buscador-barra button { border: 0; background: none; font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--cacao); padding: 10px 12px; cursor: pointer; }
+    .buscador .rotulo { display: block; margin: 24px 0 12px; }
+    .res-lista a { display: grid; grid-template-columns: 56px 1fr auto; gap: 14px; align-items: center; padding: 10px 0; text-decoration: none; border-bottom: 1px solid var(--linea); }
+    .res-lista img, .res-lista .sin-img { width: 56px; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 8px; background: var(--rosa-empolvado); }
+    .res-lista .n { font-family: var(--serif); font-size: 19px; line-height: 1.2; display: block; }
+    .res-lista .c { font-size: 11px; color: var(--texto-suave); letter-spacing: .08em; text-transform: uppercase; }
+    .res-lista .pr { font-size: 14px; }
+    .res-lista mark { background: rgba(229, 193, 203, .7); color: inherit; border-radius: 3px; }
+    .sugerencias { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .sugerencias a { text-decoration: none; }
+    .sugerencias img, .sugerencias .sin-img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 12px; background: var(--rosa-empolvado); display: block; }
+    .sugerencias .n { font-family: var(--serif); font-size: 17px; line-height: 1.2; margin: 8px 0 0; display: block; }
+    .sugerencias .pr { font-size: 12px; color: var(--texto-suave); }
+    .chips-busqueda { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chips-busqueda button { border: 1px solid rgba(193, 100, 120, .35); background: var(--marfil-suave); border-radius: 999px; padding: 8px 14px; font-family: var(--sans); font-size: 13px; color: var(--cacao); cursor: pointer; }
+    .tarjeta-caja { position: relative; }
+    .rapido-capa { position: absolute; top: 0; left: 0; right: 0; aspect-ratio: 4 / 5; pointer-events: none; }
+    .rapido { position: absolute; right: 10px; bottom: 10px; pointer-events: auto; width: 42px; height: 42px; border-radius: 50%; border: 0; background: rgba(251, 248, 243, .94); color: var(--cacao); box-shadow: 0 6px 18px rgba(53, 39, 44, .14); cursor: pointer; display: grid; place-items: center; transition: transform .2s var(--suave); }
+    .rapido:hover { transform: scale(1.06); }
+    .rapido svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .botones-compra { display: grid; gap: 10px; }
+    .botones-compra .boton { width: 100%; text-align: center; border-radius: 14px; }
+    .enlace-ig { display: block; text-align: center; margin: 16px 0 0; font-size: 12px; color: var(--texto-suave); }
+    .hoja { position: fixed; left: 0; right: 0; bottom: 0; z-index: 35; background: var(--marfil-suave); border-top-left-radius: 22px; border-top-right-radius: 22px; box-shadow: 0 -12px 40px rgba(53, 39, 44, .18); padding: 20px var(--margen) calc(22px + env(safe-area-inset-bottom)); animation: sube .3s var(--suave); }
+    @keyframes sube { from { transform: translateY(100%); } }
+    .hoja-fila { display: grid; grid-template-columns: 60px 1fr; gap: 14px; align-items: center; max-width: 560px; margin: 0 auto 16px; }
+    .hoja-fila img, .hoja-fila .sin-img { width: 60px; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 10px; background: var(--rosa-empolvado); }
+    .hoja-fila strong { display: block; font-family: var(--serif); font-weight: 400; font-size: 20px; line-height: 1.2; }
+    .hoja-fila span { font-size: 12px; color: var(--texto-suave); }
+    .hoja-botones { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 560px; margin: 0 auto; }
+    .hoja-botones .boton { border-radius: 14px; text-align: center; padding: 16px 10px; }
+    .boton .giro { display: inline-block; width: 13px; height: 13px; margin-right: 10px; vertical-align: -2px; border: 2px solid rgba(255,255,255,.35); border-top-color: #fff; border-radius: 50%; animation: gira .8s linear infinite; }
+    .pago-total { font-family: var(--serif); font-size: 22px; letter-spacing: 0; text-transform: none; margin-left: 6px; }
+    #ck-enviar { border-radius: 14px; padding: 20px; }
+    @media (max-width: 720px) {
+      .solo-escritorio { display: none; }
+      .sugerencias { grid-template-columns: repeat(2, 1fr); }
+      .rapido { width: 38px; height: 38px; right: 8px; bottom: 8px; }
+    }
+
     /* ---------- Aviso ---------- */
     .toast {
       position: fixed; left: 20px; right: 20px; bottom: 28px; margin: 0 auto; max-width: 440px; text-align: center;
@@ -343,8 +398,9 @@
         <img src="/assets/logo-lazos-memorables.png" alt="Lazos Memorables · transmitiendo amor" width="437" height="310">
       </a>
       <div class="derecha">
-        <a class="enlace-sup" href="https://www.instagram.com/lazosmemorables/" target="_blank" rel="noopener">Instagram</a>
-        <a class="enlace-sup bolsa-enlace" href="#/bolsa" id="enlace-bolsa" hidden>Bolsa (<span id="n-bolsa">0</span>)</a>
+        <a class="enlace-sup solo-escritorio" href="https://www.instagram.com/lazosmemorables/" target="_blank" rel="noopener" style="margin-right:14px">Instagram</a>
+        <button class="icono-btn" type="button" id="btn-buscar" aria-label="Buscar productos"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg></button>
+        <a class="icono-btn" href="#/carrito" id="enlace-bolsa" aria-label="Carrito" hidden><svg viewBox="0 0 24 24"><path d="M3 4h2.2l2.1 10.2a1.6 1.6 0 0 0 1.6 1.3h8.4a1.6 1.6 0 0 0 1.6-1.2L21 8H6.1"/><circle cx="9.5" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/></svg><span class="burbuja cero" id="n-bolsa">0</span></a>
       </div>
     </div>
   </header>
@@ -410,8 +466,11 @@
             <span class="rotulo" style="display:block;margin-bottom:10px">Cantidad</span>
             <div class="cantidad"><button type="button" data-cant="-1" aria-label="Menos">−</button><span id="p-cant">1</span><button type="button" data-cant="1" aria-label="Más">+</button></div>
           </div>
-          <button id="btn-agregar" class="boton" type="button" hidden>Agregar a la bolsa</button>
-          <button id="btn-pedir" class="boton" type="button">Pedir por Instagram</button>
+          <div class="botones-compra">
+            <button id="btn-comprar" class="boton" type="button" hidden>Comprar ahora</button>
+            <button id="btn-agregar" class="boton claro" type="button" hidden>Agregar al carrito</button>
+            <button id="btn-pedir" class="boton" type="button">Pedir por Instagram</button>
+          </div>
           <p class="nota-pedido" id="nota-pedido">Te confirmamos disponibilidad, costo de envío y forma de pago por mensaje directo.</p>
           <dl id="p-datos" class="datos"></dl>
         </div>
@@ -422,7 +481,7 @@
     <div id="vista-bolsa" class="contenedor" hidden>
       <div class="pagina">
         <span class="rotulo">Tu selección</span>
-        <h1>Bolsa</h1>
+        <h1>Carrito</h1>
         <div id="bolsa-lineas"></div>
         <div id="bolsa-resumen" class="resumen"></div>
         <div style="text-align:right;margin-top:28px" id="bolsa-acciones"></div>
@@ -432,8 +491,8 @@
     <!-- Checkout -->
     <div id="vista-checkout" class="contenedor" hidden>
       <div class="pagina">
-        <a class="enlace-sup" href="#/bolsa">← Bolsa</a>
-        <h1 style="margin-top:20px">Finalizar pedido</h1>
+        <a class="enlace-sup" href="#/carrito">← Carrito</a>
+        <h1 style="margin-top:20px">Finalizar compra</h1>
         <form id="form-checkout" class="formulario" autocomplete="on" novalidate>
           <span class="rotulo">Tus datos</span>
           <div class="doble">
@@ -458,6 +517,14 @@
           <div><label class="etq" for="ck-nota">Nota (opcional)</label><input id="ck-nota" class="campo" maxlength="300" placeholder="Ej.: es un regalo, incluir tarjeta"></div>
           <div class="trampa" aria-hidden="true"><label for="ck-empresa">Empresa</label><input id="ck-empresa" tabindex="-1" autocomplete="off"></div>
 
+          <div id="ck-caja-pago" hidden>
+            <span class="rotulo" style="display:block;margin:6px 0 12px">¿Cómo quieres pagar?</span>
+            <div class="opciones-entrega" id="ck-pagos">
+              <label class="opcion-entrega activa"><input type="radio" name="pago" value="wompi" checked><strong>Pagar en línea</strong><span>Tarjeta, PSE, Nequi, Bancolombia, Daviplata</span></label>
+              <label class="opcion-entrega" id="ck-op-transf"><input type="radio" name="pago" value="transferencia"><strong>Transferencia o QR</strong><span>Pagas desde tu banco y envías el comprobante</span></label>
+            </div>
+          </div>
+
           <div id="ck-resumen" class="resumen" style="margin:8px 0 0;max-width:none"></div>
 
           <label class="check"><input type="checkbox" id="ck-datos"> <span>Autorizo a Lazos Memorables a tratar mis datos para procesar y entregar mi pedido, conforme a su <a href="/privacidad/" target="_blank" rel="noopener">Política de Tratamiento de Datos</a>.</span></label>
@@ -465,6 +532,7 @@
           <p id="ck-error" class="error-form" hidden></p>
           <button class="boton" type="submit" id="ck-enviar">Confirmar pedido</button>
           <p class="nota-pedido" id="ck-nota-pago">Al confirmar, apartamos tus piezas y te mostramos cómo pagar.</p>
+          <p class="nota-pedido" id="ck-recordar" style="margin-top:4px">Guardamos tus datos en este celular para que tu próxima compra sea más rápida.</p>
         </form>
       </div>
     </div>
@@ -474,6 +542,23 @@
       <div class="pagina" id="pedido-contenido"><p class="rotulo">Cargando tu pedido…</p></div>
     </div>
   </main>
+
+  <div id="buscador" class="buscador" hidden role="dialog" aria-modal="true" aria-label="Buscar productos">
+    <div class="buscador-caja"><div class="contenedor">
+      <div class="buscador-barra"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg>
+        <input id="q" type="search" placeholder="Busca aretes, collares, pulseras…" autocomplete="off" enterkeyhint="search" aria-label="Buscar">
+        <button type="button" id="cerrar-buscar">Cerrar</button></div>
+      <div id="buscador-res"></div>
+    </div></div>
+  </div>
+
+  <div id="hoja-carrito" class="hoja" hidden role="dialog" aria-label="Agregado al carrito">
+    <div class="hoja-fila" id="hoja-producto"></div>
+    <div class="hoja-botones">
+      <button class="boton claro" type="button" id="hoja-seguir">Seguir viendo</button>
+      <a class="boton" href="#/checkout" id="hoja-pagar">Ir a pagar</a>
+    </div>
+  </div>
 
   <footer>
     <div class="contenedor">
@@ -552,16 +637,74 @@
         var desde = p.variantes && p.variantes.length
           ? Math.min.apply(null, p.variantes.filter(function (v) { return v.disponible; }).map(function (v) { return v.precio; }).concat([p.precio]))
           : p.precio;
-        return '<a class="tarjeta" href="#/p/' + esc(p.slug) + '">' +
+        return '<div class="tarjeta-caja"><a class="tarjeta" href="#/p/' + esc(p.slug) + '">' +
           '<div class="marco">' +
             (f[0] ? '<img src="' + esc(f[0].mini) + '" alt="' + esc(p.nombre) + '" loading="lazy" width="600" height="750">' : '') +
             (f[1] ? '<img class="segunda" src="' + esc(f[1].mini) + '" alt="" loading="lazy" width="600" height="750">' : '') +
           '</div>' +
           '<p class="nombre">' + esc(p.nombre) + '</p>' +
-          '<span class="precio">' + (desde < p.precio ? 'Desde ' : '') + pesos(desde) + '</span></a>';
+          '<span class="precio">' + (desde < p.precio ? 'Desde ' : '') + pesos(desde) + '</span></a>' +
+          (tienda.checkout_activo ? '<div class="rapido-capa"><button class="rapido" type="button" data-rapido="' + esc(p.slug) + '" aria-label="Agregar ' + esc(p.nombre) + ' al carrito"><svg viewBox="0 0 24 24"><path d="M3 4h2.2l2.1 10.2a1.6 1.6 0 0 0 1.6 1.3h8.4a1.6 1.6 0 0 0 1.6-1.2L21 8H6.1"/><path d="M13 9.5v4M11 11.5h4"/></svg></button></div>' : '') + '</div>';
       }).join('');
       observar($('rejilla'));
     }
+
+    $('rejilla').addEventListener('click', function (ev) {
+      var b = ev.target.closest('[data-rapido]'); if (!b) return;
+      ev.preventDefault();
+      var p = catalogo.productos.filter(function (x) { return x.slug === b.dataset.rapido; })[0]; if (!p) return;
+      var disp = (p.variantes || []).filter(function (v) { return v.disponible; });
+      if (p.variantes && p.variantes.length && disp.length !== 1) { location.hash = '#/p/' + p.slug; return; }
+      agregarSku(disp.length ? disp[0].sku : p.sku, 1);
+      mostrarHoja(p, disp.length ? disp[0].nombre : '');
+    });
+
+    /* ---------- Búsqueda (v2.4) ---------- */
+    function sinTildes(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+    function abrirBuscador() { $('buscador').hidden = false; $('q').value = ''; pintarBusqueda(); setTimeout(function () { $('q').focus(); }, 30); document.body.style.overflow = 'hidden'; }
+    function cerrarBuscador() { if ($('buscador').hidden) return; $('buscador').hidden = true; document.body.style.overflow = ''; }
+    function filaRes(p, q) {
+      var f = (p.fotos || [])[0], n = esc(p.nombre);
+      if (q) { var i = sinTildes(p.nombre).indexOf(q); if (i >= 0) n = esc(p.nombre.slice(0, i)) + '<mark>' + esc(p.nombre.slice(i, i + q.length)) + '</mark>' + esc(p.nombre.slice(i + q.length)); }
+      return '<a href="#/p/' + esc(p.slug) + '">' + (f ? '<img src="' + esc(f.mini) + '" alt="" loading="lazy">' : '<span class="sin-img"></span>') +
+        '<span><span class="n">' + n + '</span><span class="c">' + esc(p.categoria) + '</span></span><span class="pr">' + pesos(p.precio) + '</span></a>';
+    }
+    function tarjetaSug(p) {
+      var f = (p.fotos || [])[0];
+      return '<a href="#/p/' + esc(p.slug) + '">' + (f ? '<img src="' + esc(f.mini) + '" alt="" loading="lazy">' : '<span class="sin-img"></span>') +
+        '<span class="n">' + esc(p.nombre) + '</span><span class="pr">' + pesos(p.precio) + '</span></a>';
+    }
+    function pintarBusqueda() {
+      var q = sinTildes($('q').value.trim()), todos = catalogo.productos, html = '';
+      var palabras = q.split(/\s+/).filter(Boolean);
+      var res = q ? todos.filter(function (p) {
+        var txt = sinTildes(p.nombre + ' ' + p.categoria + ' ' + (p.descripcion || '') + ' ' + (p.material || '') + ' ' + p.sku);
+        return palabras.every(function (w) { return txt.indexOf(w) >= 0; });
+      }) : [];
+      if (!todos.length) { $('buscador-res').innerHTML = '<p class="rotulo">La colección está en preparación</p>'; return; }
+      if (!q) {
+        html += catalogo.categorias.length ? '<span class="rotulo">Categorías</span><div class="chips-busqueda">' + catalogo.categorias.map(function (c) { return '<button type="button" data-qcat="' + esc(c.nombre) + '">' + esc(c.nombre) + '</button>'; }).join('') + '</div>' : '';
+      } else if (res.length) {
+        html += '<span class="rotulo">' + res.length + (res.length === 1 ? ' resultado' : ' resultados') + '</span><div class="res-lista">' + res.slice(0, 12).map(function (p) { return filaRes(p, palabras[0]); }).join('') + '</div>';
+      } else {
+        html += '<p style="margin:22px 0 0">No encontramos “' + esc($('q').value.trim()) + '”. Mira estas piezas:</p>';
+      }
+      var vistos = {}; res.forEach(function (p) { vistos[p.slug] = 1; });
+      var cat = res[0] && res[0].categoria;
+      var sug = todos.filter(function (p) { return !vistos[p.slug] && cat && p.categoria === cat; })
+        .concat(todos.filter(function (p) { return !vistos[p.slug] && (!cat || p.categoria !== cat); })).slice(0, 4);
+      if (sug.length) html += '<span class="rotulo">' + (q && res.length ? 'También te puede gustar' : 'Te puede gustar') + '</span><div class="sugerencias">' + sug.map(tarjetaSug).join('') + '</div>';
+      $('buscador-res').innerHTML = html;
+    }
+    $('btn-buscar').addEventListener('click', abrirBuscador);
+    $('cerrar-buscar').addEventListener('click', cerrarBuscador);
+    $('buscador').addEventListener('click', function (ev) {
+      if (ev.target === this) { cerrarBuscador(); return; }
+      var c = ev.target.closest('[data-qcat]'); if (c) { $('q').value = c.dataset.qcat; pintarBusqueda(); }
+      if (ev.target.closest('a[href^="#/p/"]')) cerrarBuscador();
+    });
+    $('q').addEventListener('input', pintarBusqueda);
+    document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') { cerrarBuscador(); $('hoja-carrito').hidden = true; } });
 
     $('filtros').addEventListener('click', function (ev) {
       var b = ev.target.closest('.filtro'); if (!b) return;
@@ -582,9 +725,9 @@
         history.replaceState(null, '', '/');
         avisar('Ese producto ya no está disponible.');
       }
-      if (h === '#/bolsa') { mostrarVista('vista-bolsa'); window.scrollTo(0, 0); pintarBolsa(); document.title = 'Bolsa · Lazos Memorables'; return; }
+      if (h === '#/carrito' || h === '#/bolsa') { mostrarVista('vista-bolsa'); window.scrollTo(0, 0); pintarBolsa(); document.title = 'Carrito · Lazos Memorables'; return; }
       if (h === '#/checkout') {
-        if (!tienda.checkout_activo || !leerBolsa().length) { location.hash = '#/bolsa'; return; }
+        if (!tienda.checkout_activo || !leerBolsa().length) { location.hash = '#/carrito'; return; }
         mostrarVista('vista-checkout'); window.scrollTo(0, 0); prepararCheckout(); document.title = 'Finalizar pedido · Lazos Memorables'; return;
       }
       var mp = h.match(/^#\/pedido\/(\d+)\/([a-f0-9]{32})$/);
@@ -594,6 +737,7 @@
     }
 
     window.addEventListener('hashchange', function () {
+      $('hoja-carrito').hidden = true; cerrarBuscador();
       var antes = $('vista-inicio').hidden;
       enrutar();
       if (antes && !$('vista-inicio').hidden && /^#(coleccion|historia)$/.test(location.hash)) {
@@ -614,10 +758,9 @@
       document.title = p.nombre + ' · Lazos Memorables';
       cantidadActual = 1; $('p-cant').textContent = '1';
       var activo = !!tienda.checkout_activo;
-      $('btn-agregar').hidden = !activo; $('caja-cantidad').hidden = !activo;
-      $('btn-pedir').className = activo ? 'boton claro' : 'boton';
-      $('btn-pedir').style.marginTop = activo ? '10px' : '';
-      $('nota-pedido').textContent = activo ? 'Compra segura: apartamos tus piezas mientras confirmas el pago.' : 'Te confirmamos disponibilidad, costo de envío y forma de pago por mensaje directo.';
+      $('btn-agregar').hidden = !activo; $('btn-comprar').hidden = !activo; $('caja-cantidad').hidden = !activo;
+      $('btn-pedir').hidden = activo;
+      $('nota-pedido').textContent = activo ? (tienda.pago_en_linea ? 'Paga en línea con tarjeta, PSE o Nequi, o por transferencia. Envíos desde Cartagena.' : 'Compra segura: apartamos tus piezas mientras confirmas el pago.') : 'Te confirmamos disponibilidad, costo de envío y forma de pago por mensaje directo.';
 
       $('p-categoria').textContent = p.categoria;
       $('p-nombre').textContent = p.nombre;
@@ -677,7 +820,10 @@
     function guardarBolsa(b) { try { localStorage.setItem(CLAVE_BOLSA, JSON.stringify(b)); } catch (e) { /* sin almacenamiento */ } contarBolsa(); }
     function contarBolsa() {
       var n = leerBolsa().reduce(function (t, l) { return t + l.cantidad; }, 0);
-      $('n-bolsa').textContent = n; $('enlace-bolsa').hidden = !tienda.checkout_activo;
+      var bur = $('n-bolsa'), antes = Number(bur.textContent) || 0;
+      bur.textContent = n; bur.className = 'burbuja' + (n ? '' : ' cero');
+      if (n > antes) { void bur.offsetWidth; bur.className = 'burbuja salta'; }
+      $('enlace-bolsa').hidden = !tienda.checkout_activo;
     }
     /** Busca cada línea en el catálogo vigente. Quita lo que ya no está disponible. */
     function resolverLinea(l) {
@@ -691,7 +837,7 @@
     }
     function depurarBolsa() {
       var b = leerBolsa(), limpia = b.filter(function (l) { return resolverLinea(l); });
-      if (limpia.length !== b.length) { guardarBolsa(limpia); if (b.length) avisar('Actualizamos tu bolsa: una pieza ya no está disponible.'); }
+      if (limpia.length !== b.length) { guardarBolsa(limpia); if (b.length) avisar('Actualizamos tu carrito: una pieza ya no está disponible.'); }
       else contarBolsa();
     }
     $('caja-cantidad').addEventListener('click', function (ev) {
@@ -699,14 +845,32 @@
       cantidadActual = Math.max(1, Math.min(10, cantidadActual + Number(b.dataset.cant)));
       $('p-cant').textContent = cantidadActual;
     });
-    $('btn-agregar').addEventListener('click', function () {
-      if (actual.variantes && actual.variantes.length && !opcionActual) { avisar('Elige una opción.'); return; }
-      var sku = opcionActual ? opcionActual.sku : actual.sku;
+    function agregarSku(sku, cantidad) {
       var b = leerBolsa(), l = b.filter(function (x) { return x.sku === sku; })[0];
-      if (l) l.cantidad = Math.min(10, l.cantidad + cantidadActual); else b.push({ sku: sku, cantidad: cantidadActual });
+      if (l) l.cantidad = Math.min(10, l.cantidad + cantidad); else b.push({ sku: sku, cantidad: cantidad });
       guardarBolsa(b);
-      avisar('Agregado a tu bolsa.');
-      setTimeout(function () { location.hash = '#/bolsa'; }, 500);
+    }
+    function mostrarHoja(p, nombreOpcion) {
+      var f = (p.fotos || [])[0], t = totalesBolsa(), n = leerBolsa().reduce(function (s, l) { return s + l.cantidad; }, 0);
+      $('hoja-producto').innerHTML = (f ? '<img src="' + esc(f.mini) + '" alt="">' : '<span class="sin-img"></span>') +
+        '<div><strong>Agregado al carrito</strong><span>' + esc(p.nombre) + (nombreOpcion ? ' · ' + esc(nombreOpcion) : '') + ' · ' + n + (n === 1 ? ' pieza' : ' piezas') + ' · ' + pesos(t.subtotal) + '</span></div>';
+      $('hoja-carrito').hidden = false;
+    }
+    $('hoja-seguir').addEventListener('click', function () { $('hoja-carrito').hidden = true; });
+    $('hoja-pagar').addEventListener('click', function () { $('hoja-carrito').hidden = true; });
+    function skuElegido() {
+      if (actual.variantes && actual.variantes.length && !opcionActual) { avisar('Elige una opción.'); return null; }
+      return opcionActual ? opcionActual.sku : actual.sku;
+    }
+    $('btn-agregar').addEventListener('click', function () {
+      var sku = skuElegido(); if (!sku) return;
+      agregarSku(sku, cantidadActual);
+      mostrarHoja(actual, opcionActual && opcionActual.nombre);
+    });
+    $('btn-comprar').addEventListener('click', function () {
+      var sku = skuElegido(); if (!sku) return;
+      agregarSku(sku, cantidadActual);
+      location.hash = '#/checkout';
     });
     function totalesBolsa() {
       var sub = 0;
@@ -716,7 +880,7 @@
     function pintarBolsa() {
       var t = totalesBolsa();
       if (!t.lineas.length) {
-        $('bolsa-lineas').innerHTML = '<p style="color:var(--texto-suave)">Tu bolsa está vacía.</p>';
+        $('bolsa-lineas').innerHTML = '<p style="color:var(--texto-suave)">Tu carrito está vacío.</p>';
         $('bolsa-resumen').innerHTML = ''; $('bolsa-acciones').innerHTML = '<a class="boton claro" href="#coleccion">Ver la colección</a>';
         return;
       }
@@ -729,7 +893,7 @@
       }).join('');
       $('bolsa-resumen').innerHTML = '<div class="total"><span>Subtotal</span><span>' + pesos(t.subtotal) + '</span></div>' +
         '<div><span style="color:var(--texto-suave);font-size:12px">El envío se calcula en el siguiente paso.</span></div>';
-      $('bolsa-acciones').innerHTML = '<a class="boton" href="#/checkout">Continuar</a>';
+      $('bolsa-acciones').innerHTML = '<a class="boton" href="#/checkout" style="border-radius:14px">Ir a pagar · ' + pesos(t.subtotal) + '</a>';
     }
     $('bolsa-lineas').addEventListener('click', function (ev) {
       var b = ev.target.closest('[data-b]'); if (!b) return;
@@ -749,8 +913,18 @@
       if (!claveCheckout) claveCheckout = nuevaClave();
       $('ck-tarifa-domicilio').textContent = textoTarifa(tienda.envio && tienda.envio.domicilio);
       $('ck-tarifa-nacional').textContent = textoTarifa(tienda.envio && tienda.envio.nacional);
-      $('ck-error').hidden = true; actualizarEntrega();
+      $('ck-error').hidden = true;
+      $('ck-caja-pago').hidden = !tienda.pago_en_linea;
+      try {
+        var g = JSON.parse(localStorage.getItem('lazos_datos') || 'null');
+        if (g) ['nombre', 'tel', 'email', 'dir', 'barrio', 'ciudad', 'depto'].forEach(function (k) { if (g[k] && !$('ck-' + k).value) $('ck-' + k).value = g[k]; });
+        if (g && g.entrega) { var re = document.querySelector('input[name="entrega"][value="' + g.entrega + '"]'); if (re) re.checked = true; }
+        if (g && g.acepta) $('ck-datos').checked = true;
+      } catch (x) { /* sin almacenamiento */ }
+      if (tienda.pago_en_linea) cargarWidget('https://checkout.wompi.co/widget.js').catch(function () { /* se reintenta al pagar */ });
+      actualizarEntrega();
     }
+    function pagoElegido() { var r = document.querySelector('input[name="pago"]:checked'); return tienda.pago_en_linea && r ? r.value : 'transferencia'; }
     function actualizarEntrega() {
       var e = entregaElegida();
       document.querySelectorAll('.opcion-entrega').forEach(function (o) { o.classList.toggle('activa', o.querySelector('input').checked); });
@@ -760,8 +934,13 @@
         '<div><span>Envío</span><span>' + (envio === null || envio === undefined ? 'Por confirmar' : pesos(envio)) + '</span></div>' +
         '<div class="total"><span>Total</span><span>' + pesos(t.subtotal + (envio || 0)) + '</span></div>' +
         (envio === null || envio === undefined ? '<div><span style="color:var(--texto-suave);font-size:12px">Te escribiremos con el valor del envío antes de que pagues.</span></div>' : '');
+      var porCotizar = envio === null || envio === undefined, total = t.subtotal + (envio || 0), btn = $('ck-enviar');
+      if (!btn.disabled) btn.innerHTML = porCotizar ? 'Apartar mi pedido' : pagoElegido() === 'wompi' ? 'Pagar <span class="pago-total">' + pesos(total) + '</span>' : 'Confirmar pedido';
+      $('ck-nota-pago').textContent = porCotizar ? 'Apartamos tus piezas y te escribimos con el valor del envío para que puedas pagar.'
+        : pagoElegido() === 'wompi' ? 'Se abre el pago seguro de Wompi aquí mismo. Tu pedido se confirma al instante.' : 'Al confirmar, apartamos tus piezas y te mostramos los datos para transferir.';
     }
     $('ck-entregas').addEventListener('change', actualizarEntrega);
+    $('ck-pagos').addEventListener('change', actualizarEntrega);
     $('form-checkout').addEventListener('submit', function (ev) {
       ev.preventDefault();
       var err = $('ck-error'); err.hidden = true;
@@ -773,25 +952,30 @@
       if (e === 'domicilio' && $('ck-barrio').value.trim().length < 2) return fallo('Escribe tu barrio.');
       if (e === 'nacional' && $('ck-ciudad').value.trim().length < 2) return fallo('Escribe la ciudad o municipio.');
       if (!$('ck-datos').checked) return fallo('Para continuar, autoriza el tratamiento de tus datos.');
-      if (!t.lineas.length) { location.hash = '#/bolsa'; return; }
-      var btn = $('ck-enviar'); btn.disabled = true; btn.textContent = 'Confirmando…';
+      if (!t.lineas.length) { location.hash = '#/carrito'; return; }
+      var pago = pagoElegido();
+      var btn = $('ck-enviar'); btn.disabled = true; btn.innerHTML = '<span class="giro"></span>Apartando tus piezas…';
+      try { localStorage.setItem('lazos_datos', JSON.stringify({ nombre: $('ck-nombre').value, tel: $('ck-tel').value, email: $('ck-email').value, dir: $('ck-dir').value,
+        barrio: $('ck-barrio').value, ciudad: $('ck-ciudad').value, depto: $('ck-depto').value, entrega: e, acepta: true })); } catch (x) { /* sin almacenamiento */ }
       fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'crearPedidoWeb', data: {
         nombre: $('ck-nombre').value, telefono: $('ck-tel').value, email: $('ck-email').value, tipo_entrega: e,
         direccion: $('ck-dir').value, barrio: $('ck-barrio').value, ciudad: $('ck-ciudad').value, departamento: $('ck-depto').value,
         nota: $('ck-nota').value, empresa: $('ck-empresa').value, acepta_datos: $('ck-datos').checked, acepta_novedades: $('ck-novedades').checked,
-        idempotency_key: claveCheckout, lineas: t.lineas.map(function (x) { return { sku: x.l.sku, cantidad: x.l.cantidad }; })
+        idempotency_key: claveCheckout, pago: pago, lineas: t.lineas.map(function (x) { return { sku: x.l.sku, cantidad: x.l.cantidad }; })
       } }) }).then(function (r) { return r.json(); }).catch(function () { return { ok: false, error: { message: 'No pudimos conectar. Revisa tu internet e intenta de nuevo.' } }; })
         .then(function (r) {
-          btn.disabled = false; btn.textContent = 'Confirmar pedido';
+          btn.disabled = false; actualizarEntrega();
           if (!r.ok) { fallo(r.error && r.error.message || 'No pudimos crear tu pedido. Intenta de nuevo.'); return; }
           guardarBolsa([]); claveCheckout = null;
-          try { localStorage.setItem('lazos_ultimo_pedido', JSON.stringify(r.data)); } catch (x) { /* sin almacenamiento */ }
+          try { localStorage.setItem('lazos_ultimo_pedido', JSON.stringify({ numero: r.data.numero, token: r.data.token })); } catch (x) { /* sin almacenamiento */ }
+          if (r.data.pedido) pedidoPrecargado = r.data.pedido;
           location.hash = '#/pedido/' + r.data.numero + '/' + r.data.token;
+          if (r.data.wompi) { pedidoRef = { numero: String(r.data.numero), token: r.data.token }; abrirWidget(r.data.wompi); }
         });
     });
 
     /* ---------- Seguimiento del pedido ---------- */
-    var pedidoRef = null, cuentaAtras = null;
+    var pedidoRef = null, cuentaAtras = null, pedidoPrecargado = null;
     function api(action, data) {
       return fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: action, data: data }) })
         .then(function (r) { return r.json(); }).catch(function () { return { ok: false, error: { message: 'No pudimos conectar. Intenta de nuevo.' } }; });
@@ -800,6 +984,7 @@
       pedidoRef = { numero: numero, token: token };
       var tx = null; try { tx = sessionStorage.getItem('lazos_tx_' + numero); sessionStorage.removeItem('lazos_tx_' + numero); } catch (x) { /* sin almacenamiento */ }
       if (tx) { sondeos = 0; confirmarWompi(tx); return; }
+      if (pedidoPrecargado && String(pedidoPrecargado.numero).replace('#', '') === String(numero)) { var pp = pedidoPrecargado; pedidoPrecargado = null; pintarPedidoWeb(pp); return; }
       api('consultarPedidoWeb', pedidoRef).then(function (r) {
         if (!r.ok) { $('pedido-contenido').innerHTML = '<span class="rotulo">Pedido</span><h1>No encontramos ese pedido</h1><p>Revisa el enlace o escríbenos por Instagram.</p>'; return; }
         pintarPedidoWeb(r.data);
@@ -900,19 +1085,21 @@
       var listo = function () { bw.disabled = false; det.textContent = antes; };
       api('iniciarPagoWompi', pedidoRef).then(function (r) {
         if (!r.ok) { listo(); avisar(r.error.message); if (r.error.code === 'ESTADO_INVALIDO' || r.error.code === 'YA_PAGADO') cargarPedido(pedidoRef.numero, pedidoRef.token); return; }
-        var c = r.data;
-        return cargarWidget(c.widget).then(function () {
-          listo();
-          var conf = { currency: c.currency, amountInCents: c.amountInCents, reference: c.reference, publicKey: c.publicKey,
-                       signature: { integrity: c.signature.integrity }, redirectUrl: c.redirectUrl };
-          if (c.customerData && (c.customerData.email || c.customerData.phoneNumber)) conf.customerData = c.customerData;
-          new window.WidgetCheckout(conf).open(function (res) {
-            var tx = res && res.transaction;
-            if (tx && tx.id) { sondeos = 0; confirmarWompi(tx.id); } else cargarPedido(pedidoRef.numero, pedidoRef.token);
-          });
-        }, function () { listo(); avisar('No pudimos abrir el pago en línea. Revisa tu conexión o paga por transferencia.'); });
+        abrirWidget(r.data).then(listo, listo);
       });
     });
+    /** Abre el pago seguro de Wompi con la configuración firmada por el servidor. */
+    function abrirWidget(c) {
+      return cargarWidget(c.widget).then(function () {
+        var conf = { currency: c.currency, amountInCents: c.amountInCents, reference: c.reference, publicKey: c.publicKey,
+                     signature: { integrity: c.signature.integrity }, redirectUrl: c.redirectUrl };
+        if (c.customerData && (c.customerData.email || c.customerData.phoneNumber)) conf.customerData = c.customerData;
+        new window.WidgetCheckout(conf).open(function (res) {
+          var tx = res && res.transaction;
+          if (tx && tx.id) { sondeos = 0; confirmarWompi(tx.id); } else cargarPedido(pedidoRef.numero, pedidoRef.token);
+        });
+      }, function () { avisar('No pudimos abrir el pago en línea. Revisa tu conexión o elige transferencia.'); });
+    }
 
     document.addEventListener('submit', function (ev) {
       if (ev.target.id !== 'form-reporte') return;
