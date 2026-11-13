@@ -2,7 +2,7 @@
 <html lang="es-CO">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS MEMORABLES — index.html · Vitrina v2.2.0 (logo, miniaturas y vista previa al compartir) -->
+  <!-- LAZOS MEMORABLES — index.html · Vitrina v2.3.0 (pago en línea con Wompi) -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Lazos Memorables · Accesorios femeninos · Cartagena</title>
   <meta name="description" content="Aretes, collares y pulseras que reflejan tu esencia y acompañan momentos significativos. Desde Cartagena para toda Colombia.">
@@ -267,6 +267,34 @@
     .error-form { border-left: 3px solid var(--rosa-historico); border-radius: 10px; }
     .resumen .total { border-top-color: var(--rosa-historico); }
     footer { background: var(--rosa-claro); border-top: 1px solid var(--linea); }
+
+    /* ---------- Formas de pago (v2.3) ---------- */
+    .pagos h2.titulo-pago { font-family: var(--serif); font-weight: 400; font-size: 30px; color: var(--rosa-historico); margin: 34px 0 6px; }
+    .pagos .sub { color: var(--texto-suave); margin: 0 0 18px; font-size: 14px; }
+    .forma-pago {
+      width: 100%; display: grid; grid-template-columns: 46px 1fr auto; gap: 16px; align-items: center; text-align: left;
+      background: var(--marfil-suave); border: 1px solid rgba(193, 100, 120, .3); border-radius: 18px; padding: 18px 20px;
+      font-family: var(--sans); color: var(--cacao); cursor: pointer; margin: 0 0 12px; transition: border-color .2s ease, box-shadow .2s ease, transform .2s var(--suave);
+    }
+    .forma-pago:hover { border-color: var(--rosa-historico); transform: translateY(-1px); }
+    .forma-pago[aria-expanded="true"] { border-color: var(--rosa-historico); box-shadow: inset 0 0 0 1px var(--rosa-historico); }
+    .forma-pago:disabled { opacity: .6; cursor: progress; transform: none; }
+    .forma-pago .ico { width: 46px; height: 46px; border-radius: 50%; background: var(--cacao); color: var(--marfil); display: grid; place-items: center; }
+    .forma-pago .ico svg { width: 22px; height: 22px; }
+    .forma-pago strong { display: block; font-weight: 600; font-size: 15px; }
+    .forma-pago .det { display: block; font-size: 12px; color: var(--texto-suave); margin-top: 2px; }
+    .forma-pago .medios { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .forma-pago .medios span { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; padding: 5px 9px; border-radius: 999px; background: var(--blanco); border: 1px solid var(--linea); }
+    .forma-pago .flecha { font-size: 20px; color: var(--rosa-historico); }
+    .sello-seguro { display: flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: .06em; color: var(--texto-suave); margin: 2px 0 22px 4px; }
+    .sello-seguro svg { width: 14px; height: 14px; flex: none; }
+    .aviso-pago { border-radius: 14px; padding: 14px 16px; margin: 0 0 18px; font-size: 14px; background: var(--marfil-suave); border-left: 3px solid var(--rosa-historico); }
+    .aviso-pago.ok { border-left-color: var(--oro); }
+    .aviso-pago strong { display: block; margin-bottom: 2px; }
+    .panel-transferencia { padding: 4px 4px 8px; }
+    .procesando { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(53,39,44,.25); border-top-color: var(--cacao); border-radius: 50%; animation: gira .8s linear infinite; vertical-align: -2px; margin-right: 8px; }
+    @keyframes gira { to { transform: rotate(360deg); } }
+    @media (max-width: 720px) { .forma-pago { grid-template-columns: 40px 1fr auto; padding: 16px; gap: 12px; } .forma-pago .ico { width: 40px; height: 40px; } }
 
     /* ---------- Aviso ---------- */
     .toast {
@@ -770,6 +798,8 @@
     }
     function cargarPedido(numero, token) {
       pedidoRef = { numero: numero, token: token };
+      var tx = null; try { tx = sessionStorage.getItem('lazos_tx_' + numero); sessionStorage.removeItem('lazos_tx_' + numero); } catch (x) { /* sin almacenamiento */ }
+      if (tx) { sondeos = 0; confirmarWompi(tx); return; }
       api('consultarPedidoWeb', pedidoRef).then(function (r) {
         if (!r.ok) { $('pedido-contenido').innerHTML = '<span class="rotulo">Pedido</span><h1>No encontramos ese pedido</h1><p>Revisa el enlace o escríbenos por Instagram.</p>'; return; }
         pintarPedidoWeb(r.data);
@@ -782,19 +812,38 @@
       if (d.estado === 'pendiente_pago' && d.envio_por_cotizar) {
         html += '<div class="caja"><h2>Estamos confirmando tu envío</h2><p>Apartamos tus piezas. Te escribiremos por Instagram o al celular que nos diste con el valor del envío a ' + esc(d.ciudad) + '. Después podrás pagar desde esta misma página.</p><p>Guarda este enlace para volver a tu pedido.</p></div>';
       } else if (d.estado === 'pendiente_pago') {
-        html += '<div class="caja"><h2>Cómo pagar</h2>' +
-          (d.pago_instrucciones ? '<pre>' + esc(d.pago_instrucciones) + '</pre>' : '<p>Te enviaremos los datos de pago por mensaje directo en Instagram.</p>') +
-          '<p>Valor a pagar: <strong style="color:var(--cacao)">' + pesos(d.total) + '</strong></p>' +
-          (d.expira_en ? '<p id="cuenta-atras"></p>' : '') + '</div>' +
-          '<form id="form-reporte" class="formulario"><span class="rotulo">¿Ya pagaste?</span>' +
+        var formReporte = '<form id="form-reporte" class="formulario"><span class="rotulo">¿Ya pagaste?</span>' +
           '<div class="doble"><div><label class="etq" for="rp-medio">Medio de pago</label><select id="rp-medio" class="selector">' +
           Object.keys(d.medios).filter(function (k) { return k !== 'efectivo'; }).map(function (k) { return '<option value="' + k + '">' + esc(d.medios[k]) + '</option>'; }).join('') + '</select></div>' +
           '<div><label class="etq" for="rp-ref">Número de comprobante (opcional)</label><input id="rp-ref" class="campo" maxlength="60"></div></div>' +
           '<div><label class="etq" for="rp-foto">Foto del comprobante (opcional)</label><input id="rp-foto" type="file" accept="image/*" style="font-size:13px;padding:8px 0"></div>' +
           '<p id="rp-error" class="error-form" hidden></p><button class="boton" type="submit" id="rp-enviar">Ya pagué</button>' +
           '<p class="nota-pedido">Verificaremos el pago en nuestra cuenta y te confirmaremos por mensaje.</p></form>';
+        var datosTransferencia = (d.pago_instrucciones ? '<pre>' + esc(d.pago_instrucciones) + '</pre>' : '<p>Te enviaremos los datos de pago por mensaje directo en Instagram.</p>') +
+          '<p>Valor a pagar: <strong style="color:var(--cacao)">' + pesos(d.total) + '</strong></p>';
+        if (d.wompi) {
+          var u = d.pago_en_linea;
+          html += '<div class="pagos"><h2 class="titulo-pago">¿Cómo quieres pagar?</h2><p class="sub">Total ' + pesos(d.total) + (d.expira_en ? ' · <span id="cuenta-atras"></span>' : '') + '</p>' +
+            (u && u.estado === 'PENDING' ? '<div class="aviso-pago ok"><strong><span class="procesando"></span>Tu pago está en proceso</strong>Estamos esperando la confirmación de ' + esc(u.metodo || 'tu banco') + '. Esta página se actualiza sola.</div>' : '') +
+            (u && ['DECLINED', 'ERROR', 'VOIDED'].indexOf(u.estado) >= 0 ? '<div class="aviso-pago"><strong>Tu pago no fue aprobado</strong>' + (u.metodo ? 'El pago con ' + esc(u.metodo) + ' no fue autorizado. ' : '') + 'No se hizo ningún cobro. Puedes intentarlo de nuevo o elegir otro medio.</div>' : '') +
+            '<button class="forma-pago" type="button" id="btn-wompi">' +
+              '<span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3 10h18M7 15h4"/></svg></span>' +
+              '<span><strong>Pagar en línea</strong><span class="det">Tarjeta débito o crédito, PSE, Nequi y más</span>' +
+              '<span class="medios"><span>Tarjeta</span><span>PSE</span><span>Nequi</span><span>Bancolombia</span><span>Daviplata</span></span></span>' +
+              '<span class="flecha">›</span></button>' +
+            '<p class="sello-seguro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>Pago seguro procesado por Wompi' + (d.wompi_ambiente === 'pruebas' ? ' · modo de pruebas' : '') + '. Tu pedido se confirma al instante.</p>' +
+            '<button class="forma-pago" type="button" id="btn-transferencia" aria-expanded="false">' +
+              '<span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 9h13l-3-3M20 15H7l3 3"/></svg></span>' +
+              '<span><strong>Transferencia o QR</strong><span class="det">Pagas desde tu banco y nos envías el comprobante</span></span>' +
+              '<span class="flecha">›</span></button>' +
+            '<div id="panel-transferencia" class="panel-transferencia" hidden><div class="caja" style="margin-top:6px">' + datosTransferencia + '</div>' + formReporte + '</div></div>';
+        } else {
+          html += '<div class="caja"><h2>Cómo pagar</h2>' + datosTransferencia + (d.expira_en ? '<p id="cuenta-atras"></p>' : '') + '</div>' + formReporte;
+        }
       } else if (d.estado === 'pago_reportado') {
         html += '<div class="caja"><h2>Recibimos tu reporte de pago</h2><p>Lo estamos verificando en nuestra cuenta. Te confirmaremos por mensaje apenas esté listo.</p></div>';
+      } else if (d.estado === 'confirmado' && d.pago_en_linea && d.pago_en_linea.estado === 'APPROVED') {
+        html += '<div class="caja"><h2>Recibimos tu pago</h2><p>Tu pago con ' + esc(d.pago_en_linea.metodo || 'Wompi') + ' fue aprobado. Ya estamos preparando tu pedido con todo el cuidado que merece.</p><p>Te escribiremos cuando vaya en camino. Guarda este enlace para ver su estado.</p></div>';
       } else if (d.estado === 'despachado' && d.guia) {
         html += '<div class="caja"><h2>Tu pedido va en camino</h2><p>' + esc(d.guia) + '</p></div>';
       } else if (d.estado === 'expirado') {
@@ -814,7 +863,57 @@
         };
         tic(); cuentaAtras = setInterval(tic, 1000);
       }
+      // Pago en proceso (PSE, Nequi): se vuelve a consultar sola cada 8 s durante 3 min.
+      clearTimeout(sondeo);
+      if (d.estado === 'pendiente_pago' && d.pago_en_linea && d.pago_en_linea.estado === 'PENDING' && d.pago_en_linea.transaccion && sondeos < 22) {
+        sondeo = setTimeout(function () { sondeos++; confirmarWompi(d.pago_en_linea.transaccion, true); }, 8000);
+      }
     }
+
+    /* ---------- Pago en línea con Wompi (v2.3) ---------- */
+    var sondeo = null, sondeos = 0, widgetCargado = null;
+    function cargarWidget(src) {
+      if (window.WidgetCheckout) return Promise.resolve();
+      if (!widgetCargado) widgetCargado = new Promise(function (ok, falla) {
+        var s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = function () { widgetCargado = null; falla(); };
+        document.head.appendChild(s);
+      });
+      return widgetCargado;
+    }
+    function confirmarWompi(id, silencioso) {
+      if (!silencioso) $('pedido-contenido').innerHTML = '<span class="rotulo">Pedido ' + esc(pedidoRef.numero) + '</span><h1>Confirmando tu pago…</h1><p class="sub"><span class="procesando"></span>Estamos consultando con Wompi. No cierres esta página.</p>';
+      return api('confirmarPagoWompi', { numero: pedidoRef.numero, token: pedidoRef.token, id: id }).then(function (r) {
+        if (r.ok) { pintarPedidoWeb(r.data); if (!silencioso) window.scrollTo(0, 0); return; }
+        if (!silencioso) avisar(r.error && r.error.message || 'No pudimos confirmar el pago. Revisa tu pedido en unos minutos.');
+        cargarPedido(pedidoRef.numero, pedidoRef.token);
+      });
+    }
+    document.addEventListener('click', function (ev) {
+      var bt = ev.target.closest('#btn-transferencia');
+      if (bt) {
+        var abierto = bt.getAttribute('aria-expanded') === 'true';
+        bt.setAttribute('aria-expanded', String(!abierto)); $('panel-transferencia').hidden = abierto;
+        return;
+      }
+      var bw = ev.target.closest('#btn-wompi'); if (!bw) return;
+      bw.disabled = true; var det = bw.querySelector('.det'), antes = det.textContent; det.innerHTML = '<span class="procesando"></span>Abriendo el pago seguro…';
+      var listo = function () { bw.disabled = false; det.textContent = antes; };
+      api('iniciarPagoWompi', pedidoRef).then(function (r) {
+        if (!r.ok) { listo(); avisar(r.error.message); if (r.error.code === 'ESTADO_INVALIDO' || r.error.code === 'YA_PAGADO') cargarPedido(pedidoRef.numero, pedidoRef.token); return; }
+        var c = r.data;
+        return cargarWidget(c.widget).then(function () {
+          listo();
+          var conf = { currency: c.currency, amountInCents: c.amountInCents, reference: c.reference, publicKey: c.publicKey,
+                       signature: { integrity: c.signature.integrity }, redirectUrl: c.redirectUrl };
+          if (c.customerData && (c.customerData.email || c.customerData.phoneNumber)) conf.customerData = c.customerData;
+          new window.WidgetCheckout(conf).open(function (res) {
+            var tx = res && res.transaction;
+            if (tx && tx.id) { sondeos = 0; confirmarWompi(tx.id); } else cargarPedido(pedidoRef.numero, pedidoRef.token);
+          });
+        }, function () { listo(); avisar('No pudimos abrir el pago en línea. Revisa tu conexión o paga por transferencia.'); });
+      });
+    });
+
     document.addEventListener('submit', function (ev) {
       if (ev.target.id !== 'form-reporte') return;
       ev.preventDefault();
@@ -861,6 +960,15 @@
     document.querySelectorAll('[data-ir-inicio]').forEach(function (a) {
       a.addEventListener('click', function () { if ($('vista-inicio').hidden) mostrarVista('vista-inicio'); });
     });
+
+    // Regreso desde Wompi (PSE, Bancolombia…): /?pedido=1001&t=TOKEN&id=TRANSACCION
+    (function () {
+      var q = new URLSearchParams(location.search), n = q.get('pedido'), tk = q.get('t'), id = q.get('id');
+      if (n && /^\d+$/.test(n) && tk && /^[a-f0-9]{32}$/.test(tk)) {
+        if (id && /^[A-Za-z0-9-]{3,80}$/.test(id)) { try { sessionStorage.setItem('lazos_tx_' + n, id); } catch (x) { /* sin almacenamiento */ } }
+        history.replaceState(null, '', '/#/pedido/' + n + '/' + tk);
+      }
+    })();
 
     $('anio').textContent = new Date().getFullYear();
     observar(document);

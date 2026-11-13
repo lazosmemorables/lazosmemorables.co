@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.18.1 · Panel administrativo -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.19.0 · Panel administrativo (pagos en línea con Wompi) -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -426,6 +426,26 @@
     .ajuste-valor .acciones-edicion { display: flex; gap: 14px; justify-content: flex-end; margin-top: 10px; }
     .nota { font-size: 11px; letter-spacing: .04em; color: var(--texto-suave); margin-top: 10px; display: inline-block; }
     .bloque-respaldo { margin-top: 56px; }
+    /* Wompi (v0.19) */
+    .wompi { margin-top: 48px; background: var(--marfil-suave, #FBF8F3); border: 1px solid rgba(184,155,123,.35); border-radius: 22px; padding: 26px 24px; }
+    .wompi-cab { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+    .wompi-cab h3 { font-family: var(--serif); font-weight: 400; font-size: 28px; margin: 4px 0 2px; }
+    .wompi-estado { font-size: 10px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; padding: 7px 12px; border-radius: 999px; background: #fff; border: 1px solid rgba(53,39,44,.15); }
+    .wompi-estado.on { background: var(--cacao); color: #fff; border-color: var(--cacao); }
+    .wompi-llaves { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 22px 0; }
+    .wompi-amb { background: #fff; border-radius: 16px; padding: 16px 18px; border: 1px solid rgba(53,39,44,.08); }
+    .wompi-amb.actual { box-shadow: inset 0 0 0 1px var(--oro); }
+    .wompi-amb b { display: block; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; margin-bottom: 10px; }
+    .wompi-amb span { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; }
+    .wompi-amb i { font-style: normal; font-weight: 600; }
+    .wompi-amb i.si { color: #7a6046; } .wompi-amb i.no { color: rgba(53,39,44,.4); }
+    .wompi-pegar { display: flex; gap: 10px; align-items: stretch; margin: 6px 0 4px; }
+    .wompi-pegar .campo { flex: 1; font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
+    .wompi-url { display: flex; gap: 10px; align-items: center; background: #fff; border-radius: 12px; padding: 10px 12px; margin: 8px 0 4px; border: 1px dashed rgba(184,155,123,.6); }
+    .wompi-url code { flex: 1; font-size: 11px; word-break: break-all; color: var(--cacao); }
+    .wompi-ultimos li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(53,39,44,.08); font-size: 13px; }
+    .wompi-ultimos { list-style: none; margin: 8px 0 0; padding: 0; }
+    @media (max-width: 640px) { .wompi-llaves { grid-template-columns: 1fr; } .wompi-pegar { flex-direction: column; } }
     .bloque-respaldo dl { margin-bottom: 24px; }
 
     /* ---------- Productos ---------- */
@@ -1611,6 +1631,30 @@
         <p class="titulo-seccion">Valores del sistema</p>
         <div id="lista-config" class="lista" aria-live="polite"></div>
 
+        <div class="wompi" id="wompi">
+          <div class="wompi-cab">
+            <div><span class="titulo-seccion" style="margin:0">Pagos en línea</span><h3>Wompi</h3>
+              <p class="pista" style="margin:0">Tarjeta, PSE, Nequi, Bancolombia y más. El pedido se confirma solo cuando Wompi aprueba el pago.</p></div>
+            <span class="wompi-estado" id="w-estado">—</span>
+          </div>
+          <div id="lista-wompi" class="lista" style="margin-top:18px"></div>
+          <div class="wompi-llaves" id="w-llaves"></div>
+          <p class="titulo-seccion">Guardar una llave</p>
+          <p class="pista">Copia cada llave desde Wompi → Desarrolladores y pégala aquí, una por una. El sistema reconoce sola cuál es. Los secretos quedan guardados solo en Apps Script (no en GitHub) y nunca se vuelven a mostrar.</p>
+          <form class="wompi-pegar" id="w-form" autocomplete="off">
+            <input class="campo" id="w-llave" placeholder="pub_test_…  ·  test_integrity_…  ·  test_events_…" autocapitalize="off" spellcheck="false" aria-label="Llave de Wompi">
+            <button class="boton" type="submit">Guardar</button>
+          </form>
+          <p class="titulo-seccion" style="margin-top:22px">URL de eventos</p>
+          <p class="pista">Pégala en Wompi → Desarrolladores → URL de eventos (en pruebas y en producción). Así Wompi le avisa al sistema cada pago.</p>
+          <div class="wompi-url"><code id="w-url"></code><button class="enlace" type="button" id="w-copiar">Copiar</button></div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:18px">
+            <button class="boton" type="button" id="w-probar">Probar conexión</button>
+          </div>
+          <p id="w-prueba" class="pista" hidden></p>
+          <div id="w-ultimos-caja" hidden><p class="titulo-seccion" style="margin-top:24px">Últimos pagos en línea</p><ul class="wompi-ultimos" id="w-ultimos"></ul></div>
+        </div>
+
         <div class="bloque-respaldo">
           <p class="titulo-seccion">Catálogo web</p>
           <dl>
@@ -1844,7 +1888,7 @@
       if (vista === 'nueva-compra') prepararCompra();
       if (vista === 'nuevo') prepararNuevo();
       if (vista === 'categorias') cargarCategorias();
-      if (vista === 'configuracion') { cargarConfiguracion(); cargarRespaldo(); cargarCatalogo(); }
+      if (vista === 'configuracion') { cargarConfiguracion(); cargarRespaldo(); cargarCatalogo(); cargarWompi(); }
     }
     document.querySelector('.nav').addEventListener('click', function (ev) {
       var b = ev.target.closest('button[data-vista]');
@@ -2970,6 +3014,12 @@
           (c.verificado_por ? ' · Verificó ' + escapar(c.verificado_por) : ' · Registró ' + escapar(c.creado_por)) + (c.nota ? ' · ' + escapar(c.nota) : '') + '</span></div>' +
           (c.comprobante ? '<a class="enlace" href="' + escapar(c.comprobante) + '" target="_blank" rel="noopener">Ver comprobante</a>' : '') + '</li>';
       }).join('') : '<li class="vacio">Aún no hay pagos registrados.</li>';
+      var pl = p.pago_en_linea;
+      if (pl && pl.estado !== 'APPROVED' && ['pendiente_pago', 'pago_reportado', 'expirado'].indexOf(p.estado) >= 0) {
+        $('pe-cobros').innerHTML += '<li class="item"><div class="item-principal"><span class="item-nombre">Pago en línea · ' + escapar(pl.estado_texto) + '</span>' +
+          '<span class="item-meta">' + escapar(pl.metodo || 'Wompi') + (pl.intentos > 1 ? ' · ' + pl.intentos + ' intentos' : '') + (pl.ambiente === 'pruebas' ? ' · modo pruebas' : '') +
+          (pl.estado === 'PENDING' ? ' · se confirma solo cuando el banco responda' : '') + '</span></div></li>';
+      }
     }
 
     var FORMULARIOS = {
@@ -4117,7 +4167,14 @@
     }
 
     function pintarConfiguracion() {
-      $('lista-config').innerHTML = ajustes.map(function (a) {
+      var html = function (lista) { return lista.map(filaAjuste).join(''); };
+      $('lista-config').innerHTML = html(ajustes.filter(function (a) { return a.clave.indexOf('WOMPI_') !== 0; }));
+      $('lista-wompi').innerHTML = html(ajustes.filter(function (a) { return a.clave.indexOf('WOMPI_') === 0; }));
+      var input = $('lista-config').querySelector('[data-campo="ajuste"]');
+      if (input) { input.focus(); input.select(); }
+    }
+
+    function filaAjuste(a) {
         var clave = escapar(a.clave);
         var traza = a.actualizado_por && a.actualizado_por !== 'sistema'
           ? '<span class="ajuste-traza">Cambiado por ' + escapar(a.actualizado_por) + ' · ' + escapar(fechaCorta(a.actualizado_en)) + '</span>' : '';
@@ -4156,9 +4213,6 @@
           '<div class="ajuste-texto"><span class="ajuste-nombre">' + escapar(a.etiqueta) + '</span>' +
           '<span class="ajuste-ayuda">' + escapar(a.ayuda) + '</span>' + traza + '</div>' +
           '<div class="ajuste-valor">' + derecha + '</div></div>';
-      }).join('');
-      var input = $('lista-config').querySelector('[data-campo="ajuste"]');
-      if (input) { input.focus(); input.select(); }
     }
 
     function guardarAjuste(clave) {
@@ -4175,7 +4229,12 @@
       });
     }
 
-    $('lista-config').addEventListener('click', function (ev) {
+    var CONFIRMAR_ACTIVAR = {
+      CHECKOUT_ACTIVO: '¿Activar la compra directa en la página? Antes deben estar listos los datos de pago, las tarifas y la política de datos.',
+      WOMPI_ACTIVO: '¿Mostrar el botón "Pagar en línea" en los pedidos de la tienda?',
+      WOMPI_PRODUCCION: '¿Pasar Wompi a COBROS REALES? Antes guarda las llaves de producción y prueba con una compra pequeña.'
+    };
+    function clicAjuste(ev) {
       var b = ev.target.closest('button[data-acc]');
       if (!b) return;
       var clave = b.closest('.ajuste').dataset.clave;
@@ -4184,13 +4243,62 @@
       else if (b.dataset.acc === 'guardar') guardarAjuste(clave);
       else if (b.dataset.acc === 'alternar') {
         var a = ajustes.filter(function (x) { return x.clave === clave; })[0];
-        if (a.valor !== 'SI' && !window.confirm('¿Activar la compra directa en la página? Antes deben estar listos los datos de pago, las tarifas y la política de datos.')) return;
+        if (a.valor !== 'SI' && CONFIRMAR_ACTIVAR[clave] && !window.confirm(CONFIRMAR_ACTIVAR[clave])) return;
         b.disabled = true;
         api('actualizarConfiguracion', { clave: clave, valor: a.valor === 'SI' ? 'NO' : 'SI' }).then(function (r) {
           b.disabled = false; if (!r.ok) { manejarError(r); return; }
           avisar(a.etiqueta + ': ' + (r.data.valor === 'SI' ? 'activa' : 'apagada') + '.'); cargarConfiguracion();
+          if (clave.indexOf('WOMPI_') === 0) cargarWompi();
         });
       }
+    }
+    $('lista-config').addEventListener('click', clicAjuste);
+    $('lista-wompi').addEventListener('click', clicAjuste);
+
+    /* ---------------- Wompi ---------------- */
+    function cargarWompi() {
+      $('w-url').textContent = API_URL;
+      api('estadoWompi').then(function (r) {
+        if (!r.ok) { manejarError(r); return; }
+        var w = r.data, prod = w.ambiente === 'produccion';
+        var est = $('w-estado');
+        est.textContent = !w.activo ? 'Apagado' : !w.disponible ? 'Faltan llaves' : prod ? 'Activo · Cobros reales' : 'Activo · Pruebas';
+        est.className = 'wompi-estado' + (w.activo && w.disponible ? ' on' : '');
+        var col = function (nombre, k, x) {
+          var f = function (et, ok, opc) { return '<span>' + et + (opc ? ' <small style="opacity:.6">(opcional)</small>' : '') + '<i class="' + (ok ? 'si' : 'no') + '">' + (ok ? '✓ Guardada' : 'Falta') + '</i></span>'; };
+          return '<div class="wompi-amb' + (w.ambiente === k ? ' actual' : '') + '"><b>' + nombre + (w.ambiente === k ? ' · en uso' : '') + '</b>' +
+            f('Llave pública', x.publica) + f('Secreto de integridad', x.integridad) + f('Secreto de eventos', x.eventos) + f('Llave privada', x.privada, true) + '</div>';
+        };
+        $('w-llaves').innerHTML = col('Pruebas (Sandbox)', 'pruebas', w.pruebas) + col('Producción', 'produccion', w.produccion);
+        $('w-ultimos-caja').hidden = !w.ultimos.length;
+        $('w-ultimos').innerHTML = w.ultimos.map(function (u) {
+          return '<li><span><b>' + escapar(u.numero) + '</b> · ' + escapar(u.metodo || '—') + (u.ambiente === 'pruebas' ? ' · prueba' : '') + '</span><span>' + pesos(u.monto) + ' · ' + escapar(u.estado) + '</span></li>';
+        }).join('');
+      });
+    }
+    $('w-form').addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var inp = $('w-llave'), valor = inp.value.trim(); if (!valor) return;
+      inp.disabled = true;
+      api('guardarLlaveWompi', { valor: valor }).then(function (r) {
+        inp.disabled = false;
+        if (!r.ok) { manejarError(r); return; }
+        inp.value = ''; avisar('Llave guardada.'); cargarWompi(); cargarConfiguracion();
+      });
+    });
+    $('w-copiar').addEventListener('click', function () {
+      var txt = API_URL;
+      (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () { avisar('URL copiada.'); }, function () { window.prompt('Copia la URL:', txt); });
+    });
+    $('w-probar').addEventListener('click', function () {
+      var b = this, out = $('w-prueba'); b.disabled = true; b.textContent = 'Probando…';
+      api('probarWompi').then(function (r) {
+        b.disabled = false; b.textContent = 'Probar conexión'; out.hidden = false;
+        if (!r.ok) { out.textContent = r.error.message; return; }
+        var d = r.data;
+        out.innerHTML = '<b>Conectado con ' + escapar(d.comercio || 'tu comercio') + '</b> (' + (d.ambiente === 'produccion' ? 'producción' : 'pruebas') + ').<br>Medios habilitados: ' + escapar(d.metodos.join(', ') || '—') +
+          (!d.integridad ? '<br>Falta el secreto de integridad: sin él no se puede cobrar.' : '') + (!d.eventos ? '<br>Falta el secreto de eventos: los pagos se confirmarán al volver a la página y en la revisión automática.' : '');
+      });
     });
 
     $('lista-config').addEventListener('keydown', function (ev) {
