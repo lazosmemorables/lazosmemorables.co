@@ -1,31 +1,9 @@
 {
- "generado": "2026-11-12T21:43:28-05:00",
+ "generado": "2026-11-12T21:45:11-05:00",
  "version": 1,
  "moneda": "COP",
- "categorias": [
-  {
-   "codigo": "ARE",
-   "nombre": "Aretes"
-  }
- ],
- "productos": [
-  {
-   "sku": "LM-ARE-0004",
-   "slug": "prueba-aretes-are-0004",
-   "nombre": "Prueba aretes",
-   "categoria": "Aretes",
-   "categoria_codigo": "ARE",
-   "precio": 45000,
-   "descripcion": "",
-   "fotos": [
-    {
-     "web": "/assets/productos/lm-are-0004/f21918def593c.jpg",
-     "mini": "/assets/productos/lm-are-0004/f21918def593c-mini.jpg"
-    }
-   ],
-   "variantes": []
-  }
- ],
+ "categorias": [],
+ "productos": [],
  "tienda": {
   "checkout_activo": true,
   "envio": {
