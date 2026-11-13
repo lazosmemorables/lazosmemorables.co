@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.16.0 · Panel administrativo -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.17.0 · Panel administrativo -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -568,6 +568,173 @@
     }
 
 
+
+    /* ---------- Campos y chips (v0.17: menos formulario, más app) ---------- */
+    .campo, .selector {
+      border: 1px solid rgba(53, 39, 44, .14) !important; border-radius: 14px !important; background: #FBF8F3 !important;
+      padding: 13px 15px !important; transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    .campo:focus, .selector:focus { outline: none; border-color: #B89B7B !important; box-shadow: 0 0 0 3px rgba(184, 155, 123, .18); }
+    textarea.campo { min-height: 110px; }
+    .etq { margin-bottom: 8px; display: block; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 6px; }
+    .chip {
+      font-family: var(--sans); font-size: 13px; color: var(--cacao); background: #fff; border: 1px solid rgba(53, 39, 44, .16);
+      border-radius: 999px; padding: 9px 15px; cursor: pointer; transition: all .15s ease; white-space: nowrap;
+    }
+    .chip:hover { border-color: #B89B7B; }
+    .chip[aria-pressed="true"] { background: var(--cacao); color: #fff; border-color: var(--cacao); }
+    .tarjeta-suave { background: #FBF8F3; border: 1px solid rgba(53, 39, 44, .08); border-radius: 16px; padding: 14px; display: grid; gap: 10px; margin: 6px 0 4px; }
+    .doble-suave { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; }
+
+    /* ---------- Punto de venta ---------- */
+    .pos-cabeza { margin: 0 0 16px; }
+    .pos-buscar { position: sticky; top: 0; z-index: 4; display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid rgba(53, 39, 44, .14);
+      border-radius: 999px; padding: 0 16px; margin: 0 0 12px; box-shadow: 0 8px 20px -18px rgba(53, 39, 44, .5); }
+    .pos-buscar svg { width: 20px; height: 20px; fill: none; stroke: #9C7A64; stroke-width: 1.6; stroke-linecap: round; flex: none; }
+    .pos-buscar input { border: 0; outline: none; background: transparent; font-family: var(--sans); font-size: 16px; color: var(--cacao); padding: 14px 0; width: 100%; }
+    .pos-rejilla { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 14px 0 120px; }
+    .pz { position: relative; background: #fff; border: 1px solid rgba(53, 39, 44, .1); border-radius: 18px; overflow: hidden; cursor: pointer; text-align: left;
+      padding: 0; font-family: var(--sans); color: var(--cacao); transition: transform .12s ease, box-shadow .2s ease, border-color .2s ease; }
+    .pz:active { transform: scale(.97); }
+    .pz.en-bolsa { border-color: var(--cacao); box-shadow: 0 0 0 1px var(--cacao); }
+    .pz-foto { aspect-ratio: 4 / 5; background: #F2E5E7; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .pz-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .pz-foto .mono { font-family: var(--serif); font-size: 42px; color: #9C7A64; letter-spacing: .02em; }
+    .pz-info { padding: 10px 12px 12px; }
+    .pz-nombre { font-family: var(--serif); font-size: 18px; line-height: 1.15; display: block; }
+    .pz-var { font-size: 11.5px; color: var(--texto-suave); display: block; margin-top: 2px; }
+    .pz-pie { display: flex; justify-content: space-between; align-items: baseline; margin-top: 6px; }
+    .pz-precio { font-weight: 600; font-size: 14px; }
+    .pz-disp { font-size: 11px; color: var(--texto-suave); }
+    .pz-cant { position: absolute; top: 10px; right: 10px; min-width: 30px; height: 30px; border-radius: 15px; background: var(--cacao); color: #fff;
+      font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; padding: 0 8px; }
+    .pz-menos { position: absolute; top: 10px; left: 10px; width: 30px; height: 30px; border-radius: 15px; background: rgba(255, 255, 255, .92); border: 1px solid rgba(53, 39, 44, .2);
+      font-size: 17px; line-height: 1; display: flex; align-items: center; justify-content: center; color: var(--cacao); }
+    .pz.agotado { opacity: .45; cursor: default; }
+    .pz.agotado .pz-disp { color: #C2556A; font-weight: 600; }
+    .pos-barra { position: fixed; left: 50%; transform: translateX(-50%); bottom: max(16px, env(safe-area-inset-bottom)); z-index: 20; width: min(640px, calc(100% - 28px));
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--cacao); color: #fff; border-radius: 20px; padding: 12px 12px 12px 20px;
+      box-shadow: 0 18px 40px -16px rgba(53, 39, 44, .6); }
+    .pos-barra span { display: block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .75); }
+    .pos-barra b { font-family: var(--serif); font-weight: 400; font-size: 26px; }
+    .pos-barra .boton { background: #E5C1CB; color: var(--cacao); border-radius: 14px; width: auto; }
+
+    .hoja { position: fixed; inset: 0; z-index: 40; display: flex; align-items: flex-end; justify-content: center; }
+    .hoja-fondo { position: absolute; inset: 0; background: rgba(53, 39, 44, .45); }
+    .hoja-cuerpo { position: relative; width: min(680px, 100%); max-height: 92vh; overflow-y: auto; background: #fff; border-radius: 26px 26px 0 0;
+      padding: 10px 22px calc(26px + env(safe-area-inset-bottom)); animation: subir .28s cubic-bezier(.22, .61, .36, 1); }
+    @keyframes subir { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+    .hoja-tirador { width: 42px; height: 4px; border-radius: 2px; background: rgba(53, 39, 44, .2); margin: 4px auto 10px; }
+    .hoja-cab { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 8px; }
+    .hoja-cab h3 { font-family: var(--serif); font-weight: 400; font-size: 28px; margin: 0; }
+    .paso { font-size: 10.5px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--texto-suave); margin: 22px 0 10px; }
+    .it { display: grid; grid-template-columns: 52px 1fr auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--linea); }
+    .it-foto { width: 52px; height: 65px; border-radius: 10px; background: #F2E5E7; overflow: hidden; display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif); color: #9C7A64; font-size: 18px; }
+    .it-foto img { width: 100%; height: 100%; object-fit: cover; }
+    .it-nombre { font-size: 14px; font-weight: 500; display: block; }
+    .it-meta { font-size: 12px; color: var(--texto-suave); }
+    .stepper { display: inline-flex; align-items: center; border: 1px solid rgba(53, 39, 44, .16); border-radius: 999px; }
+    .stepper button { width: 34px; height: 34px; border: 0; background: none; font-size: 17px; cursor: pointer; color: var(--cacao); }
+    .stepper span { min-width: 22px; text-align: center; font-weight: 600; font-size: 14px; }
+    .clienta-card { display: flex; align-items: center; gap: 12px; background: #FBF8F3; border: 1px solid rgba(53, 39, 44, .08); border-radius: 16px; padding: 12px 14px; }
+    .avatar { width: 42px; height: 42px; border-radius: 50%; background: #E5C1CB; color: var(--cacao); display: flex; align-items: center; justify-content: center;
+      font-family: var(--serif); font-size: 19px; flex: none; }
+    .clienta-card .c-txt { flex: 1; min-width: 0; }
+    .clienta-card b { display: block; font-weight: 600; font-size: 15px; }
+    .clienta-card span { font-size: 12px; color: var(--texto-suave); }
+    .sugs { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
+    .sugs li { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 14px; background: #FBF8F3; cursor: pointer; font-size: 13.5px; }
+    .sugs li .avatar { width: 32px; height: 32px; font-size: 15px; }
+    .opciones-pago { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .opcion-pago { text-align: left; background: #fff; border: 1px solid rgba(53, 39, 44, .16); border-radius: 16px; padding: 14px; cursor: pointer; font-family: var(--sans); color: var(--cacao); }
+    .opcion-pago b { display: block; font-family: var(--serif); font-weight: 400; font-size: 20px; margin-bottom: 4px; }
+    .opcion-pago span { font-size: 11.5px; color: var(--texto-suave); line-height: 1.4; display: block; }
+    .opcion-pago span span { display: inline; }
+    .opcion-pago[aria-pressed="true"] { background: var(--cacao); border-color: var(--cacao); color: #fff; }
+    .opcion-pago[aria-pressed="true"] span { color: rgba(255, 255, 255, .78); }
+    .extras { display: flex; gap: 18px; margin: 18px 0 8px; }
+    #pos-desc, #pos-nota { margin-bottom: 8px; width: 100%; }
+    .pos-totales { margin: 14px 0 16px; }
+    .pos-totales div { display: flex; justify-content: space-between; font-size: 14px; padding: 5px 0; }
+    .pos-totales .total { font-family: var(--serif); font-size: 30px; border-top: 1px solid var(--cacao); margin-top: 6px; padding-top: 12px; }
+    .pos-totales .nota-m { font-size: 12px; color: var(--texto-suave); }
+    .pos-registrar { width: 100%; padding: 20px !important; border-radius: 16px !important; font-size: 12px !important; }
+    .hoja-cuerpo.listo { text-align: center; padding-top: 34px; border-radius: 26px; margin-bottom: 0; }
+    .listo-check { width: 72px; height: 72px; border-radius: 50%; background: var(--cacao); margin: 0 auto 18px; display: flex; align-items: center; justify-content: center; animation: latir .5s ease; }
+    .listo-check svg { width: 34px; height: 34px; fill: none; stroke: #E5C1CB; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    @keyframes latir { 0% { transform: scale(.6); opacity: 0; } 70% { transform: scale(1.06); } 100% { transform: none; opacity: 1; } }
+    .listo-titulo { font-family: var(--serif); font-weight: 400; font-size: 34px; margin: 6px 0 6px; }
+    .listo-sub { color: var(--texto-suave); font-size: 14px; margin: 0 0 22px; }
+    .listo-acciones { display: grid; gap: 12px; justify-items: center; margin-bottom: 14px; }
+    .listo-acciones .boton { width: 100%; border-radius: 16px; padding: 18px; }
+    .listo-correo { font-size: 12px; color: var(--texto-suave); margin: 0 0 18px; }
+    .boton.claro { background: transparent; color: var(--cacao); border: 1px solid var(--cacao); }
+    @media (max-width: 900px) { .pos-rejilla { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 720px) {
+      .pos-rejilla { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .opciones-pago { grid-template-columns: 1fr; }
+      .opcion-pago b { font-size: 19px; }
+      .hoja-cuerpo { padding-left: 18px; padding-right: 18px; }
+      .doble-suave { grid-template-columns: 1fr; }
+    }
+
+    /* ---------- Comprobante (se dibuja fuera de pantalla y se convierte a PDF) ---------- */
+    #comprobante-lienzo { position: fixed; left: -10000px; top: 0; width: 600px; background: #fff; }
+    .cp { width: 600px; background: #fff; color: #35272C; font-family: 'Montserrat', Arial, sans-serif; padding: 44px 48px 36px; box-sizing: border-box; }
+    .cp-logo { display: block; width: 150px; margin: 0 auto 22px; }
+    .cp-gracias { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 34px; line-height: 1.1; text-align: center; margin: 0 0 8px; font-weight: 400; }
+    .cp-frase { text-align: center; font-size: 12.5px; color: rgba(53, 39, 44, .72); margin: 0 0 26px; line-height: 1.6; }
+    .cp-meta { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #B89B7B; border-bottom: 1px solid rgba(53, 39, 44, .12); padding: 12px 0; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+    .cp-meta b { font-weight: 600; }
+    .cp-sello { display: inline-block; padding: 6px 12px; border-radius: 999px; font-size: 10px; font-weight: 600; letter-spacing: .16em; }
+    .cp-sello.pagado { background: #35272C; color: #fff; }
+    .cp-sello.pendiente, .cp-sello.reportado { background: #F2E5E7; color: #35272C; border: 1px solid #C2556A; }
+    .cp-sello.credito { background: #F5F1E9; color: #35272C; border: 1px solid #B89B7B; }
+    .cp-para { margin: 20px 0 6px; font-size: 12px; color: rgba(53, 39, 44, .72); }
+    .cp-para b { color: #35272C; font-size: 14px; font-weight: 600; }
+    .cp-lineas { margin: 14px 0 6px; }
+    .cp-linea { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid rgba(53, 39, 44, .1); }
+    .cp-foto { width: 46px; height: 58px; border-radius: 8px; background: #F2E5E7; overflow: hidden; flex: none; display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', Georgia, serif; color: #9C7A64; font-size: 17px; }
+    .cp-foto img { width: 100%; height: 100%; object-fit: cover; }
+    .cp-ln { flex: 1; font-size: 13px; }
+    .cp-ln small { display: block; color: rgba(53, 39, 44, .65); font-size: 11.5px; margin-top: 2px; }
+    .cp-val { font-size: 13px; font-weight: 600; white-space: nowrap; }
+    .cp-tot { margin: 10px 0 0 auto; width: 260px; font-size: 12.5px; }
+    .cp-tot div { display: flex; justify-content: space-between; padding: 4px 0; }
+    .cp-tot .grande { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 28px; border-top: 1px solid #35272C; margin-top: 6px; padding-top: 10px; }
+    .cp-caja { background: #FBF8F3; border-radius: 14px; padding: 16px 18px; margin: 22px 0 0; font-size: 12px; line-height: 1.65; }
+    .cp-caja h4 { margin: 0 0 6px; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 19px; }
+    .cp-caja pre { font-family: 'Montserrat', Arial, sans-serif; white-space: pre-wrap; margin: 6px 0 0; font-size: 12px; }
+    .cp-pie { text-align: center; margin-top: 30px; padding-top: 18px; border-top: 1px solid rgba(53, 39, 44, .12); }
+    .cp-lema { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 20px; color: #9C7A64; }
+    .cp-redes { font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; margin-top: 6px; }
+    .cp-legal { font-size: 9.5px; color: rgba(53, 39, 44, .55); margin-top: 10px; }
+
+
+    /* ---------- Nuevo producto (v0.17) ---------- */
+    .np-tarjeta { display: grid; grid-template-columns: 300px 1fr; gap: 32px; align-items: start; }
+    .np-foto-caja { aspect-ratio: 4 / 5; border-radius: 22px; background: #F2E5E7; border: 1.5px dashed rgba(193, 100, 120, .45); display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 4px; cursor: pointer; color: var(--cacao); text-align: center; position: relative; overflow: hidden; }
+    .np-foto-caja.con-foto { border: 0; }
+    .np-foto-caja img { width: 100%; height: 100%; object-fit: cover; }
+    .np-foto-caja.cargando { opacity: .6; pointer-events: none; }
+    .np-mas { font-family: var(--serif); font-size: 54px; line-height: 1; color: #C16478; }
+    .np-foto-caja small { font-size: 11px; color: var(--texto-suave); }
+    .np-quitar { position: absolute; bottom: 12px; right: 12px; background: rgba(255, 255, 255, .92); border: 0; border-radius: 999px; padding: 8px 14px; font-size: 12px; cursor: pointer; color: var(--cacao); }
+    .np-vista-nombre { font-family: var(--serif); font-size: 22px; margin: 14px 0 0; line-height: 1.2; }
+    .np-vista-precio { font-weight: 600; margin: 4px 0 0; }
+    .np-grande { font-size: 18px !important; width: 100%; }
+    #np-desc { width: 100%; }
+    .np-crear { width: 100%; margin-top: 22px; border-radius: 16px; padding: 19px; }
+    @media (max-width: 720px) {
+      .np-tarjeta { grid-template-columns: 1fr; gap: 20px; }
+      .np-foto-col { display: grid; grid-template-columns: 130px 1fr; gap: 0 16px; align-items: end; }
+      .np-foto-col .np-foto-caja { grid-row: span 2; }
+      .np-vista-nombre { margin: 0; }
+    }
+
     /* ---------- Cartera ---------- */
     .tramos { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--linea); margin: 6px 0 8px; }
     .tramos i { display: block; height: 100%; }
@@ -870,69 +1037,82 @@
 
       <!-- Ventas: nueva -->
       <section id="vista-nueva-venta" hidden>
-        <button class="enlace volver" type="button" data-ir="ventas">← Ventas</button>
-        <h2 class="titulo-vista">Nueva venta</h2>
-        <p class="intro">Registra la venta como la acuerdas por mensaje. Si aún no paga, las unidades quedan reservadas por <span id="nv-minutos">30</span> minutos.</p>
-        <form id="form-venta" class="formulario" autocomplete="off">
-          <div>
-            <p class="titulo-seccion" style="margin:0 0 6px">Clienta</p>
-            <div id="nv-clienta-elegida" class="clienta-elegida" hidden></div>
-            <div id="nv-clienta-buscar" class="buscador-clienta">
-              <input id="nv-buscar" class="campo" style="width:100%" placeholder="Busca por nombre o celular">
-              <ul id="nv-sugerencias" class="sugerencias"></ul>
-              <button class="enlace" type="button" id="nv-nueva-clienta" style="margin-top:12px">+ Nueva clienta</button>
+        <button class="enlace volver" type="button" data-ir="inicio">← Inicio</button>
+        <div class="pos-cabeza">
+          <h2 class="titulo-vista" style="margin:0">Nueva venta</h2>
+          <p class="intro" style="margin:4px 0 0">Toca las piezas que se lleva.</p>
+        </div>
+        <div class="pos-buscar">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+          <input id="pos-q" type="search" placeholder="Nombre, iniciales o SKU · ej.: ap" autocomplete="off" aria-label="Buscar producto">
+        </div>
+        <div class="chips" id="pos-cats" role="group" aria-label="Categoría"></div>
+        <div class="pos-rejilla" id="pos-rejilla"><p class="vacio">Cargando productos…</p></div>
+
+        <div class="pos-barra" id="pos-barra" hidden>
+          <div><span id="pos-barra-n">0 piezas</span><b id="pos-barra-total">$0</b></div>
+          <button class="boton" type="button" id="pos-continuar">Continuar</button>
+        </div>
+
+        <!-- Hoja de cierre de la venta -->
+        <div class="hoja" id="pos-hoja" hidden>
+          <div class="hoja-fondo" data-cerrar-hoja></div>
+          <div class="hoja-cuerpo" role="dialog" aria-modal="true" aria-labelledby="pos-hoja-titulo">
+            <div class="hoja-tirador"></div>
+            <div class="hoja-cab"><h3 id="pos-hoja-titulo">Resumen de la venta</h3><button class="enlace" type="button" data-cerrar-hoja>Seguir eligiendo</button></div>
+            <div id="pos-items"></div>
+
+            <p class="paso">Clienta</p>
+            <div id="pos-clienta"></div>
+
+            <p class="paso">¿Por dónde compró?</p>
+            <div class="chips" id="pos-canal"></div>
+
+            <p class="paso">Entrega</p>
+            <div class="chips" id="pos-entrega"></div>
+            <div id="pos-entrega-datos" class="tarjeta-suave" hidden>
+              <div class="doble-suave"><input id="pos-dir" class="campo" maxlength="160" placeholder="Dirección de entrega"><input id="pos-ciudad" class="campo" maxlength="40" placeholder="Ciudad"></div>
+              <input id="pos-envio" class="campo" inputmode="numeric" data-precio placeholder="Valor del envío que paga la clienta (0 si es gratis)">
             </div>
-            <div id="nv-form-clienta" class="panel-var formulario" hidden style="margin-top:14px">
-              <div class="doble">
-                <div><label class="etq" for="cl-nombre">Nombre</label><input id="cl-nombre" class="campo" maxlength="80"></div>
-                <div><label class="etq" for="cl-tel">Celular</label><input id="cl-tel" class="campo" inputmode="tel" maxlength="16" placeholder="300 123 4567"></div>
-              </div>
-              <div class="doble">
-                <div><label class="etq" for="cl-ciudad">Ciudad</label><input id="cl-ciudad" class="campo" maxlength="40" value="Cartagena"></div>
-                <div><label class="etq" for="cl-barrio">Barrio</label><input id="cl-barrio" class="campo" maxlength="60"></div>
-              </div>
-              <div><label class="etq" for="cl-dir">Dirección</label><input id="cl-dir" class="campo" maxlength="120"></div>
-              <label class="confirmacion"><input type="checkbox" id="cl-consiente"> Acepta recibir novedades de Lazos Memorables (consentimiento aparte, opcional)</label>
-              <div class="pie-form" style="margin:0"><button class="boton" type="button" id="cl-guardar">Guardar clienta</button>
-                <button class="enlace" type="button" id="cl-cancelar">Cancelar</button></div>
+
+            <p class="paso">Pago</p>
+            <div class="opciones-pago" id="pos-pago">
+              <button type="button" class="opcion-pago" data-pago="verificado"><b>Ya pagó</b><span>El dinero ya está en la cuenta o en caja</span></button>
+              <button type="button" class="opcion-pago" data-pago="credito"><b>Paga después</b><span>Se la lleva y queda en Por cobrar</span></button>
+              <button type="button" class="opcion-pago" data-pago="pendiente"><b>Aún no paga</b><span>Se aparta <span id="pos-minutos">30</span> minutos</span></button>
             </div>
-          </div>
+            <div id="pos-pago-medio" class="tarjeta-suave" hidden><span class="etq">¿Cómo pagó?</span><div class="chips" id="pos-medios"></div></div>
+            <div id="pos-pago-credito" class="tarjeta-suave" hidden><span class="etq">Paga a más tardar (opcional)</span><input id="pos-venc" class="campo" type="date"></div>
 
-          <div class="doble">
-            <div><label class="etq" for="nv-canal">Canal</label><select id="nv-canal" class="selector" style="width:100%"></select></div>
-            <div><label class="etq" for="nv-entrega">Entrega</label><select id="nv-entrega" class="selector" style="width:100%"></select></div>
-          </div>
+            <div class="extras">
+              <button class="enlace" type="button" id="pos-btn-desc">+ Descuento</button>
+              <button class="enlace" type="button" id="pos-btn-nota">+ Nota</button>
+            </div>
+            <input id="pos-desc" class="campo" inputmode="numeric" data-precio placeholder="Descuento en pesos" hidden>
+            <input id="pos-nota" class="campo" maxlength="300" placeholder="Ej.: es un regalo, empacar con tarjeta" hidden>
 
-          <div>
-            <p class="titulo-seccion" style="margin:18px 0 0">Productos</p>
-            <div id="nv-lineas"></div>
-            <button class="enlace" type="button" id="nv-agregar" style="margin-top:14px">+ Agregar producto</button>
+            <div class="pos-totales" id="pos-totales"></div>
+            <button class="boton pos-registrar" type="button" id="pos-registrar">Registrar venta</button>
           </div>
+        </div>
 
-          <div class="doble">
-            <div><label class="etq" for="nv-desc">Descuento (opcional)</label><input id="nv-desc" class="campo" inputmode="numeric" data-precio placeholder="0"></div>
-            <div id="nv-envio-caja"><label class="etq" for="nv-envio">Envío cobrado a la clienta</label><input id="nv-envio" class="campo" inputmode="numeric" data-precio placeholder="0"></div>
+        <!-- Venta registrada -->
+        <div class="hoja" id="pos-listo" hidden>
+          <div class="hoja-fondo"></div>
+          <div class="hoja-cuerpo listo">
+            <div class="listo-check"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7"/></svg></div>
+            <p class="app-fecha" id="listo-numero" style="text-align:center"></p>
+            <h3 class="listo-titulo" id="listo-titulo">Venta registrada</h3>
+            <p class="listo-sub" id="listo-sub"></p>
+            <div class="listo-acciones">
+              <button class="boton" type="button" id="listo-compartir">Compartir comprobante</button>
+              <button class="enlace" type="button" id="listo-descargar">Descargar PDF</button>
+              <button class="enlace" type="button" id="listo-ver">Ver la venta</button>
+            </div>
+            <p class="listo-correo" id="listo-correo">Preparando el comprobante…</p>
+            <button class="boton claro" type="button" id="listo-otra" style="width:100%">Registrar otra venta</button>
           </div>
-          <div id="nv-dir-caja" class="doble">
-            <div><label class="etq" for="nv-dir">Dirección de entrega</label><input id="nv-dir" class="campo" maxlength="160"></div>
-            <div><label class="etq" for="nv-ciudad">Ciudad</label><input id="nv-ciudad" class="campo" maxlength="40"></div>
-          </div>
-
-          <div class="doble">
-            <div><label class="etq" for="nv-pago">Pago</label>
-              <select id="nv-pago" class="selector" style="width:100%">
-                <option value="pendiente">Aún no paga · reservar</option>
-                <option value="verificado">Ya pagó y lo verifiqué</option>
-                <option value="credito">Se la lleva y paga después (crédito)</option>
-              </select></div>
-            <div id="nv-venc-caja" hidden><label class="etq" for="nv-venc">Paga a más tardar (opcional)</label><input id="nv-venc" class="campo" type="date"></div>
-            <div id="nv-medio-caja" hidden><label class="etq" for="nv-medio">Medio</label><select id="nv-medio" class="selector" style="width:100%"></select></div>
-          </div>
-          <div><label class="etq" for="nv-nota">Nota (opcional)</label><input id="nv-nota" class="campo" maxlength="300" placeholder="Ej.: es un regalo, empacar con tarjeta"></div>
-
-          <div class="totales" id="nv-totales"></div>
-          <div class="pie-form"><button class="boton" type="submit">Registrar venta</button></div>
-        </form>
+        </div>
       </section>
 
       <!-- Ventas: detalle -->
@@ -987,36 +1167,29 @@
         <button class="enlace volver" type="button" data-ir="productos">← Productos</button>
         <h2 class="titulo-vista">Nuevo producto</h2>
         <p class="intro">Empieza como borrador. El SKU se asigna al crearlo según la categoría.</p>
-        <form id="form-nuevo" class="formulario" autocomplete="off">
-          <div>
-            <label class="etq" for="np-cat">Categoría</label>
-            <select id="np-cat" class="selector" style="width:100%" required></select>
-          </div>
-          <div>
-            <label class="etq" for="np-nombre">Nombre comercial</label>
-            <input id="np-nombre" class="campo" maxlength="80" placeholder="Ej.: Aretes Perla Luna" required>
-          </div>
-          <div class="doble">
-            <div>
-              <label class="etq" for="np-precio">Precio de venta (COP)</label>
-              <input id="np-precio" class="campo" inputmode="numeric" placeholder="45.000" data-precio required>
-            </div>
-            <div></div>
-          </div>
-          <div>
-            <label class="etq" for="np-desc">Descripción (opcional)</label>
-            <textarea id="np-desc" class="campo" maxlength="600" placeholder="Cómo es, cómo se usa, qué la hace especial."></textarea>
-          </div>
-          <div>
-            <span class="etq">Foto principal (opcional)</span>
-            <div class="fotos" style="max-width:280px">
-              <label class="foto-agregar" for="np-foto" id="np-foto-btn"><span class="mas">+</span>Agregar foto</label>
-              <div class="foto" id="np-foto-vista" hidden><img alt="Vista previa de la foto"><div class="acciones-foto"><button class="enlace peligro" type="button" id="np-foto-quitar">Quitar</button></div></div>
-            </div>
+        <form id="form-nuevo" class="np-tarjeta" autocomplete="off">
+          <div class="np-foto-col">
+            <label class="np-foto-caja" for="np-foto" id="np-foto-btn">
+              <span class="np-mas">+</span><span>Agregar foto</span><small>Opcional · se recorta en 4:5</small>
+            </label>
+            <div class="np-foto-caja con-foto" id="np-foto-vista" hidden><img alt="Vista previa de la foto"><button class="np-quitar" type="button" id="np-foto-quitar">Quitar</button></div>
             <input id="np-foto" type="file" accept="image/*" hidden>
-            <p class="pista" style="margin:6px 0 0">Se recorta en formato 4:5. Puedes agregar más fotos después, desde la ficha.</p>
+            <p class="np-vista-nombre" id="np-vista-nombre">Nombre del producto</p>
+            <p class="np-vista-precio" id="np-vista-precio">$0</p>
           </div>
-          <div class="pie-form"><button class="boton" type="submit">Crear producto</button></div>
+          <div class="np-datos">
+            <span class="etq">Categoría</span>
+            <div class="chips" id="np-cats"></div>
+            <select id="np-cat" hidden required></select>
+            <label class="etq" for="np-nombre" style="margin-top:18px">Nombre</label>
+            <input id="np-nombre" class="campo np-grande" maxlength="80" placeholder="Ej.: Aretes Perla Luna" required>
+            <label class="etq" for="np-precio" style="margin-top:18px">Precio de venta</label>
+            <input id="np-precio" class="campo np-grande" inputmode="numeric" placeholder="$ 45.000" data-precio required>
+            <label class="etq" for="np-desc" style="margin-top:18px">Descripción (opcional)</label>
+            <textarea id="np-desc" class="campo" maxlength="600" placeholder="Cómo es, cómo se usa, qué la hace especial."></textarea>
+            <button class="boton np-crear" type="submit">Crear producto</button>
+            <p class="pista" style="margin:10px 0 0">Queda como borrador. El SKU se asigna solo según la categoría. Luego cargas existencias y lo publicas.</p>
+          </div>
         </form>
       </section>
 
@@ -1096,6 +1269,7 @@
           <div class="cifra-bloque"><span id="inv-alertas" class="valor">—</span><span class="rotulo">Con alerta</span></div>
         </div>
         <div class="filtros">
+          <div class="pos-buscar" style="position:static;max-width:420px"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><input id="inv-q" type="search" placeholder="Nombre, iniciales o SKU" autocomplete="off" aria-label="Buscar en inventario"></div>
           <div class="pildoras" id="filtro-inv" role="group" aria-label="Filtro">
             <button class="pildora" type="button" data-f="" aria-pressed="true">Todo</button>
             <button class="pildora" type="button" data-f="alertas" aria-pressed="false">Agotadas o bajo mínimo</button>
@@ -1830,13 +2004,24 @@
       }).catch(function (e) { avisar(e.message, true); }).then(function () { $('np-foto-btn').classList.remove('cargando'); });
     });
     $('np-foto-quitar').addEventListener('click', limpiarFotoNueva);
+    $('np-cats').addEventListener('click', function (ev) {
+      var c = ev.target.closest('[data-npcat]'); if (!c) return;
+      this.querySelectorAll('.chip').forEach(function (x) { x.setAttribute('aria-pressed', x === c ? 'true' : 'false'); });
+      $('np-cat').value = c.dataset.npcat;
+    });
+    $('np-nombre').addEventListener('input', function () { $('np-vista-nombre').textContent = this.value.trim() || 'Nombre del producto'; });
+    $('np-precio').addEventListener('input', function () { $('np-vista-precio').textContent = pesos(Number(soloDigitos(this.value)) || 0); });
     function prepararNuevo() {
       $('form-nuevo').reset(); limpiarFotoNueva();
       var pintar = function () {
         $('np-cat').innerHTML = '<option value="">Elige una categoría</option>' + categoriasActivas.map(function (c) {
           return '<option value="' + escapar(c.categoria_id) + '">' + escapar(c.nombre) + ' · ' + escapar(c.codigo) + '</option>';
         }).join('');
+        $('np-cats').innerHTML = categoriasActivas.map(function (c) {
+          return '<button class="chip" type="button" data-npcat="' + escapar(c.categoria_id) + '" aria-pressed="false">' + escapar(c.nombre) + '</button>';
+        }).join('') || '<span class="pista">Primero crea una categoría.</span>';
       };
+      $('np-vista-nombre').textContent = 'Nombre del producto'; $('np-vista-precio').textContent = '$0';
       if (categoriasActivas.length) { pintar(); }
       else {
         $('np-cat').innerHTML = '<option value="">Cargando categorías…</option>';
@@ -2214,7 +2399,9 @@
           ul.innerHTML = '<li class="vacio">' + (filtroInv ? 'Sin alertas. Todo en orden.' : 'Aún no hay variantes activas.') + '</li>';
           return;
         }
-        ul.innerHTML = r.data.filas.map(function (f) {
+        var qInv = $('inv-q').value, filas = r.data.filas.filter(function (f) { return coincide(qInv, (f.producto || f.nombre || '') + ' ' + (f.variante || ''), f.sku); });
+        if (!filas.length) { ul.innerHTML = '<li class="vacio">No encontramos “' + escapar(qInv) + '”.</li>'; return; }
+        ul.innerHTML = filas.map(function (f) {
           var tag = f.alerta === 'agotada' ? '<span class="etiqueta agotada">Agotada</span>'
             : (f.alerta === 'bajo_minimo' ? '<span class="etiqueta bajo_minimo">Bajo mínimo</span>' : '');
           return '<li class="item enlazado" data-pid="' + escapar(f.product_id) + '" tabindex="0">' +
@@ -2280,7 +2467,7 @@
             '<div class="item-principal"><span class="item-nombre">' + escapar(p.numero) + ' · ' + escapar(p.clienta) + '</span>' +
             '<span class="item-meta">' + escapar(p.resumen) + ' · ' + p.unidades + ' uds · ' + escapar(p.canal) + ' · ' + escapar(fechaCorta(p.creado_en)) + extra + '</span></div>' +
             (p.verificacion_atrasada ? '<span class="etiqueta agotada">Verificación atrasada</span>' : '') +
-            '<div class="item-precio"><span class="cifra">' + pesos(p.total) + '</span><span class="etiqueta ' + escapar(p.estado) + '">' + escapar(p.estado_texto) + '</span></div></li>';
+            '<div class="item-precio"><span class="cifra">' + pesos(p.total) + '</span>' + (p.credito_saldo ? '<span class="etiqueta pendiente_pago">Crédito · debe ' + pesos(p.credito_saldo) + '</span>' : '<span class="etiqueta ' + escapar(p.estado) + '">' + escapar(p.estado_texto) + '</span>') + '</div></li>';
         }).join('') : '<li class="vacio">No hay pedidos en este grupo.</li>';
       });
     }
@@ -2296,140 +2483,303 @@
     $('lista-ventas').addEventListener('click', function (ev) { var li = ev.target.closest('[data-oid]'); if (li) abrirPedido(li.dataset.oid); });
     $('btn-nueva-venta').addEventListener('click', function () { irA('nueva-venta'); });
 
-    /* Nueva venta */
-    var datosVenta = null, clienta = null, claveVenta = null, buscarTimer;
+    var invTimer;
+    $('inv-q').addEventListener('input', function () { clearTimeout(invTimer); invTimer = setTimeout(cargarInventario, 250); });
+    /* ---------------- Nueva venta · punto de venta visual (v0.17) ---------------- */
+    var pos = null;
+    function quitarTildes(t) { return String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim(); }
+    /** Búsqueda práctica: parte del nombre, iniciales ("ap" = Aretes Perla), comienzos de palabra o SKU. */
+    function coincide(q, texto, extra) {
+      q = quitarTildes(q); if (!q) return true;
+      var t = quitarTildes(texto), todo = t + ' ' + quitarTildes(extra);
+      if (todo.indexOf(q) >= 0) return true;
+      var palabras = t.split(/[^a-z0-9]+/).filter(Boolean), compacto = q.replace(/\s+/g, '');
+      var vacias = ['de', 'del', 'la', 'el', 'en', 'y', 'con', 'los', 'las'];
+      var inic = palabras.map(function (w) { return w[0]; }).join(''), inic2 = palabras.filter(function (w) { return vacias.indexOf(w) < 0; }).map(function (w) { return w[0]; }).join('');
+      if (compacto.length >= 2 && (inic.indexOf(compacto) === 0 || inic2.indexOf(compacto) === 0)) return true;
+      return q.split(' ').every(function (tok) { return palabras.some(function (w) { return w.indexOf(tok) === 0; }); });
+    }
+    function iniciales(t) { return String(t || '').split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0].toUpperCase(); }).join(''); }
+    function fotoOMono(url, nombre, clase) { return url ? '<img src="' + escapar(url) + '" alt="" loading="lazy" onerror="this.parentNode.innerHTML=\'<span class=&quot;mono&quot;>' + escapar(iniciales(nombre)) + '</span>\'">' : '<span class="' + (clase || 'mono') + '">' + escapar(iniciales(nombre)) + '</span>'; }
+
     function prepararVenta() {
-      $('form-venta').reset(); clienta = null; claveVenta = nuevaClave();
-      pintarClienta();
-      $('nv-lineas').innerHTML = '<p class="vacio" style="padding:12px 0">Cargando productos…</p>';
+      pos = { datos: null, bolsa: {}, cat: '', clienta: null, canal: 'instagram', entrega: 'recoge', pago: '', medio: '', clave: nuevaClave(), sugeridas: [] };
+      $('pos-q').value = ''; $('pos-hoja').hidden = true; $('pos-listo').hidden = true; $('pos-barra').hidden = true;
+      ['pos-desc', 'pos-nota', 'pos-envio', 'pos-dir', 'pos-ciudad', 'pos-venc'].forEach(function (id) { $(id).value = ''; });
+      $('pos-desc').hidden = true; $('pos-nota').hidden = true;
+      $('pos-rejilla').innerHTML = '<p class="vacio">Cargando productos…</p>';
       api('datosNuevaVenta').then(function (r) {
         if (!r.ok) { manejarError(r); return; }
-        datosVenta = r.data;
-        $('nv-minutos').textContent = datosVenta.reserva_minutos;
-        $('nv-canal').innerHTML = opciones(datosVenta.canales);
-        $('nv-entrega').innerHTML = opciones(datosVenta.entregas);
-        $('nv-medio').innerHTML = opciones(datosVenta.medios);
-        $('nv-lineas').innerHTML = '';
-        if (!datosVenta.variantes.length) { $('nv-lineas').innerHTML = '<p class="vacio" style="padding:12px 0">Aún no hay productos activos.</p>'; return; }
-        agregarLineaVenta(); cambiosEntrega(); recalcularVenta();
+        pos.datos = r.data;
+        $('pos-minutos').textContent = r.data.reserva_minutos;
+        var cats = []; r.data.variantes.forEach(function (v) { if (v.categoria && cats.indexOf(v.categoria) < 0) cats.push(v.categoria); });
+        $('pos-cats').innerHTML = ['<button class="chip" type="button" data-cat="" aria-pressed="true">Todo</button>'].concat(cats.map(function (c) {
+          return '<button class="chip" type="button" data-cat="' + escapar(c) + '" aria-pressed="false">' + escapar(c) + '</button>';
+        })).join('');
+        pintarRejilla();
       });
     }
-    function pintarClienta() {
-      var el = $('nv-clienta-elegida');
-      el.hidden = !clienta; $('nv-clienta-buscar').hidden = !!clienta; $('nv-form-clienta').hidden = true;
-      if (clienta) {
-        el.innerHTML = '<div><span class="item-nombre" style="font-size:20px">' + escapar(clienta.nombre) + '</span><span class="item-meta">' + escapar(clienta.telefono) +
-          (clienta.ciudad ? ' · ' + escapar(clienta.ciudad) : '') + (clienta.compras ? ' · ' + clienta.compras + (clienta.compras === 1 ? ' compra anterior' : ' compras anteriores') : ' · Clienta nueva') + '</span></div>' +
-          '<button class="enlace" type="button" id="nv-cambiar">Cambiar</button>';
-        $('nv-dir').value = clienta.direccion || ''; $('nv-ciudad').value = clienta.ciudad || '';
-      }
-      $('nv-sugerencias').innerHTML = ''; $('nv-buscar').value = '';
-    }
-    $('nv-clienta-elegida').addEventListener('click', function (ev) { if (ev.target.id === 'nv-cambiar') { clienta = null; pintarClienta(); $('nv-buscar').focus(); } });
-    var sugeridas = [];
-    $('nv-buscar').addEventListener('input', function () {
-      clearTimeout(buscarTimer); var q = this.value.trim();
-      if (q.length < 2) { $('nv-sugerencias').innerHTML = ''; return; }
-      buscarTimer = setTimeout(function () {
-        api('buscarClientas', { q: q }).then(function (r) {
-          if (!r.ok) { manejarError(r); return; }
-          sugeridas = r.data;
-          $('nv-sugerencias').innerHTML = sugeridas.length ? sugeridas.map(function (c, i) {
-            return '<li data-i="' + i + '"><b>' + escapar(c.nombre) + '</b> · ' + escapar(c.telefono) + (c.ciudad ? ' · ' + escapar(c.ciudad) : '') + '</li>';
-          }).join('') : '<li style="cursor:default;color:var(--texto-suave)">Sin resultados. Crea una clienta nueva.</li>';
-        });
-      }, 300);
-    });
-    $('nv-sugerencias').addEventListener('click', function (ev) {
-      var li = ev.target.closest('[data-i]'); if (!li) return;
-      clienta = sugeridas[Number(li.dataset.i)]; pintarClienta();
-    });
-    $('nv-nueva-clienta').addEventListener('click', function () {
-      $('nv-form-clienta').hidden = false; $('nv-clienta-buscar').hidden = true;
-      var q = $('nv-buscar').value.trim();
-      if (/\d{4,}/.test(q)) $('cl-tel').value = q; else $('cl-nombre').value = q;
-      $('cl-nombre').focus();
-    });
-    $('cl-cancelar').addEventListener('click', function () { $('nv-form-clienta').hidden = true; $('nv-clienta-buscar').hidden = false; });
-    $('cl-guardar').addEventListener('click', function () {
-      var btn = this; btn.disabled = true;
-      api('guardarClienta', { nombre: $('cl-nombre').value, telefono: $('cl-tel').value, ciudad: $('cl-ciudad').value,
-        barrio: $('cl-barrio').value, direccion: $('cl-dir').value, consentimiento_marketing: $('cl-consiente').checked }).then(function (r) {
-        btn.disabled = false;
-        if (!r.ok) { manejarError(r); return; }
-        clienta = r.data; pintarClienta(); avisar('Clienta guardada: ' + clienta.nombre);
+    function variantePos(id) { return pos.datos.variantes.filter(function (v) { return v.variant_id === id; })[0]; }
+    function pintarRejilla() {
+      var q = $('pos-q').value, lista = pos.datos.variantes.filter(function (v) {
+        return (!pos.cat || v.categoria === pos.cat) && coincide(q, v.nombre, v.sku + ' ' + v.categoria);
       });
+      lista.sort(function (a, b) { return (b.disponible > 0) - (a.disponible > 0) || a.nombre.localeCompare(b.nombre); });
+      if (!pos.datos.variantes.length) { $('pos-rejilla').innerHTML = '<p class="vacio">Aún no hay productos. Créalos en Productos y carga sus existencias.</p>'; return; }
+      $('pos-rejilla').innerHTML = lista.length ? lista.map(function (v) {
+        var n = pos.bolsa[v.variant_id] || 0, agotado = v.disponible <= 0;
+        return '<button type="button" class="pz' + (n ? ' en-bolsa' : '') + (agotado ? ' agotado' : '') + '" data-pz="' + escapar(v.variant_id) + '"' + (agotado ? ' aria-disabled="true"' : '') + '>' +
+          '<div class="pz-foto">' + fotoOMono(v.foto, v.producto || v.nombre) + '</div>' +
+          (n ? '<span class="pz-cant">×' + n + '</span><span class="pz-menos" data-menos="' + escapar(v.variant_id) + '" role="button" aria-label="Quitar una">−</span>' : '') +
+          '<div class="pz-info"><span class="pz-nombre">' + escapar(v.producto || v.nombre) + '</span>' + (v.variante ? '<span class="pz-var">' + escapar(v.variante) + '</span>' : '') +
+          '<div class="pz-pie"><span class="pz-precio">' + pesos(v.precio) + '</span><span class="pz-disp">' + (agotado ? 'Agotado' : v.disponible + ' disp.') + '</span></div></div></button>';
+      }).join('') : '<p class="vacio">No encontramos “' + escapar(q) + '”. Prueba con otra palabra o con las iniciales.</p>';
+      pintarBarra();
+    }
+    function piezasBolsa() { return Object.keys(pos.bolsa).reduce(function (t, k) { return t + pos.bolsa[k]; }, 0); }
+    function subtotalBolsa() { return Object.keys(pos.bolsa).reduce(function (t, k) { return t + variantePos(k).precio * pos.bolsa[k]; }, 0); }
+    function pintarBarra() {
+      var n = piezasBolsa();
+      $('pos-barra').hidden = !n;
+      $('pos-barra-n').textContent = n + (n === 1 ? ' pieza' : ' piezas');
+      $('pos-barra-total').textContent = pesos(subtotalBolsa());
+    }
+    function cambiarBolsa(id, delta) {
+      var v = variantePos(id); if (!v) return;
+      var n = (pos.bolsa[id] || 0) + delta;
+      if (n > v.disponible) { avisar('Solo hay ' + v.disponible + ' disponibles de ' + v.nombre + '.', true); return; }
+      if (n <= 0) delete pos.bolsa[id]; else pos.bolsa[id] = n;
+    }
+    $('pos-rejilla').addEventListener('click', function (ev) {
+      var menos = ev.target.closest('[data-menos]');
+      if (menos) { ev.stopPropagation(); cambiarBolsa(menos.dataset.menos, -1); pintarRejilla(); return; }
+      var b = ev.target.closest('[data-pz]'); if (!b || b.classList.contains('agotado')) return;
+      cambiarBolsa(b.dataset.pz, 1); pintarRejilla();
     });
-    function agregarLineaVenta() {
-      var div = document.createElement('div'); div.className = 'linea-venta';
-      div.innerHTML = '<div><label class="etq">Producto</label><select class="selector" data-l="var"><option value="">Elige</option>' +
-        datosVenta.variantes.map(function (v) {
-          return '<option value="' + escapar(v.variant_id) + '"' + (v.disponible ? '' : ' disabled') + '>' + escapar(v.nombre) + ' · ' + pesos(v.precio) +
-            (v.disponible ? ' · ' + v.disponible + ' disp.' : ' · agotado') + '</option>';
-        }).join('') + '</select></div>' +
-        '<div><label class="etq">Cant.</label><input class="campo" data-l="cant" inputmode="numeric" value="1"></div>' +
-        '<div><label class="etq">Valor</label><span data-l="valor" style="display:block;padding:12px 2px">—</span></div>' +
-        '<div><button class="enlace peligro" type="button" data-l="quitar">Quitar</button></div><div class="info" data-l="info"></div>';
-      $('nv-lineas').appendChild(div);
-    }
-    $('nv-agregar').addEventListener('click', function () { if (datosVenta) agregarLineaVenta(); });
-    $('nv-lineas').addEventListener('click', function (ev) {
-      var b = ev.target.closest('[data-l="quitar"]'); if (!b) return;
-      if ($('nv-lineas').children.length > 1) { b.closest('.linea-venta').remove(); recalcularVenta(); }
+    $('pos-q').addEventListener('input', function () { if (pos && pos.datos) pintarRejilla(); });
+    $('pos-cats').addEventListener('click', function (ev) {
+      var c = ev.target.closest('[data-cat]'); if (!c) return;
+      this.querySelectorAll('.chip').forEach(function (x) { x.setAttribute('aria-pressed', x === c ? 'true' : 'false'); });
+      pos.cat = c.dataset.cat; pintarRejilla();
     });
-    ['input', 'change'].forEach(function (t) { $('form-venta').addEventListener(t, recalcularVenta); });
-    $('nv-entrega').addEventListener('change', cambiosEntrega);
-    $('nv-pago').addEventListener('change', function () { $('nv-medio-caja').hidden = this.value !== 'verificado'; $('nv-venc-caja').hidden = this.value !== 'credito'; });
-    function cambiosEntrega() {
-      var recoge = $('nv-entrega').value === 'recoge';
-      $('nv-envio-caja').hidden = recoge; $('nv-dir-caja').hidden = recoge;
-      if (recoge) $('nv-envio').value = '';
+
+    /* Hoja de cierre */
+    function chipsDe(obj, actual, attr) {
+      return Object.keys(obj).map(function (k) { return '<button class="chip" type="button" data-' + attr + '="' + k + '" aria-pressed="' + (k === actual) + '">' + escapar(obj[k]) + '</button>'; }).join('');
     }
-    function lineasVenta() {
-      return Array.prototype.map.call($('nv-lineas').querySelectorAll('.linea-venta'), function (el) {
-        var id = el.querySelector('[data-l="var"]').value;
-        return { el: el, v: datosVenta.variantes.filter(function (x) { return x.variant_id === id; })[0], cantidad: Number(soloDigitos(el.querySelector('[data-l="cant"]').value)) || 0 };
-      });
+    $('pos-continuar').addEventListener('click', function () { pintarHoja(); $('pos-hoja').hidden = false; });
+    function pintarHoja() {
+      var d = pos.datos;
+      $('pos-items').innerHTML = Object.keys(pos.bolsa).map(function (id) {
+        var v = variantePos(id), n = pos.bolsa[id];
+        return '<div class="it"><div class="it-foto">' + fotoOMono(v.foto, v.producto || v.nombre, '') + '</div>' +
+          '<div><span class="it-nombre">' + escapar(v.nombre) + '</span><span class="it-meta">' + pesos(v.precio) + ' · ' + escapar(v.sku) + '</span></div>' +
+          '<div style="text-align:right"><div class="stepper"><button type="button" data-it="' + escapar(id) + '" data-d="-1" aria-label="Menos">−</button><span>' + n + '</span><button type="button" data-it="' + escapar(id) + '" data-d="1" aria-label="Más">+</button></div>' +
+          '<div style="font-size:13px;font-weight:600;margin-top:6px">' + pesos(v.precio * n) + '</div></div></div>';
+      }).join('');
+      pintarClientaPos();
+      $('pos-canal').innerHTML = chipsDe(d.canales, pos.canal, 'canal');
+      $('pos-entrega').innerHTML = chipsDe(d.entregas, pos.entrega, 'entrega');
+      $('pos-medios').innerHTML = chipsDe(d.medios, pos.medio, 'medio');
+      document.querySelectorAll('#pos-pago .opcion-pago').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.pago === pos.pago ? 'true' : 'false'); });
+      $('pos-entrega-datos').hidden = pos.entrega === 'recoge';
+      $('pos-pago-medio').hidden = pos.pago !== 'verificado';
+      $('pos-pago-credito').hidden = pos.pago !== 'credito';
+      totalesPos();
     }
-    function recalcularVenta() {
-      if (!datosVenta || !$('nv-lineas').children.length) return;
-      var ls = lineasVenta(), sub = 0, costo = 0, costoCompleto = true;
-      ls.forEach(function (l) {
-        var info = l.el.querySelector('[data-l="info"]'), valor = l.el.querySelector('[data-l="valor"]');
-        if (!l.v) { valor.textContent = '—'; info.textContent = ''; return; }
-        sub += l.v.precio * l.cantidad;
-        if (l.v.costo_promedio !== null) costo += l.v.costo_promedio * l.cantidad; else costoCompleto = false;
-        valor.textContent = pesos(l.v.precio * l.cantidad);
-        info.textContent = l.cantidad > l.v.disponible ? 'Solo hay ' + l.v.disponible + ' disponibles.' : l.v.sku + ' · ' + l.v.disponible + ' disponibles';
-      });
-      var desc = Number(soloDigitos($('nv-desc').value)) || 0, envio = $('nv-entrega').value === 'recoge' ? 0 : (Number(soloDigitos($('nv-envio').value)) || 0);
-      var neto = sub - desc, margen = neto > 0 && costoCompleto && costo ? Math.round((neto - costo) / neto * 100) : null;
-      $('nv-totales').innerHTML = '<div><span>Subtotal</span><span>' + pesos(sub) + '</span></div>' +
+    function totalesPos() {
+      var sub = subtotalBolsa(), desc = Number(soloDigitos($('pos-desc').value)) || 0, envio = pos.entrega === 'recoge' ? 0 : (Number(soloDigitos($('pos-envio').value)) || 0);
+      var costo = 0, completo = true;
+      Object.keys(pos.bolsa).forEach(function (id) { var v = variantePos(id); if (v.costo_promedio === null) completo = false; else costo += v.costo_promedio * pos.bolsa[id]; });
+      var neto = sub - desc, margen = neto > 0 && completo && costo ? Math.round((neto - costo) / neto * 100) : null;
+      $('pos-totales').innerHTML = '<div><span>Subtotal</span><span>' + pesos(sub) + '</span></div>' +
         (desc ? '<div><span>Descuento</span><span>−' + pesos(desc) + '</span></div>' : '') +
         (envio ? '<div><span>Envío</span><span>' + pesos(envio) + '</span></div>' : '') +
         '<div class="total"><span>Total</span><span>' + pesos(neto + envio) + '</span></div>' +
-        (margen !== null ? '<div><span>Margen bruto estimado</span><span>' + margen + '%</span></div>' : '') +
-        (margen !== null && margen < 0 ? '<div style="color:var(--rosa-alterno)"><span>Atención: este descuento deja pérdida.</span></div>' : '');
+        (margen !== null ? '<div class="nota-m"><span>Margen bruto estimado</span><span' + (margen < 0 ? ' style="color:#C2556A;font-weight:600"' : '') + '>' + margen + '%</span></div>' : '');
+      $('pos-registrar').textContent = 'Registrar venta · ' + pesos(neto + envio);
     }
-    $('form-venta').addEventListener('submit', function (ev) {
-      ev.preventDefault();
-      if (!clienta) { avisar('Elige o crea la clienta.', true); return; }
-      var ls = lineasVenta().filter(function (l) { return l.v; });
-      if (!ls.length) { avisar('Agrega al menos un producto.', true); return; }
-      var btn = this.querySelector('button[type="submit"]'); btn.disabled = true; btn.textContent = 'Registrando…';
-      api('crearPedido', {
-        customer_id: clienta.customer_id, canal: $('nv-canal').value, tipo_entrega: $('nv-entrega').value,
-        descuento: soloDigitos($('nv-desc').value), envio_cobrado: soloDigitos($('nv-envio').value),
-        direccion_entrega: $('nv-dir').value, ciudad_entrega: $('nv-ciudad').value, nota: $('nv-nota').value,
-        pago: $('nv-pago').value, medio: $('nv-medio').value, vencimiento: $('nv-pago').value === 'credito' ? $('nv-venc').value : '', idempotency_key: claveVenta,
-        lineas: ls.map(function (l) { return { variant_id: l.v.variant_id, cantidad: l.cantidad }; })
-      }).then(function (r) {
-        btn.disabled = false; btn.textContent = 'Registrar venta';
-        if (!r.ok) { manejarError(r); return; }
-        avisar('Pedido ' + r.data.numero + ' registrado' + (r.data.estado === 'confirmado' ? ' y pagado.' : '. Unidades reservadas.'));
-        abrirPedido(r.data.order_id);
-      });
+    function pintarClientaPos() {
+      var c = pos.clienta, el = $('pos-clienta');
+      if (c) {
+        el.innerHTML = '<div class="clienta-card"><span class="avatar">' + escapar(iniciales(c.nombre)) + '</span><div class="c-txt"><b>' + escapar(c.nombre) + '</b><span>' +
+          escapar(telTexto(c.telefono)) + (c.compras ? ' · ' + c.compras + (c.compras === 1 ? ' compra anterior' : ' compras anteriores') : ' · clienta nueva') + '</span></div>' +
+          '<button class="enlace" type="button" id="pos-cambiar-cl">Cambiar</button></div>';
+        return;
+      }
+      el.innerHTML = '<div class="pos-buscar" style="position:static;margin:0"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>' +
+        '<input id="pos-cl-q" type="search" placeholder="Nombre o celular de la clienta" autocomplete="off"></div><ul class="sugs" id="pos-sugs"></ul>' +
+        '<div id="pos-cl-nueva" class="tarjeta-suave" hidden><span class="etq">Clienta nueva</span>' +
+        '<div class="doble-suave" style="grid-template-columns:1fr 1fr"><input id="pos-cl-nombre" class="campo" maxlength="80" placeholder="Nombre y apellido"><input id="pos-cl-tel" class="campo" maxlength="16" inputmode="tel" placeholder="Celular"></div>' +
+        '<label class="confirmacion" style="font-size:12px"><input type="checkbox" id="pos-cl-nov"> Aceptó recibir novedades (opcional)</label>' +
+        '<button class="boton" type="button" id="pos-cl-guardar" style="border-radius:14px">Guardar clienta</button></div>';
+    }
+    var clTimer;
+    $('pos-hoja').addEventListener('input', function (ev) {
+      if (ev.target.id === 'pos-cl-q') {
+        clearTimeout(clTimer); var q = ev.target.value.trim();
+        if (q.length < 2) { $('pos-sugs').innerHTML = ''; return; }
+        clTimer = setTimeout(function () {
+          api('buscarClientas', { q: q }).then(function (r) {
+            if (!r.ok) return;
+            pos.sugeridas = r.data;
+            $('pos-sugs').innerHTML = r.data.map(function (c, i) {
+              return '<li data-sug="' + i + '"><span class="avatar">' + escapar(iniciales(c.nombre)) + '</span><span><b>' + escapar(c.nombre) + '</b> · ' + escapar(telTexto(c.telefono)) + '</span></li>';
+            }).join('') + '<li data-nueva-cl="1" style="background:#fff;border:1px dashed rgba(53,39,44,.25)"><span class="avatar" style="background:#F5F1E9">+</span><span>Crear clienta nueva' + (r.data.length ? '' : ': “' + escapar(q) + '”') + '</span></li>';
+          });
+        }, 280);
+      }
+      if (ev.target.id === 'pos-desc' || ev.target.id === 'pos-envio') totalesPos();
     });
+    $('pos-hoja').addEventListener('click', function (ev) {
+      var t = ev.target;
+      if (t.closest('[data-cerrar-hoja]')) { $('pos-hoja').hidden = true; pintarRejilla(); return; }
+      var st = t.closest('[data-it]');
+      if (st) { cambiarBolsa(st.dataset.it, Number(st.dataset.d)); if (!piezasBolsa()) { $('pos-hoja').hidden = true; pintarRejilla(); return; } pintarHoja(); return; }
+      var sg = t.closest('[data-sug]'); if (sg) { pos.clienta = pos.sugeridas[Number(sg.dataset.sug)]; pintarClientaPos(); return; }
+      if (t.closest('[data-nueva-cl]')) {
+        var q = $('pos-cl-q').value.trim(); $('pos-cl-nueva').hidden = false; $('pos-sugs').innerHTML = '';
+        if (/\d{4,}/.test(q)) $('pos-cl-tel').value = q; else $('pos-cl-nombre').value = q;
+        (/\d{4,}/.test(q) ? $('pos-cl-nombre') : $('pos-cl-tel')).focus(); return;
+      }
+      if (t.id === 'pos-cambiar-cl') { pos.clienta = null; pintarClientaPos(); $('pos-cl-q').focus(); return; }
+      if (t.id === 'pos-cl-guardar') {
+        t.disabled = true;
+        api('guardarClienta', { nombre: $('pos-cl-nombre').value, telefono: $('pos-cl-tel').value, ciudad: 'Cartagena', consentimiento_marketing: $('pos-cl-nov').checked }).then(function (r) {
+          t.disabled = false; if (!r.ok) { manejarError(r); return; }
+          pos.clienta = r.data; pintarClientaPos(); avisar('Clienta guardada.');
+        });
+        return;
+      }
+      var ch = t.closest('[data-canal]'); if (ch) { pos.canal = ch.dataset.canal; pintarHoja(); return; }
+      var en = t.closest('[data-entrega]');
+      if (en) {
+        pos.entrega = en.dataset.entrega;
+        if (pos.clienta && !$('pos-dir').value) { $('pos-dir').value = pos.clienta.direccion || ''; $('pos-ciudad').value = pos.clienta.ciudad || (pos.entrega === 'domicilio' ? 'Cartagena' : ''); }
+        pintarHoja(); return;
+      }
+      var pg = t.closest('[data-pago]'); if (pg) { pos.pago = pg.dataset.pago; if (pos.pago === 'verificado' && !pos.medio) pos.medio = 'transferencia'; pintarHoja(); return; }
+      var md = t.closest('[data-medio]'); if (md) { pos.medio = md.dataset.medio; pintarHoja(); return; }
+      if (t.id === 'pos-btn-desc') { $('pos-desc').hidden = false; $('pos-desc').focus(); return; }
+      if (t.id === 'pos-btn-nota') { $('pos-nota').hidden = false; $('pos-nota').focus(); return; }
+      if (t.id === 'pos-registrar') registrarVentaPos(t);
+    });
+    function registrarVentaPos(btn) {
+      if (!pos.clienta) { avisar('Elige o crea la clienta.', true); $('pos-cl-q') && $('pos-cl-q').focus(); return; }
+      if (!pos.pago) { avisar('Elige cómo queda el pago.', true); return; }
+      btn.disabled = true; btn.textContent = 'Registrando…';
+      api('crearPedido', {
+        customer_id: pos.clienta.customer_id, canal: pos.canal, tipo_entrega: pos.entrega,
+        descuento: soloDigitos($('pos-desc').value), envio_cobrado: pos.entrega === 'recoge' ? '' : soloDigitos($('pos-envio').value),
+        direccion_entrega: $('pos-dir').value, ciudad_entrega: $('pos-ciudad').value, nota: $('pos-nota').value,
+        pago: pos.pago, medio: pos.medio, vencimiento: pos.pago === 'credito' ? $('pos-venc').value : '', idempotency_key: pos.clave,
+        lineas: Object.keys(pos.bolsa).map(function (id) { return { variant_id: id, cantidad: pos.bolsa[id] }; })
+      }).then(function (r) {
+        btn.disabled = false; totalesPos();
+        if (!r.ok) { manejarError(r); return; }
+        mostrarListo(r.data);
+      });
+    }
+    function mostrarListo(venta) {
+      $('pos-hoja').hidden = true; $('pos-barra').hidden = true;
+      pos.venta = venta; pos.pdf = null;
+      $('listo-numero').textContent = 'Venta ' + venta.numero;
+      $('listo-titulo').textContent = pos.pago === 'verificado' ? '¡Venta registrada!' : pos.pago === 'credito' ? 'Venta registrada a crédito' : 'Pedido apartado';
+      $('listo-sub').textContent = pos.clienta.nombre + ' · ' + pesos(venta.total) + ' · ' +
+        (pos.pago === 'verificado' ? 'pagado por ' + (pos.datos.medios[pos.medio] || '').toLowerCase() : pos.pago === 'credito' ? 'queda en Por cobrar' : 'pendiente de pago');
+      $('listo-correo').textContent = 'Preparando el comprobante…';
+      $('pos-listo').hidden = false;
+      prepararComprobante(venta.order_id, true).then(function (res) {
+        $('listo-correo').textContent = res.enviado_a ? 'Copia enviada a ' + res.enviado_a + '.' : 'Comprobante listo.';
+      }).catch(function (e) { $('listo-correo').textContent = 'No se pudo preparar el comprobante: ' + e.message; });
+    }
+    $('pos-listo').addEventListener('click', function (ev) {
+      var id = ev.target.id;
+      if (id === 'listo-compartir') compartirComprobante(pos.venta.order_id, 'compartir');
+      if (id === 'listo-descargar') compartirComprobante(pos.venta.order_id, 'descargar');
+      if (id === 'listo-ver') { $('pos-listo').hidden = true; abrirPedido(pos.venta.order_id); }
+      if (id === 'listo-otra') prepararVenta();
+    });
+
+    /* ---------------- Comprobante de compra en PDF (v0.17) ---------------- */
+    var comprobantes = {};   // order_id → { blob, nombre, datos }
+    function cargarScript(src) {
+      return new Promise(function (ok, mal) {
+        if (document.querySelector('script[data-src="' + src + '"]')) { ok(); return; }
+        var s = document.createElement('script'); s.src = src; s.dataset.src = src; s.onload = ok; s.onerror = function () { mal(new Error('No se pudo cargar ' + src)); };
+        document.head.appendChild(s);
+      });
+    }
+    function htmlComprobante(d) {
+      var nombre = (d.clienta.nombre || '').split(' ')[0];
+      var p = d.pago, sello = { pagado: 'PAGADO', credito: 'PAGO PENDIENTE', pendiente: 'PAGO PENDIENTE', reportado: 'PAGO EN VERIFICACIÓN' }[p.estado];
+      return '<div class="cp">' +
+        '<img class="cp-logo" src="/assets/logo-lazos-memorables.png" alt="Lazos Memorables">' +
+        '<h1 class="cp-gracias">Gracias por tu compra' + (nombre ? ', ' + escapar(nombre) : '') + '</h1>' +
+        '<p class="cp-frase">Gracias por elegirnos. Esperamos que cada pieza te acompañe en momentos que valga la pena recordar.</p>' +
+        '<div class="cp-meta"><span>Comprobante <b>' + escapar(d.numero) + '</b> · ' + escapar(fechaLarga(d.fecha)) + '</span><span class="cp-sello ' + p.estado + '">' + sello + '</span></div>' +
+        '<p class="cp-para">Para <b>' + escapar(d.clienta.nombre) + '</b>' + (d.clienta.telefono ? ' · ' + escapar(telTexto(d.clienta.telefono)) : '') + '</p>' +
+        '<div class="cp-lineas">' + d.lineas.map(function (l) {
+          return '<div class="cp-linea"><div class="cp-foto">' + (l.foto ? '<img src="' + escapar(l.foto) + '" alt="">' : escapar(iniciales(l.nombre))) + '</div>' +
+            '<div class="cp-ln">' + escapar(l.nombre) + '<small>' + l.cantidad + ' × ' + pesos(l.precio) + '</small></div><div class="cp-val">' + pesos(l.precio * l.cantidad) + '</div></div>';
+        }).join('') + '</div>' +
+        '<div class="cp-tot"><div><span>Subtotal</span><span>' + pesos(d.subtotal) + '</span></div>' +
+          (d.descuento ? '<div><span>Descuento</span><span>−' + pesos(d.descuento) + '</span></div>' : '') +
+          (d.envio ? '<div><span>Envío</span><span>' + pesos(d.envio) + '</span></div>' : '') +
+          '<div class="grande"><span>Total</span><span>' + pesos(d.total) + '</span></div></div>' +
+        '<div class="cp-caja"><h4>Pago</h4>' +
+          '<div><b>Estado:</b> ' + escapar(p.texto) + '</div>' +
+          (p.medio ? '<div><b>Medio:</b> ' + escapar(p.medio) + '</div>' : '') +
+          (p.abonado && p.saldo ? '<div><b>Abonado:</b> ' + pesos(p.abonado) + '</div>' : '') +
+          (p.saldo ? '<div><b>Saldo pendiente:</b> ' + pesos(p.saldo) + '</div>' : '') +
+          (p.vencimiento ? '<div><b>Paga a más tardar:</b> ' + escapar(fechaLarga(p.vencimiento)) + '</div>' : '') +
+          (d.pago_instrucciones ? '<pre>' + escapar(d.pago_instrucciones) + '</pre>' : '') + '</div>' +
+        '<div class="cp-caja" style="margin-top:12px"><h4>Entrega</h4><div>' + escapar(d.entrega) + (d.direccion && d.entrega.indexOf('Recoge') < 0 ? ' · ' + escapar(d.direccion) : '') + '</div></div>' +
+        '<div class="cp-pie"><div class="cp-lema">Transmitiendo amor</div><div class="cp-redes">@lazosmemorables · lazosmemorables.co · Cartagena de Indias</div>' +
+          '<div class="cp-legal">Comprobante de compra. No reemplaza una factura electrónica.</div></div></div>';
+    }
+    /** Arma el PDF (una sola página del alto del contenido) y lo guarda en Drive; con enviar=true también al correo. */
+    function prepararComprobante(orderId, enviar) {
+      return Promise.all([cargarScript('vendor/html2canvas.min.js'), cargarScript('vendor/jspdf.umd.min.js'), api('datosComprobante', { order_id: orderId })]).then(function (res) {
+        var r = res[2]; if (!r.ok) throw new Error(r.error.message);
+        var d = r.data, lienzo = $('comprobante-lienzo');
+        lienzo.innerHTML = htmlComprobante(d);
+        var imgs = Array.prototype.slice.call(lienzo.querySelectorAll('img'));
+        return Promise.all(imgs.map(function (im) {
+          return new Promise(function (ok) { if (im.complete && im.naturalWidth) ok(); else { im.onload = ok; im.onerror = function () { var p = im.parentNode; if (p.classList.contains('cp-foto')) p.textContent = ''; else im.remove(); ok(); }; } });
+        })).then(function () { return document.fonts ? document.fonts.ready : null; }).then(function () {
+          return window.html2canvas(lienzo.firstChild, { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false });
+        }).then(function (canvas) {
+          var ancho = 420, alto = Math.round(canvas.height / canvas.width * ancho);
+          var doc = new window.jspdf.jsPDF({ unit: 'pt', format: [ancho, alto], compress: true });
+          doc.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, ancho, alto);
+          doc.setProperties({ title: 'Comprobante ' + d.numero + ' · Lazos Memorables', author: 'Lazos Memorables' });
+          var blob = doc.output('blob'), nombre = 'Lazos Memorables · Comprobante ' + d.numero.replace('#', '') + '.pdf';
+          comprobantes[orderId] = { blob: blob, nombre: nombre, datos: d };
+          lienzo.innerHTML = '';
+          return new Promise(function (ok) { var fr = new FileReader(); fr.onload = function () { ok(String(fr.result).split(',')[1]); }; fr.readAsDataURL(blob); });
+        }).then(function (b64) {
+          return api('guardarComprobante', { order_id: orderId, pdf: b64, enviar: !!enviar }).then(function (g) { return g.ok ? g.data : { enviado_a: '' }; });
+        });
+      });
+    }
+    function compartirComprobante(orderId, modo) {
+      var listo = comprobantes[orderId] ? Promise.resolve() : prepararComprobante(orderId, false);
+      avisar(comprobantes[orderId] ? 'Abriendo el comprobante…' : 'Preparando el comprobante…');
+      listo.then(function () {
+        var c = comprobantes[orderId], archivo = new File([c.blob], c.nombre, { type: 'application/pdf' });
+        var nombre = (c.datos.clienta.nombre || '').split(' ')[0];
+        var texto = 'Hola' + (nombre ? ', ' + nombre : '') + '. Gracias por tu compra en Lazos Memorables. Te compartimos tu comprobante ' + c.datos.numero + '.';
+        if (modo === 'compartir' && navigator.canShare && navigator.canShare({ files: [archivo] })) {
+          navigator.share({ files: [archivo], title: 'Comprobante ' + c.datos.numero, text: texto }).catch(function () { /* cancelado */ });
+          return;
+        }
+        var url = URL.createObjectURL(c.blob), a = document.createElement('a');
+        a.href = url; a.download = c.nombre; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+        if (modo === 'compartir') avisar('Se descargó el PDF. Adjúntalo en el chat con la clienta.');
+      }).catch(function (e) { avisar(e.message, true); });
+    }
 
     /* Detalle del pedido */
     var pedido = null;
@@ -2444,6 +2794,7 @@
       $('pe-sub').textContent = p.numero + ' · ' + p.canal + ' · ' + fechaCorta(p.fechas.creado);
       $('pe-titulo').textContent = p.clienta.nombre || 'Pedido';
       $('pe-estado').className = 'etiqueta ' + p.estado; $('pe-estado').textContent = p.estado_texto;
+      if (p.credito && p.credito.saldo > 0) { $('pe-estado').className = 'etiqueta pendiente_pago'; $('pe-estado').textContent = 'A crédito · debe ' + pesos(p.credito.saldo); }
       $('pe-meta').textContent = p.entrega_texto + ' · Registrado por ' + p.creado_por + (p.nota ? ' · ' + p.nota : '');
       var idx = PASOS.map(function (x) { return x[0]; }).indexOf(p.estado);
       var cerrado = ['cancelado', 'expirado', 'devuelto'].indexOf(p.estado) >= 0;
@@ -2454,6 +2805,7 @@
       var aviso = '';
       if (p.estado === 'pendiente_pago' && p.expira_en) aviso = 'Unidades reservadas hasta las ' + horaCorta(p.expira_en) + '. Si no se reporta el pago, el pedido expira y las libera.';
       if (p.estado === 'pendiente_pago' && p.envio_por_cotizar) aviso = 'Pedido web con envío por cotizar. Escríbele a la clienta con el valor y fíjalo aquí; desde ese momento tiene ' + (p.reserva_minutos || 30) + ' minutos para pagar.';
+      if (p.credito && p.credito.saldo > 0) aviso = 'Venta a crédito: debe ' + pesos(p.credito.saldo) + (p.credito.vencimiento ? ' · paga a más tardar el ' + fechaLarga(p.credito.vencimiento) : '') + '. Registra los pagos en Por cobrar.';
       if (p.verificacion_atrasada) aviso = 'El pago se reportó hace más del tiempo configurado y aún no se verifica. Revisa la cuenta bancaria.';
       if (cerrado) aviso = p.estado_texto + (p.motivo_cierre ? ': ' + p.motivo_cierre : '') +
         (p.cobros.some(function (c) { return c.estado === 'por_reembolsar'; }) ? ' · Hay un pago por reembolsar a la clienta.' : '');
@@ -2462,7 +2814,6 @@
       var acc = [];
       if (p.estado === 'pendiente_pago' && p.envio_por_cotizar) acc.push(['fijar_envio', 'Fijar costo del envío']);
       else if (p.estado === 'pendiente_pago') acc.push(['reportar', 'Registrar pago reportado'], ['verificar', 'Verificar pago']);
-      if (p.seguimiento) acc.push(['copiar_enlace', 'Copiar enlace de la clienta']);
       if (p.estado === 'pago_reportado') acc.push(['verificar', 'Verificar pago'], ['rechazar', 'Rechazar pago']);
       if (p.estado === 'confirmado') acc.push(['preparar', 'Pasar a preparación']);
       if ((p.estado === 'confirmado' || p.estado === 'preparando') && p.tipo_entrega !== 'recoge') acc.push(['despachar', 'Registrar envío']);
@@ -2470,8 +2821,11 @@
       if (p.estado === 'despachado') acc.push(['entregar', 'Marcar entregado']);
       if (['pendiente_pago', 'pago_reportado', 'confirmado', 'preparando'].indexOf(p.estado) >= 0) acc.push(['cancelar', 'Cancelar pedido']);
       if (p.estado === 'despachado' || p.estado === 'entregado') acc.push(['devolver', 'Registrar devolución']);
+      if (p.estado !== 'eliminado') acc.splice(acc.length ? 1 : 0, 0, ['comprobante', 'Compartir comprobante']);
+      if (p.seguimiento) acc.push(['copiar_enlace', 'Copiar enlace de la clienta']);
+      if (p.estado !== 'eliminado') acc.push(['correo', 'Enviar copia a mi correo'], ['eliminar', 'Eliminar venta']);
       $('pe-acciones').innerHTML = acc.map(function (a, i) {
-        var peligro = a[0] === 'cancelar' || a[0] === 'devolver' || a[0] === 'rechazar';
+        var peligro = a[0] === 'cancelar' || a[0] === 'devolver' || a[0] === 'rechazar' || a[0] === 'eliminar';
         return '<button class="' + (i === 0 && !peligro ? 'boton' : 'enlace' + (peligro ? ' peligro' : '')) + '" type="button" data-acc="' + a[0] + '">' + a[1] + '</button>';
       }).join('');
 
@@ -2531,6 +2885,25 @@
     $('pe-acciones').addEventListener('click', function (ev) {
       var b = ev.target.closest('button[data-acc]'); if (!b) return;
       var a = b.dataset.acc;
+      if (a === 'comprobante') { compartirComprobante(pedido.order_id, 'compartir'); return; }
+      if (a === 'correo') {
+        b.disabled = true; avisar('Preparando y enviando el comprobante…');
+        delete comprobantes[pedido.order_id];
+        prepararComprobante(pedido.order_id, true).then(function (res) { b.disabled = false; avisar(res.enviado_a ? 'Copia enviada a ' + res.enviado_a + '.' : 'Comprobante guardado.'); })
+          .catch(function (e) { b.disabled = false; avisar(e.message, true); });
+        return;
+      }
+      if (a === 'eliminar') {
+        var conf = window.prompt('Eliminar la venta ' + pedido.numero + ' por ' + pesos(pedido.total) + '.\n\nLas piezas vuelven al inventario y la venta sale de ventas, finanzas, clientas y por cobrar. Queda registrada en la auditoría.\n\nEscribe ELIMINAR para confirmar:');
+        if (conf === null) return;
+        if (conf.trim().toUpperCase() !== 'ELIMINAR') { avisar('No se eliminó: escribe ELIMINAR para confirmar.', true); return; }
+        b.disabled = true;
+        api('eliminarVenta', { order_id: pedido.order_id, confirmacion: 'ELIMINAR', motivo: 'Eliminada desde el panel' }).then(function (r) {
+          b.disabled = false; if (!r.ok) { manejarError(r); return; }
+          avisar('Venta ' + r.data.numero + ' eliminada. Todo quedó ajustado.'); delete comprobantes[pedido.order_id]; irA('ventas');
+        });
+        return;
+      }
       if (a === 'copiar_enlace') {
         var txt = pedido.seguimiento;
         (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () { avisar('Enlace copiado. Pégalo en el chat con la clienta.'); })
@@ -3000,11 +3373,11 @@
           c.innerHTML = '<form id="form-gasto" class="formulario panel-var" autocomplete="off">' +
             '<p class="titulo-seccion" style="margin:0">Registrar gasto</p>' +
             '<p class="pista" style="margin:0">Publicidad, empaques, fotos, suscripciones. Las compras de mercancía van en Compras y el envío de cada pedido se registra al despacharlo.</p>' +
-            '<div class="doble"><div><label class="etq" for="gs-cat">Categoría</label><select id="gs-cat" class="selector" style="width:100%"><option value="">Elige…</option>' + opciones(g.categorias) + '</select></div>' +
-            '<div><label class="etq" for="gs-desc">Descripción</label><input id="gs-desc" class="campo" maxlength="120" placeholder="Ej.: pauta historia lanzamiento"></div></div>' +
+            '<div><span class="etq">¿En qué se gastó?</span><div class="chips" id="gs-cats">' + Object.keys(g.categorias).map(function (k) { return '<button class="chip" type="button" data-gcat="' + k + '" aria-pressed="false">' + escapar(g.categorias[k]) + '</button>'; }).join('') + '</div><input type="hidden" id="gs-cat"></div>' +
+            '<div><label class="etq" for="gs-desc">Descripción</label><input id="gs-desc" class="campo" maxlength="120" placeholder="Ej.: pauta historia lanzamiento" style="width:100%"></div>' +
             '<div class="doble"><div><label class="etq" for="gs-monto">Valor</label><input id="gs-monto" class="campo" inputmode="numeric" data-precio placeholder="0"></div>' +
             '<div><label class="etq" for="gs-fecha">Fecha</label><input id="gs-fecha" class="campo" type="date" value="' + hoyBogota() + '" max="' + hoyBogota() + '"></div></div>' +
-            '<div><label class="etq" for="gs-medio">Cómo se pagó</label><select id="gs-medio" class="selector" style="width:100%">' + opciones(g.medios) + '</select></div>' +
+            '<div><span class="etq">¿Cómo se pagó?</span><div class="chips" id="gs-medios">' + Object.keys(g.medios).map(function (k, i) { return '<button class="chip" type="button" data-gmed="' + k + '" aria-pressed="' + (i === 0) + '">' + escapar(g.medios[k]) + '</button>'; }).join('') + '</div><input type="hidden" id="gs-medio" value="' + Object.keys(g.medios)[0] + '"></div>' +
             '<div class="pie-form" style="margin:0"><button class="boton" type="submit" id="gs-guardar">Guardar gasto</button></div></form>' +
             '<p class="titulo-seccion">Gastos de ' + mesTexto(g.mes) + ' · ' + pesos(g.total) + '</p>' +
             '<ul class="lista">' + (g.gastos.length ? g.gastos.map(function (x) {
@@ -3055,6 +3428,12 @@
       });
     }
     $('vista-finanzas').addEventListener('click', function (ev) {
+      var gc = ev.target.closest('[data-gcat],[data-gmed]');
+      if (gc) {
+        var grupo = gc.parentNode, campo = gc.dataset.gcat ? 'gs-cat' : 'gs-medio';
+        grupo.querySelectorAll('.chip').forEach(function (x) { x.setAttribute('aria-pressed', x === gc ? 'true' : 'false'); });
+        $(campo).value = gc.dataset.gcat || gc.dataset.gmed; return;
+      }
       var m = ev.target.closest('[data-mes]');
       if (m) { finMes = moverMes(finMes, Number(m.dataset.mes)); cargarFinanzas(); return; }
       var f = ev.target.closest('#filtro-finanzas .pildora');
@@ -3655,5 +4034,6 @@
     }
   })();
   </script>
+  <div id="comprobante-lienzo" aria-hidden="true"></div>
 </body>
 </html>
