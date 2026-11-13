@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-12T21:10:46-05:00",
+ "generado": "2026-11-12T21:19:52-05:00",
  "version": 1,
  "moneda": "COP",
  "categorias": [
@@ -27,7 +27,7 @@
   }
  ],
  "tienda": {
-  "checkout_activo": false,
+  "checkout_activo": true,
   "envio": {
    "domicilio": null,
    "nacional": null
