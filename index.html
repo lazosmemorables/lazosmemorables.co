@@ -2,7 +2,7 @@
 <html lang="es-CO">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS MEMORABLES — index.html · Vitrina v2.4.1 (envío contra entrega) -->
+  <!-- LAZOS MEMORABLES — index.html · Vitrina v2.4.2 (checkout claro y en vivo) -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Lazos Memorables · Accesorios femeninos · Cartagena</title>
   <meta name="description" content="Aretes, collares y pulseras que reflejan tu esencia y acompañan momentos significativos. Desde Cartagena para toda Colombia.">
@@ -352,6 +352,14 @@
       .rapido { width: 38px; height: 38px; right: 8px; bottom: 8px; }
     }
 
+    /* ---------- v2.4.2 · Campos obligatorios ---------- */
+    .req { color: var(--rosa-historico); font-weight: 600; margin-left: 2px; }
+    .opc { text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 11px; color: var(--texto-suave); }
+    .leyenda { font-size: 12px; color: var(--texto-suave); margin: -12px 0 0; }
+    .campo.con-error, .check.con-error input { border-color: var(--rosa-historico) !important; box-shadow: 0 0 0 3px rgba(194, 85, 106, .14); }
+    .msg-error { display: block; font-size: 12px; color: var(--rosa-historico); margin-top: 6px; font-weight: 500; }
+    .check.con-error { color: var(--cacao); }
+
     /* ---------- Aviso ---------- */
     .toast {
       position: fixed; left: 20px; right: 20px; bottom: 28px; margin: 0 auto; max-width: 440px; text-align: center;
@@ -496,11 +504,12 @@
         <h1 style="margin-top:20px">Finalizar compra</h1>
         <form id="form-checkout" class="formulario" autocomplete="on" novalidate>
           <span class="rotulo">Tus datos</span>
+          <p class="leyenda">Los campos con <span class="req">*</span> son obligatorios. Los demás son opcionales.</p>
           <div class="doble">
-            <div><label class="etq" for="ck-nombre">Nombre completo</label><input id="ck-nombre" class="campo" autocomplete="name" maxlength="80" required></div>
-            <div><label class="etq" for="ck-tel">Celular</label><input id="ck-tel" class="campo" autocomplete="tel" inputmode="tel" maxlength="16" placeholder="300 123 4567" required></div>
+            <div><label class="etq" for="ck-nombre">Nombre completo <span class="req" aria-hidden="true">*</span></label><input id="ck-nombre" class="campo" autocomplete="name" maxlength="80" required></div>
+            <div><label class="etq" for="ck-tel">Celular <span class="req" aria-hidden="true">*</span></label><input id="ck-tel" class="campo" autocomplete="tel" inputmode="tel" maxlength="16" placeholder="300 123 4567" required></div>
           </div>
-          <div><label class="etq" for="ck-email">Correo (opcional)</label><input id="ck-email" class="campo" type="email" autocomplete="email" maxlength="80"></div>
+          <div><label class="etq" for="ck-email">Correo <span class="opc">(opcional)</span></label><input id="ck-email" class="campo" type="email" autocomplete="email" maxlength="80"></div>
 
           <span class="rotulo" style="margin-top:12px">Entrega</span>
           <div class="opciones-entrega" id="ck-entregas">
@@ -508,14 +517,14 @@
             <label class="opcion-entrega"><input type="radio" name="entrega" value="nacional"><strong>Resto de Colombia</strong><span id="ck-tarifa-nacional"></span></label>
           </div>
           <div class="doble" id="ck-caja-ciudad" hidden>
-            <div><label class="etq" for="ck-ciudad">Ciudad o municipio</label><input id="ck-ciudad" class="campo" autocomplete="address-level2" maxlength="60"></div>
-            <div><label class="etq" for="ck-depto">Departamento</label><input id="ck-depto" class="campo" autocomplete="address-level1" maxlength="40"></div>
+            <div><label class="etq" for="ck-ciudad">Ciudad o municipio <span class="req" aria-hidden="true">*</span></label><input id="ck-ciudad" class="campo" autocomplete="address-level2" maxlength="60"></div>
+            <div><label class="etq" for="ck-depto">Departamento <span class="opc">(opcional)</span></label><input id="ck-depto" class="campo" autocomplete="address-level1" maxlength="40"></div>
           </div>
           <div class="doble">
-            <div><label class="etq" for="ck-dir">Dirección</label><input id="ck-dir" class="campo" autocomplete="street-address" maxlength="120" placeholder="Calle, número, apto o casa"></div>
-            <div><label class="etq" for="ck-barrio">Barrio</label><input id="ck-barrio" class="campo" maxlength="60"></div>
+            <div><label class="etq" for="ck-dir">Dirección <span class="req" aria-hidden="true">*</span></label><input id="ck-dir" class="campo" autocomplete="street-address" maxlength="120" placeholder="Calle, número, apto o casa"></div>
+            <div><label class="etq" for="ck-barrio">Barrio <span class="req" aria-hidden="true">*</span></label><input id="ck-barrio" class="campo" maxlength="60"></div>
           </div>
-          <div><label class="etq" for="ck-nota">Nota (opcional)</label><input id="ck-nota" class="campo" maxlength="300" placeholder="Ej.: es un regalo, incluir tarjeta"></div>
+          <div><label class="etq" for="ck-nota">Nota <span class="opc">(opcional)</span></label><input id="ck-nota" class="campo" maxlength="300" placeholder="Ej.: es un regalo, incluir tarjeta"></div>
           <div class="trampa" aria-hidden="true"><label for="ck-empresa">Empresa</label><input id="ck-empresa" tabindex="-1" autocomplete="off"></div>
 
           <div id="ck-caja-pago" hidden>
@@ -528,8 +537,8 @@
 
           <div id="ck-resumen" class="resumen" style="margin:8px 0 0;max-width:none"></div>
 
-          <label class="check"><input type="checkbox" id="ck-datos"> <span>Autorizo a Lazos Memorables a tratar mis datos para procesar y entregar mi pedido, conforme a su <a href="/privacidad/" target="_blank" rel="noopener">Política de Tratamiento de Datos</a>.</span></label>
-          <label class="check"><input type="checkbox" id="ck-novedades"> <span>Quiero recibir novedades, lanzamientos y beneficios. Puedo cancelarlo cuando quiera. (Opcional)</span></label>
+          <label class="check" id="lbl-datos"><input type="checkbox" id="ck-datos"> <span><span class="req">*</span> Autorizo a Lazos Memorables a tratar mis datos para procesar y entregar mi pedido, conforme a su <a href="/privacidad/" target="_blank" rel="noopener">Política de Tratamiento de Datos</a>.</span></label>
+          <label class="check"><input type="checkbox" id="ck-novedades"> <span>Quiero recibir novedades, lanzamientos y beneficios. Puedo cancelarlo cuando quiera. <span class="opc">(opcional)</span></span></label>
           <p id="ck-error" class="error-form" hidden></p>
           <button class="boton" type="submit" id="ck-enviar">Confirmar pedido</button>
           <p class="nota-pedido" id="ck-nota-pago">Al confirmar, apartamos tus piezas y te mostramos cómo pagar.</p>
@@ -926,8 +935,39 @@
         if (g && g.acepta) $('ck-datos').checked = true;
       } catch (x) { /* sin almacenamiento */ }
       if (tienda.pago_en_linea) cargarWidget('https://checkout.wompi.co/widget.js').catch(function () { /* se reintenta al pagar */ });
+      limpiarErrores();
       actualizarEntrega();
+      refrescarTienda();
     }
+    // Configuración en vivo (pago en línea y envíos): no depende de que el catálogo esté recién publicado.
+    function refrescarTienda() {
+      api('tiendaWeb', {}).then(function (r) {
+        if (!r.ok || !r.data) return;
+        tienda.pago_en_linea = r.data.pago_en_linea; tienda.envio = r.data.envio; tienda.envio_contra_entrega = r.data.envio_contra_entrega;
+        tienda.transferencia = r.data.transferencia; tienda.checkout_activo = r.data.checkout_activo;
+        if (location.hash !== '#/checkout') return;
+        $('ck-caja-pago').hidden = !tienda.pago_en_linea;
+        $('ck-tarifa-domicilio').textContent = textoTarifa(tienda.envio && tienda.envio.domicilio, 'domicilio');
+        $('ck-tarifa-nacional').textContent = textoTarifa(tienda.envio && tienda.envio.nacional, 'nacional');
+        if (tienda.pago_en_linea) cargarWidget('https://checkout.wompi.co/widget.js').catch(function () { /* se reintenta al pagar */ });
+        actualizarEntrega();
+      });
+    }
+    function limpiarErrores() {
+      document.querySelectorAll('#form-checkout .con-error').forEach(function (el) { el.classList.remove('con-error'); });
+      document.querySelectorAll('#form-checkout .msg-error').forEach(function (el) { el.remove(); });
+    }
+    function marcarError(id, msg) {
+      var el = $(id), destino = id === 'ck-datos' ? $('lbl-datos') : el;
+      destino.classList.add('con-error');
+      var s = document.createElement('small'); s.className = 'msg-error'; s.textContent = msg;
+      (id === 'ck-datos' ? destino : el).insertAdjacentElement('afterend', s);
+    }
+    $('form-checkout').addEventListener('input', function (ev) {
+      var el = ev.target; if (!el.classList.contains('con-error') && !(el.id === 'ck-datos')) return;
+      el.classList.remove('con-error'); if (el.id === 'ck-datos') $('lbl-datos').classList.remove('con-error');
+      var n = (el.id === 'ck-datos' ? $('lbl-datos') : el).nextElementSibling; if (n && n.classList.contains('msg-error')) n.remove();
+    });
     function pagoElegido() { var r = document.querySelector('input[name="pago"]:checked'); return tienda.pago_en_linea && r ? r.value : 'transferencia'; }
     function actualizarEntrega() {
       var e = entregaElegida();
@@ -952,15 +992,26 @@
       var err = $('ck-error'); err.hidden = true;
       var fallo = function (m) { err.textContent = m; err.hidden = false; };
       var e = entregaElegida(), t = totalesBolsa();
-      if ($('ck-nombre').value.trim().length < 3) return fallo('Escribe tu nombre completo.');
-      if ($('ck-tel').value.replace(/\D/g, '').length < 10) return fallo('Escribe tu celular de 10 dígitos.');
-      if ($('ck-dir').value.trim().length < 5) return fallo('Escribe la dirección de entrega.');
-      if (e === 'domicilio' && $('ck-barrio').value.trim().length < 2) return fallo('Escribe tu barrio.');
-      if (e === 'nacional' && $('ck-ciudad').value.trim().length < 2) return fallo('Escribe la ciudad o municipio.');
-      if (!$('ck-datos').checked) return fallo('Para continuar, autoriza el tratamiento de tus datos.');
+      limpiarErrores();
+      var errores = [];
+      var exigir = function (cond, id, msg) { if (!cond) { marcarError(id, msg); errores.push(id); } };
+      exigir($('ck-nombre').value.trim().length >= 3, 'ck-nombre', 'Escribe tu nombre y apellido.');
+      exigir($('ck-tel').value.replace(/\D/g, '').replace(/^57/, '').length === 10, 'ck-tel', 'Escribe tu celular de 10 dígitos.');
+      exigir(!$('ck-email').value.trim() || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($('ck-email').value.trim()), 'ck-email', 'Revisa el correo o déjalo vacío.');
+      if (e === 'nacional') exigir($('ck-ciudad').value.trim().length >= 2, 'ck-ciudad', 'Escribe la ciudad o municipio.');
+      exigir($('ck-dir').value.trim().length >= 5, 'ck-dir', 'Escribe la dirección de entrega.');
+      if (e === 'domicilio') exigir($('ck-barrio').value.trim().length >= 2, 'ck-barrio', 'Escribe tu barrio.');
+      exigir($('ck-datos').checked, 'ck-datos', 'Marca la autorización para poder procesar tu pedido.');
+      if (errores.length) {
+        fallo(errores.length === 1 ? 'Falta un dato obligatorio: revisa el campo marcado.' : 'Faltan ' + errores.length + ' datos obligatorios: revisa los campos marcados.');
+        var primero = errores[0] === 'ck-datos' ? $('lbl-datos') : $(errores[0]);
+        primero.scrollIntoView({ behavior: 'smooth', block: 'center' }); if (errores[0] !== 'ck-datos') setTimeout(function () { $(errores[0]).focus(); }, 350);
+        return;
+      }
       if (!t.lineas.length) { location.hash = '#/carrito'; return; }
       var pago = pagoElegido();
       var btn = $('ck-enviar'); btn.disabled = true; btn.innerHTML = '<span class="giro"></span>Apartando tus piezas…';
+      var pasoLento = setTimeout(function () { if (btn.disabled) btn.innerHTML = '<span class="giro"></span>' + (pago === 'wompi' ? 'Preparando tu pago seguro…' : 'Casi listo…'); }, 2500);
       try { localStorage.setItem('lazos_datos', JSON.stringify({ nombre: $('ck-nombre').value, tel: $('ck-tel').value, email: $('ck-email').value, dir: $('ck-dir').value,
         barrio: $('ck-barrio').value, ciudad: $('ck-ciudad').value, depto: $('ck-depto').value, entrega: e, acepta: true })); } catch (x) { /* sin almacenamiento */ }
       fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'crearPedidoWeb', data: {
@@ -970,7 +1021,7 @@
         idempotency_key: claveCheckout, pago: pago, lineas: t.lineas.map(function (x) { return { sku: x.l.sku, cantidad: x.l.cantidad }; })
       } }) }).then(function (r) { return r.json(); }).catch(function () { return { ok: false, error: { message: 'No pudimos conectar. Revisa tu internet e intenta de nuevo.' } }; })
         .then(function (r) {
-          btn.disabled = false; actualizarEntrega();
+          clearTimeout(pasoLento); btn.disabled = false; actualizarEntrega();
           if (!r.ok) { fallo(r.error && r.error.message || 'No pudimos crear tu pedido. Intenta de nuevo.'); return; }
           guardarBolsa([]); claveCheckout = null;
           try { localStorage.setItem('lazos_ultimo_pedido', JSON.stringify({ numero: r.data.numero, token: r.data.token })); } catch (x) { /* sin almacenamiento */ }
