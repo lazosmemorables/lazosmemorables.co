@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /lazosos/
+
+Sitemap: https://lazosmemorables.co/sitemap.xml
