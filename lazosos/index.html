@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.25.0 · Panel administrativo (memoria en el celular y precarga) -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.26.0 · Panel administrativo (asesor de marketing con IA, comisión Wompi y producción) -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -462,6 +462,50 @@
     .pcard .pr { font-size: 14px; font-weight: 600; margin-top: 8px; display: flex; justify-content: space-between; align-items: center; gap: 6px; }
     .pcard .pr .etiqueta { font-size: 8px; padding: 3px 6px; }
     @media (max-width: 640px) { .kpis { grid-template-columns: repeat(2, 1fr); } .prod-rejilla, .esq-tarjetas { grid-template-columns: repeat(2, 1fr); gap: 10px; } .buscar-grande { top: 64px; } }
+
+    /* v0.26 · Asesor de marketing */
+    .asesor { margin: 6px 0 40px; }
+    .as-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 0 0 22px; }
+    .as-kpi { background: var(--marfil-suave); border: 1px solid rgba(184,155,123,.3); border-radius: 18px; padding: 14px; }
+    .as-kpi b { display: block; font-family: var(--serif); font-weight: 400; font-size: 28px; line-height: 1.05; }
+    .as-kpi span { display: block; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--texto-suave); margin-top: 6px; }
+    .as-kpi small { display: block; font-size: 11px; margin-top: 4px; color: var(--texto-suave); }
+    .as-kpi small.sube { color: #6f8f5a; } .as-kpi small.baja { color: var(--rosa-alterno); }
+    .as-hero { background: var(--cacao); color: #FBF8F3; border-radius: 22px; padding: 22px; margin: 0 0 18px; }
+    .as-hero .rot { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; opacity: .7; }
+    .as-hero h3 { font-family: var(--serif); font-weight: 400; font-size: 26px; line-height: 1.15; margin: 8px 0 10px; color: #FBF8F3; }
+    .as-hero p { margin: 0; font-size: 14px; line-height: 1.6; opacity: .9; }
+    .as-hero .botones { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+    .as-hero .botones button { border: 1px solid rgba(251,248,243,.4); background: transparent; color: #FBF8F3; border-radius: 999px; padding: 10px 14px; font-family: var(--sans); font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+    .as-hero .botones button.lleno { background: #FBF8F3; color: var(--cacao); }
+    .as-hero .botones button:disabled { opacity: .6; }
+    .as-titulo { font-size: 10.5px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--texto-suave); margin: 22px 0 10px; display: flex; justify-content: space-between; gap: 10px; }
+    .as-dec { display: grid; gap: 10px; }
+    .as-d { background: #fff; border: 1px solid rgba(53,39,44,.1); border-left: 4px solid var(--oro); border-radius: 16px; padding: 14px 16px; }
+    .as-d.alta { border-left-color: var(--rosa-alterno); }
+    .as-d strong { display: block; font-size: 15px; }
+    .as-d .pq { font-size: 12px; color: var(--texto-suave); margin: 3px 0 8px; }
+    .as-d .ac { font-size: 13px; line-height: 1.5; }
+    .as-d .pie { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 10px; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--texto-suave); }
+    .as-ideas { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+    .as-idea { background: var(--marfil-suave); border: 1px solid rgba(184,155,123,.3); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+    .as-idea .meta { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--texto-suave); }
+    .as-idea strong { font-family: var(--serif); font-weight: 400; font-size: 20px; line-height: 1.2; }
+    .as-idea .gancho { font-size: 13px; font-style: italic; }
+    .as-idea details { font-size: 13px; line-height: 1.55; white-space: pre-line; }
+    .as-idea summary { cursor: pointer; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--texto-suave); }
+    .as-idea .acc { display: flex; gap: 14px; margin-top: auto; padding-top: 8px; }
+    .as-conectar { background: var(--marfil-suave); border: 1px dashed rgba(184,155,123,.7); border-radius: 18px; padding: 18px; }
+    .as-conectar form { display: flex; gap: 10px; margin-top: 10px; }
+    .as-conectar .campo { flex: 1; font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
+    .prod-check li { display: grid; grid-template-columns: 26px 1fr; gap: 10px; padding: 12px 0; border-bottom: 1px solid rgba(53,39,44,.08); list-style: none; }
+    .prod-check { padding: 0; margin: 10px 0 0; }
+    .prod-check i { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 12px; background: rgba(53,39,44,.08); }
+    .prod-check i.si { background: var(--cacao); color: #fff; } .prod-check i.no { background: #F2E5E7; color: var(--rosa-alterno); }
+    .prod-check b { display: block; font-size: 14px; font-weight: 600; }
+    .prod-check span { display: block; font-size: 12px; color: var(--texto-suave); }
+    .prod-check em { display: block; font-size: 12px; font-style: normal; color: var(--cacao); margin-top: 3px; }
+    @media (max-width: 640px) { .as-kpis { grid-template-columns: repeat(2, 1fr); } .as-conectar form { flex-direction: column; } }
 
     /* Wompi (v0.19) */
     .wompi { margin-top: 48px; background: var(--marfil-suave, #FBF8F3); border: 1px solid rgba(184,155,123,.35); border-radius: 22px; padding: 26px 24px; }
@@ -1665,7 +1709,9 @@
           <h2 class="titulo-vista">Marketing</h2>
           <button id="btn-nueva-pieza" class="boton" type="button">Nueva pieza</button>
         </div>
-        <p class="intro">Calendario de contenido por pilar. Anota cuántas consultas y ventas trajo cada pieza para saber qué funciona.</p>
+        <div class="asesor" id="asesor"><div class="esq-tarjetas"><i></i><i></i></div></div>
+        <p class="titulo-seccion" style="margin-top:8px">Calendario de contenido</p>
+        <p class="intro">Anota cuántas consultas y ventas trajo cada pieza: así el asesor aprende qué funciona.</p>
         <div class="selector-mes" id="mk-selector"><button type="button" data-mes-mk="-1" aria-label="Mes anterior">‹</button><span id="mk-mes">—</span><button type="button" data-mes-mk="1" aria-label="Mes siguiente">›</button></div>
         <div class="cifras">
           <div class="cifra-bloque"><span id="mk-planeadas" class="valor">—</span><span class="rotulo">Piezas del mes</span></div>
@@ -1722,6 +1768,12 @@
         <p class="titulo-seccion">Valores del sistema</p>
         <div id="lista-config" class="lista" aria-live="polite"></div>
 
+        <div class="wompi" id="prod-revision" style="margin-top:32px">
+          <div class="wompi-cab"><div><span class="titulo-seccion" style="margin:0">Paso a producción</span><h3>Lista de chequeo</h3>
+            <p class="pista" style="margin:0">Lo que falta para operar con datos y cobros reales.</p></div><span class="wompi-estado" id="pr-estado">—</span></div>
+          <ul class="prod-check" id="pr-lista"></ul>
+        </div>
+
         <div class="wompi" id="wompi">
           <div class="wompi-cab">
             <div><span class="titulo-seccion" style="margin:0">Pagos en línea</span><h3>Wompi</h3>
@@ -1743,6 +1795,8 @@
             <button class="boton" type="button" id="w-probar">Probar conexión</button>
           </div>
           <p id="w-prueba" class="pista" hidden></p>
+          <p class="pista" id="w-comision" style="margin-top:14px"></p>
+          <button class="enlace" type="button" id="w-com-pend">Registrar comisiones de pagos anteriores</button>
           <div id="w-ultimos-caja" hidden><p class="titulo-seccion" style="margin-top:24px">Últimos pagos en línea</p><ul class="wompi-ultimos" id="w-ultimos"></ul></div>
         </div>
 
@@ -2049,7 +2103,7 @@
       if (vista === 'nueva-compra') prepararCompra();
       if (vista === 'nuevo') prepararNuevo();
       if (vista === 'categorias') cargarCategorias();
-      if (vista === 'configuracion') { cargarConfiguracion(); cargarRespaldo(); cargarCatalogo(); cargarWompi(); }
+      if (vista === 'configuracion') { cargarConfiguracion(); cargarRespaldo(); cargarCatalogo(); cargarWompi(); cargarRevision(); }
     }
     document.querySelector('.nav').addEventListener('click', function (ev) {
       var b = ev.target.closest('button[data-vista]');
@@ -3777,7 +3831,78 @@
     var mkMes = '', mkDatos = null, clavePieza = null;
     var DIAS_SEM = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
     function diaTexto(f) { var d = new Date(f + 'T12:00:00Z'); return DIAS_SEM[d.getUTCDay()] + ' ' + d.getUTCDate() + ' ' + MESES_CORTOS[d.getUTCMonth()]; }
-    function cargarMarketing() {
+    /* ---------------- Asesor de marketing (v0.26) ---------------- */
+    var asDatos = null, asVista = 'diario';
+    function cargarAsesor() {
+      apiRapido('asesorMarketing', undefined, function (r) {
+        if (!r.ok) { $('asesor').innerHTML = '<p class="vacio">' + escapar(r.error.message) + '</p>'; return; }
+        asDatos = r.data; if (!asDatos.diario && asDatos.semanal) asVista = 'semanal'; pintarAsesor();
+      });
+    }
+    function pintarAsesor() {
+      var d = asDatos, k = d.kpis, html = '';
+      var varTxt = k.variacion_pct === null ? 'sin semana previa' : (k.variacion_pct >= 0 ? '▲ ' : '▼ ') + Math.abs(k.variacion_pct) + '% vs semana pasada';
+      html += '<div class="as-kpis">' +
+        '<div class="as-kpi"><b>' + pesos(k.ventas_7d) + '</b><span>Ventas · 7 días</span><small class="' + (k.variacion_pct > 0 ? 'sube' : k.variacion_pct < 0 ? 'baja' : '') + '">' + varTxt + '</small></div>' +
+        '<div class="as-kpi"><b>' + pesos(k.ticket_30d) + '</b><span>Ticket · 30 días</span><small>' + k.pedidos_7d + ' pedido(s) esta semana</small></div>' +
+        '<div class="as-kpi"><b>' + (k.web_conversion === null ? '—' : k.web_conversion + '%') + '</b><span>Pagan en la web</span><small>' + k.web_pagados + ' de ' + k.web_creados + ' pedidos web</small></div>' +
+        '<div class="as-kpi"><b>' + (k.recompra_pct || 0) + '%</b><span>Recompra</span><small>clientas con 2+ compras</small></div></div>';
+      var inf = d[asVista], i = inf && inf.informe;
+      html += '<div class="as-hero"><span class="rot">' + (asVista === 'semanal' ? 'Plan de la semana' : 'Resumen de hoy') + (inf ? ' · ' + escapar(inf.fecha) : '') + '</span>' +
+        (i ? '<h3>' + escapar(i.titular || '') + '</h3><p>' + escapar(i.diagnostico || '') + '</p>' + (i.metrica_a_vigilar ? '<p style="margin-top:10px"><b>A vigilar:</b> ' + escapar(i.metrica_a_vigilar) + '</p>' : '') + (i.riesgo ? '<p style="margin-top:6px"><b>Ojo:</b> ' + escapar(i.riesgo) + '</p>' : '')
+           : '<h3>' + (d.ia_conectada ? 'Pide tu primer análisis' : 'Tu asesor de marketing') + '</h3><p>' + (d.ia_conectada ? 'La IA lee tus ventas, inventario, clientas y contenido, y te dice qué hacer hoy y esta semana.' : 'Abajo tienes las decisiones calculadas con tus datos. Conecta la IA para recibir además un análisis diario, un plan semanal y textos listos para publicar.') + '</p>') +
+        '<div class="botones"><button type="button" data-as="diario"' + (asVista === 'diario' ? ' class="lleno"' : '') + '>Hoy</button><button type="button" data-as="semanal"' + (asVista === 'semanal' ? ' class="lleno"' : '') + '>Semana</button>' +
+        (d.ia_conectada ? '<button type="button" data-generar="' + asVista + '">' + (inf ? 'Actualizar análisis' : 'Generar análisis') + '</button>' : '') + '</div></div>';
+      var decIA = (i && i.decisiones || []).map(function (x) { return { prioridad: x.impacto === 'alto' ? 'alta' : x.impacto === 'bajo' ? 'baja' : 'media', titulo: x.titulo, por_que: x.por_que, accion: x.accion, origen: 'IA · ' + (x.cuando || '') }; });
+      var decs = decIA.concat(d.decisiones.map(function (x) { x.origen = 'Datos del panel'; return x; })).slice(0, 7);
+      html += '<p class="as-titulo"><span>Decisiones</span><span>' + decs.length + '</span></p><div class="as-dec">' + (decs.length ? decs.map(function (x) {
+        return '<div class="as-d ' + escapar(x.prioridad) + '"><strong>' + escapar(x.titulo) + '</strong><div class="pq">' + escapar(x.por_que || '') + '</div><div class="ac">' + escapar(x.accion || '') + '</div>' +
+          '<div class="pie"><span>' + escapar(x.origen) + ' · prioridad ' + escapar(x.prioridad) + '</span>' + (x.vista ? '<button class="enlace" type="button" data-ir="' + escapar(x.vista) + '">Ir</button>' : '') + '</div></div>';
+      }).join('') : '<p class="vacio">Todo en orden por ahora.</p>') + '</div>';
+      var ideas = i && i.ideas_contenido || [];
+      if (ideas.length) html += '<p class="as-titulo"><span>Ideas de contenido listas</span><span>' + ideas.length + '</span></p><div class="as-ideas">' + ideas.map(function (x, n) {
+        var pil = mkDatos && mkDatos.pilares[x.pilar] ? mkDatos.pilares[x.pilar].nombre : x.pilar;
+        return '<div class="as-idea"><span class="meta">' + escapar(pil) + ' · ' + escapar(x.formato) + (x.dia ? ' · ' + escapar(x.dia) : '') + '</span><strong>' + escapar(x.titulo) + '</strong>' +
+          (x.gancho ? '<span class="gancho">“' + escapar(x.gancho) + '”</span>' : '') + (x.producto ? '<span class="meta">Producto: ' + escapar(x.producto) + '</span>' : '') +
+          (x.texto ? '<details><summary>Ver texto</summary>' + escapar(x.texto) + '</details>' : '') +
+          '<div class="acc"><button class="enlace" type="button" data-idea="' + n + '">+ Al calendario</button>' + (x.texto ? '<button class="enlace" type="button" data-copiar="' + n + '">Copiar texto</button>' : '') + '</div></div>';
+      }).join('') + '</div>';
+      if (!d.ia_conectada) html += '<div class="as-conectar" style="margin-top:20px"><b>Conectar la IA</b><p class="pista" style="margin:4px 0 0">Pega la clave de la API de Claude (console.anthropic.com → API Keys). Se guarda solo en Apps Script. A la IA se envían cifras del negocio y nombres de productos, nunca datos de clientas.</p>' +
+        '<form id="as-form" autocomplete="off"><input class="campo" id="as-clave" placeholder="sk-ant-…" autocapitalize="off" spellcheck="false"><button class="boton" type="submit">Conectar</button></form></div>';
+      $('asesor').innerHTML = html;
+    }
+    $('asesor').addEventListener('click', function (ev) {
+      var v = ev.target.closest('[data-as]'); if (v) { asVista = v.dataset.as; pintarAsesor(); return; }
+      var g = ev.target.closest('[data-generar]');
+      if (g) {
+        g.disabled = true; g.innerHTML = '<span class="giro-mini" style="border-top-color:#35272C;border-color:rgba(53,39,44,.2)"></span>Analizando…';
+        api('generarInformeIA', { tipo: g.dataset.generar }).then(function (r) {
+          if (!r.ok) { g.disabled = false; g.textContent = 'Generar análisis'; manejarError(r); return; }
+          asDatos[r.data.tipo] = { fecha: r.data.fecha, informe: r.data.informe }; asVista = r.data.tipo; pintarAsesor(); avisar('Análisis listo.');
+        });
+        return;
+      }
+      var id = ev.target.closest('[data-idea]'), cp = ev.target.closest('[data-copiar]');
+      var ideas = (asDatos[asVista] && asDatos[asVista].informe.ideas_contenido) || [];
+      if (cp) { var x = ideas[Number(cp.dataset.copiar)]; (navigator.clipboard ? navigator.clipboard.writeText(x.texto) : Promise.reject()).then(function () { avisar('Texto copiado.'); }, function () { window.prompt('Copia el texto:', x.texto); }); return; }
+      if (id) {
+        var it = ideas[Number(id.dataset.idea)]; id.disabled = true;
+        var fecha = /^\d{4}-\d{2}-\d{2}$/.test(it.dia || '') && it.dia >= hoyBogota() ? it.dia : hoyBogota();
+        api('guardarContenido', { fecha: fecha, pilar: it.pilar, formato: it.formato, estado: 'idea', titulo: String(it.titulo || 'Idea').slice(0, 120),
+          texto: [it.gancho, it.texto].filter(Boolean).join('\n\n').slice(0, 2200), product_id: it.product_id || '', idempotency_key: nuevaClave() }).then(function (r) {
+          if (!r.ok) { id.disabled = false; manejarError(r); return; }
+          id.textContent = '✓ En el calendario'; avisar('Idea agregada al calendario como "Idea".'); cargarMarketing(true);
+        });
+      }
+    });
+    $('asesor').addEventListener('submit', function (ev) {
+      if (ev.target.id !== 'as-form') return; ev.preventDefault();
+      var v = $('as-clave').value.trim(); if (!v) return;
+      api('guardarClaveIA', { valor: v }).then(function (r) { if (!r.ok) { manejarError(r); return; } avisar('IA conectada. Ya puedes generar tu primer análisis.'); cargarAsesor(); });
+    });
+
+    function cargarMarketing(soloCalendario) {
+      if (!soloCalendario) cargarAsesor();
       if (!mkMes) mkMes = hoyBogota().slice(0, 7);
       $('mk-mes').textContent = mesTexto(mkMes);
       apiRapido('listarContenidos', { mes: mkMes }, function (r) {
@@ -3839,7 +3964,7 @@
     $('btn-nueva-pieza').addEventListener('click', function () { if (mkDatos) abrirFormPieza(null); });
     $('vista-marketing').addEventListener('click', function (ev) {
       var m = ev.target.closest('[data-mes-mk]');
-      if (m) { mkMes = moverMes(mkMes, Number(m.dataset.mesMk)); $('mk-form-caja').hidden = true; cargarMarketing(); return; }
+      if (m) { mkMes = moverMes(mkMes, Number(m.dataset.mesMk)); $('mk-form-caja').hidden = true; cargarMarketing(true); return; }
       var it = ev.target.closest('[data-pieza]');
       if (it) { abrirFormPieza(mkDatos.contenidos.filter(function (c) { return c.contenido_id === it.dataset.pieza; })[0]); return; }
       if (ev.target.closest('[data-cerrar-pieza]')) { $('mk-form-caja').hidden = true; return; }
@@ -3853,6 +3978,7 @@
       if (ev.target.id === 'pz-pilar') $('pz-pilar-ayuda').textContent = ev.target.value ? mkDatos.pilares[ev.target.value].ayuda : '';
     });
     $('vista-marketing').addEventListener('submit', function (ev) {
+      if (!ev.target.closest('#mk-form-caja')) return;   // el formulario del asesor tiene su propio manejo
       ev.preventDefault();
       var f = ev.target, btn = f.querySelector('button[type="submit"]'); btn.disabled = true;
       var pub = $('pz-estado').value === 'publicado';
@@ -3863,7 +3989,7 @@
         btn.disabled = false;
         if (!r.ok) { manejarError(r); return; }
         clavePieza = null; $('mk-form-caja').hidden = true; avisar('Pieza guardada.');
-        var mesPieza = $('pz-fecha').value.slice(0, 7); if (mesPieza) mkMes = mesPieza; cargarMarketing();
+        var mesPieza = $('pz-fecha').value.slice(0, 7); if (mesPieza) mkMes = mesPieza; cargarMarketing(true);
       });
     });
 
@@ -4481,7 +4607,7 @@
       api('listarConfiguracion').then(function (r) {
         if (!r.ok) { manejarError(r); return; }
         ajustes = r.data;
-        pintarConfiguracion();
+        pintarConfiguracion(); previaComision();
       });
     }
 
@@ -4518,7 +4644,7 @@
         } else if (editandoAjuste === a.clave) {
           var esNum = a.tipo === 'numero';
           derecha = '<input class="campo" data-campo="ajuste" value="' + escapar(a.valor) + '"' +
-            (esNum ? ' inputmode="numeric" pattern="[0-9]*"' : ' autocapitalize="characters"') +
+            (esNum ? ' inputmode="numeric" pattern="[0-9]*"' : a.tipo === 'decimal' ? ' inputmode="decimal"' : ' autocapitalize="characters"') +
             ' maxlength="6" aria-label="' + escapar(a.etiqueta) + '">' +
             '<div class="acciones-edicion"><button class="enlace" data-acc="guardar" type="button">Guardar</button>' +
             '<button class="enlace" data-acc="cancelar" type="button">Cancelar</button></div>';
@@ -4573,6 +4699,29 @@
     }
     $('lista-config').addEventListener('click', clicAjuste);
     $('lista-wompi').addEventListener('click', clicAjuste);
+
+    /* ---------------- Paso a producción (v0.26) ---------------- */
+    function cargarRevision() {
+      apiRapido('revisionProduccion', undefined, function (r) {
+        if (!r.ok) return;
+        var d = r.data, est = $('pr-estado');
+        est.textContent = d.listos + ' de ' + d.total + ' listos'; est.className = 'wompi-estado' + (d.listos === d.total ? ' on' : '');
+        $('pr-lista').innerHTML = d.lista.map(function (i) {
+          return '<li><i class="' + (i.ok === true ? 'si' : i.ok === false ? 'no' : '') + '">' + (i.ok === true ? '✓' : i.ok === false ? '!' : '?') + '</i><div><b>' + escapar(i.titulo) + '</b><span>' + escapar(i.detalle) + '</span>' +
+            (i.ok !== true && i.accion ? '<em>' + escapar(i.accion) + '</em>' : '') + '</div></li>';
+        }).join('');
+      });
+    }
+    function previaComision() {
+      var a = function (k) { var x = ajustes.filter(function (z) { return z.clave === k; })[0]; return x ? Number(String(x.valor).replace(',', '.')) || 0 : 0; };
+      var pct = a('WOMPI_COMISION_PCT'), fijo = a('WOMPI_COMISION_FIJA'), iva = a('WOMPI_COMISION_IVA');
+      var c = Math.round((53000 * pct / 100 + fijo) * (1 + iva / 100));
+      $('w-comision').innerHTML = 'Comisión: <b>' + pct.toLocaleString('es-CO') + '% + ' + pesos(fijo) + ' + IVA ' + iva + '%</b>. Ejemplo: en una venta de $53.000 Wompi descuenta <b>' + pesos(c) + '</b> y recibes <b>' + pesos(53000 - c) + '</b>. Se registra sola como gasto en Finanzas con cada pago real.';
+    }
+    $('w-com-pend').addEventListener('click', function () {
+      var b = this; b.disabled = true;
+      api('comisionesWompiPendientes').then(function (r) { b.disabled = false; if (!r.ok) { manejarError(r); return; } avisar(r.data.registradas ? r.data.registradas + ' comisión(es) registradas en Finanzas.' : 'No había comisiones pendientes.'); });
+    });
 
     /* ---------------- Wompi ---------------- */
     function cargarWompi() {
