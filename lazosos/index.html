@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.27.0 · Panel administrativo (asesor de marketing con Gemini o Claude) -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.27.1 · Panel administrativo (asesor de marketing con Gemini o Claude) -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -3880,8 +3880,8 @@
           '<button type="button" data-cambiar-clave>' + (ia.gemini && ia.claude ? 'Cambiar clave' : 'Agregar o cambiar clave') + '</button></div></div>';
       }
       html += '<div class="as-conectar" id="as-caja-clave" style="margin-top:' + (d.ia_conectada ? '10px;display:none' : '20px') + '"><b>' + (d.ia_conectada ? 'Pegar otra clave' : 'Conectar la IA') + '</b>' +
-        '<p class="pista" style="margin:4px 0 0"><b>Gemini:</b> aistudio.google.com → Get API key (empieza por <code>AIza</code>). <b>Claude:</b> console.anthropic.com → API Keys (empieza por <code>sk-ant-</code>). El panel reconoce cuál es. Se guarda solo en Apps Script; a la IA van cifras del negocio y nombres de productos, nunca datos de clientas.</p>' +
-        '<form id="as-form" autocomplete="off"><input class="campo" id="as-clave" placeholder="AIza…  o  sk-ant-…" autocapitalize="off" spellcheck="false"><button class="boton" type="submit">Conectar</button></form></div>';
+        '<p class="pista" style="margin:4px 0 0"><b>Gemini:</b> aistudio.google.com → Crear clave de API (empieza por <code>AQ.</code>). <b>Claude:</b> console.anthropic.com → API Keys (empieza por <code>sk-ant-</code>). El panel reconoce cuál es. Se guarda solo en Apps Script; a la IA van cifras del negocio y nombres de productos, nunca datos de clientas.</p>' +
+        '<form id="as-form" autocomplete="off"><input class="campo" id="as-clave" placeholder="AQ.…  o  sk-ant-…" autocapitalize="off" spellcheck="false"><button class="boton" type="submit">Conectar</button></form></div>';
       $('asesor').innerHTML = html;
     }
     $('asesor').addEventListener('click', function (ev) {
