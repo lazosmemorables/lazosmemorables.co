@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.19.0 · Panel administrativo (pagos en línea con Wompi) -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.20.0 · Panel administrativo (productos y existencias simplificados) -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -765,6 +765,40 @@
     .np-grande { font-size: 18px !important; width: 100%; }
     #np-desc { width: 100%; }
     .np-crear { width: 100%; margin-top: 22px; border-radius: 16px; padding: 19px; }
+    /* v0.20 · existencias */
+    .np-exist { margin-top: 22px; background: var(--marfil-suave); border: 1px solid rgba(184,155,123,.35); border-radius: 18px; padding: 18px; }
+    .contador { display: inline-flex; align-items: center; background: #fff; border: 1px solid rgba(53,39,44,.15); border-radius: 999px; overflow: hidden; }
+    .contador button { width: 48px; height: 48px; border: 0; background: none; font-size: 22px; color: var(--cacao); cursor: pointer; }
+    .contador button:active { background: var(--marfil); }
+    .contador input { width: 64px; height: 48px; border: 0; text-align: center; font-family: var(--serif); font-size: 26px; color: var(--cacao); background: transparent; }
+    .contador input:focus { outline: none; }
+    .fila-contador { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 8px; }
+    .margen-vivo { font-size: 13px; color: var(--texto-suave); margin: 8px 0 0; }
+    .margen-vivo b { color: var(--cacao); }
+    .cargando-ficha { padding: 70px 0; text-align: center; color: var(--texto-suave); }
+    .cargando-ficha .giro { display: block; width: 34px; height: 34px; margin: 0 auto 16px; border: 2px solid rgba(184,155,123,.3); border-top-color: var(--oro); border-radius: 50%; animation: girar .8s linear infinite; }
+    .esqueleto { background: linear-gradient(90deg, #f3eee6 25%, #faf7f2 50%, #f3eee6 75%); background-size: 200% 100%; animation: brillo 1.2s ease infinite; border-radius: 12px; }
+    @keyframes girar { to { transform: rotate(360deg); } }
+    .giro-mini { display: inline-block; width: 13px; height: 13px; margin-right: 10px; vertical-align: -2px; border: 2px solid rgba(255,255,255,.35); border-top-color: #fff; border-radius: 50%; animation: girar .8s linear infinite; }
+    .boton.claro .giro-mini { border-color: rgba(53,39,44,.2); border-top-color: var(--cacao); }
+    @keyframes brillo { to { background-position: -200% 0; } }
+    .web-linea { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; padding: 7px 12px; border-radius: 999px; background: var(--marfil-suave); border: 1px solid rgba(53,39,44,.1); margin: 0; }
+    .web-linea.si { background: #fff; border-color: var(--oro); }
+    .web-linea i { width: 8px; height: 8px; border-radius: 50%; background: rgba(53,39,44,.3); }
+    .web-linea.si i { background: var(--oro); }
+    .ex-card { background: var(--marfil-suave); border: 1px solid rgba(184,155,123,.35); border-radius: 22px; padding: 22px; margin: 0 0 44px; }
+    .ex-top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+    .ex-num { font-family: var(--serif); font-size: 56px; line-height: 1; color: var(--cacao); }
+    .ex-unid { display: block; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--texto-suave); margin-top: 6px; }
+    .ex-meta { font-size: 13px; color: var(--texto-suave); text-align: right; line-height: 1.7; }
+    .ex-meta b { color: var(--cacao); font-weight: 600; }
+    .ex-botones { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+    .ex-botones .boton { border-radius: 14px; width: 100%; }
+    .ex-botones .boton[aria-expanded="true"] { box-shadow: 0 0 0 2px var(--oro); }
+    .ex-panel { margin-top: 18px; padding-top: 18px; border-top: 1px solid rgba(53,39,44,.1); display: grid; gap: 14px; }
+    .ex-panel .chips { margin: 0; }
+    .ex-panel .campo { width: 100%; }
+    .ex-variantes { font-size: 12px; color: var(--texto-suave); margin-top: 12px; }
     @media (max-width: 720px) {
       .np-tarjeta { grid-template-columns: 1fr; gap: 20px; }
       .np-foto-col { display: grid; grid-template-columns: 130px 1fr; gap: 0 16px; align-items: end; }
@@ -1216,7 +1250,7 @@
           <h2 class="titulo-vista">Productos</h2>
           <button id="btn-nuevo-producto" class="boton" type="button">Nuevo producto</button>
         </div>
-        <p class="intro">Cada producto recibe su SKU según la categoría. El inventario se lleva por variante.</p>
+        <p class="intro">Toca un producto para ver sus existencias, sumar unidades o agregar fotos. Los que tienen foto y existencias se ven en la tienda web.</p>
         <div class="filtros">
           <label for="buscar-prod" class="sr-only">Buscar</label>
           <input id="buscar-prod" class="campo" type="search" placeholder="Buscar por nombre o SKU" autocomplete="off">
@@ -1224,7 +1258,7 @@
           <select id="filtro-cat" class="selector"><option value="">Todas las categorías</option></select>
           <div class="pildoras" id="filtro-estado" role="group" aria-label="Estado">
             <button class="pildora" type="button" data-estado="" aria-pressed="true">Vigentes</button>
-            <button class="pildora" type="button" data-estado="publicado" aria-pressed="false">Publicados</button>
+            <button class="pildora" type="button" data-estado="publicado" aria-pressed="false">Activos</button>
             <button class="pildora" type="button" data-estado="borrador" aria-pressed="false">Borradores</button>
             <button class="pildora" type="button" data-estado="sin_foto" aria-pressed="false">Sin foto</button>
             <button class="pildora" type="button" data-estado="archivado" aria-pressed="false">Archivados</button>
@@ -1237,7 +1271,7 @@
       <section id="vista-nuevo" hidden>
         <button class="enlace volver" type="button" data-ir="productos">← Productos</button>
         <h2 class="titulo-vista">Nuevo producto</h2>
-        <p class="intro">Empieza como borrador. El SKU se asigna al crearlo según la categoría.</p>
+        <p class="intro">Queda activo para venderlo desde el panel. Aparece en la tienda web cuando tenga foto y existencias.</p>
         <form id="form-nuevo" class="np-tarjeta" autocomplete="off">
           <div class="np-foto-col">
             <label class="np-foto-caja" for="np-foto" id="np-foto-btn">
@@ -1256,10 +1290,22 @@
             <input id="np-nombre" class="campo np-grande" maxlength="80" placeholder="Ej.: Aretes Perla Luna" required>
             <label class="etq" for="np-precio" style="margin-top:18px">Precio de venta</label>
             <input id="np-precio" class="campo np-grande" inputmode="numeric" placeholder="$ 45.000" data-precio required>
+            <div class="np-exist">
+              <span class="etq">¿Cuántas unidades tienes hoy?</span>
+              <div class="fila-contador">
+                <div class="contador" data-contador="np-unidades"><button type="button" data-paso="-1" aria-label="Menos">−</button><input id="np-unidades" inputmode="numeric" value="0" aria-label="Unidades"><button type="button" data-paso="1" aria-label="Más">+</button></div>
+                <span class="pista" style="margin:0">Si aún no las tienes, déjalo en 0.</span>
+              </div>
+              <div id="np-costo-caja" hidden style="margin-top:16px">
+                <label class="etq" for="np-costo">¿Cuánto te costó cada una?</label>
+                <input id="np-costo" class="campo np-grande" inputmode="numeric" placeholder="$ 20.000" data-precio>
+                <p class="margen-vivo" id="np-margen"></p>
+              </div>
+            </div>
             <label class="etq" for="np-desc" style="margin-top:18px">Descripción (opcional)</label>
             <textarea id="np-desc" class="campo" maxlength="600" placeholder="Cómo es, cómo se usa, qué la hace especial."></textarea>
             <button class="boton np-crear" type="submit">Crear producto</button>
-            <p class="pista" style="margin:10px 0 0">Queda como borrador. El SKU se asigna solo según la categoría. Luego cargas existencias y lo publicas.</p>
+            <p class="pista" style="margin:10px 0 0">El SKU se asigna solo según la categoría. La foto la puedes agregar ahora o después.</p>
           </div>
         </form>
       </section>
@@ -1267,11 +1313,27 @@
       <!-- Productos: detalle -->
       <section id="vista-producto" hidden>
         <button class="enlace volver" type="button" data-ir="productos">← Productos</button>
+        <div id="pd-cargando" class="cargando-ficha" hidden><span class="giro"></span>Cargando producto…</div>
+        <div id="pd-cuerpo">
         <p id="pd-sku" class="sku-grande"></p>
         <h2 id="pd-titulo" class="titulo-vista"></h2>
         <div class="estado-linea">
           <span id="pd-estado" class="etiqueta"></span>
           <span id="pd-acciones-estado" class="item-acciones" style="justify-content:flex-start"></span>
+        </div>
+        <p id="pd-web" class="web-linea" style="margin:-24px 0 28px"></p>
+
+        <div class="ex-card" id="pd-exist">
+          <div class="ex-top">
+            <div><span class="ex-num" id="ex-num">0</span><span class="ex-unid" id="ex-unid">unidades disponibles</span></div>
+            <div class="ex-meta" id="ex-meta"></div>
+          </div>
+          <div class="ex-botones">
+            <button class="boton" type="button" id="ex-sumar" aria-expanded="false">+ Agregar unidades</button>
+            <button class="boton claro" type="button" id="ex-restar" aria-expanded="false">− Restar unidades</button>
+          </div>
+          <form class="ex-panel" id="ex-panel" hidden autocomplete="off"></form>
+          <p class="ex-variantes" id="ex-variantes"></p>
         </div>
 
         <p class="titulo-seccion">Fotos</p>
@@ -1317,7 +1379,7 @@
           </div>
         </form>
 
-        <p class="titulo-seccion">Variantes</p>
+        <p class="titulo-seccion">Variantes (colores, acabados o tallas)</p>
         <ul id="lista-var" class="lista"></ul>
         <form id="form-variante" class="form-variante" autocomplete="off">
           <label for="nv-valor" class="sr-only">Nueva variante</label>
@@ -1327,12 +1389,13 @@
           <button class="boton" type="submit">Agregar</button>
         </form>
         <p class="pista">Agrega variantes si el producto viene en varios colores, acabados o tallas. Cada una lleva su propio inventario.</p>
+        </div>
       </section>
 
       <!-- Inventario -->
       <section id="vista-inventario" hidden>
         <h2 class="titulo-vista">Inventario</h2>
-        <p class="intro">Existencias por variante, valoradas a costo promedio. Para registrar movimientos, abre el producto.</p>
+        <p class="intro">Todas tus existencias en un solo lugar. Para sumar o restar unidades, toca el producto. Las ventas y las compras las descuentan o suman solas.</p>
         <div class="cifras">
           <div class="cifra-bloque"><span id="inv-valor" class="valor">—</span><span class="rotulo">Valor al costo</span></div>
           <div class="cifra-bloque"><span id="inv-venta" class="valor">—</span><span class="rotulo">Valor a precio de venta</span></div>
@@ -2065,14 +2128,15 @@
         return '<li class="item enlazado" data-id="' + escapar(p.product_id) + '" tabindex="0">' +
           (p.mini ? '<img class="mini-lista" src="' + escapar(p.mini) + '" alt="" loading="lazy">' : '<span class="mini-vacia" aria-hidden="true"></span>') +
           '<div class="item-principal"><span class="item-nombre">' + escapar(p.nombre) + '</span>' +
-          '<span class="item-meta"><b>' + escapar(p.sku) + '</b> · ' + escapar(p.categoria) + vars + '</span></div>' +
+          '<span class="item-meta"><b>' + escapar(p.sku) + '</b> · ' + escapar(p.categoria) + vars + '</span>' +
+          (p.estado !== 'archivado' && p.web ? '<span class="item-meta">' + (p.web.visible ? 'Se ve en la tienda web' : 'No se ve en la web · ' + escapar(p.web.motivo.toLowerCase())) + '</span>' : '') + '</div>' +
           '<div class="item-precio"><span class="cifra">' + pesos(p.precio) + '</span>' +
           '<span class="item-sku" style="display:block;margin-bottom:4px">' + (p.stock > 0 ? p.stock + (p.stock === 1 ? ' unidad' : ' unidades') : 'Sin existencias') + '</span>' +
           '<span class="etiqueta ' + escapar(p.estado) + '">' + nombreEstado(p.estado) + '</span></div></li>';
       }).join('');
     }
 
-    function nombreEstado(e) { return { publicado: 'Publicado', borrador: 'Borrador', archivado: 'Archivado' }[e] || e; }
+    function nombreEstado(e) { return { publicado: 'Activo', borrador: 'Borrador', archivado: 'Archivado' }[e] || e; }
 
     $('lista-prod').addEventListener('click', function (ev) {
       var li = ev.target.closest('.item.enlazado');
@@ -2120,9 +2184,27 @@
       $('np-cat').value = c.dataset.npcat;
     });
     $('np-nombre').addEventListener('input', function () { $('np-vista-nombre').textContent = this.value.trim() || 'Nombre del producto'; });
-    $('np-precio').addEventListener('input', function () { $('np-vista-precio').textContent = pesos(Number(soloDigitos(this.value)) || 0); });
+    $('np-precio').addEventListener('input', function () { $('np-vista-precio').textContent = pesos(Number(soloDigitos(this.value)) || 0); margenNuevo(); });
+    function margenNuevo() {
+      var u = Number(soloDigitos($('np-unidades').value)) || 0;
+      $('np-costo-caja').hidden = u <= 0;
+      var precio = Number(soloDigitos($('np-precio').value)) || 0, costo = Number(soloDigitos($('np-costo').value)) || 0;
+      $('np-margen').innerHTML = precio && costo ? 'Ganas <b>' + pesos(precio - costo) + '</b> por unidad · margen <b>' + Math.round((precio - costo) / precio * 100) + '%</b>' +
+        (u > 1 ? ' · inventario de ' + pesos(costo * u) + ' al costo' : '') : '';
+    }
+    // Contador − / + (sirve para cualquier [data-contador])
+    document.addEventListener('click', function (ev) {
+      var b = ev.target.closest('[data-contador] [data-paso]'); if (!b) return;
+      var inp = b.closest('[data-contador]').querySelector('input');
+      inp.value = Math.max(0, Math.min(10000, (Number(soloDigitos(inp.value)) || 0) + Number(b.dataset.paso)));
+      inp.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    $('np-unidades').addEventListener('input', margenNuevo);
+    $('np-costo').addEventListener('input', margenNuevo);
+    var claveNuevo = null;
     function prepararNuevo() {
-      $('form-nuevo').reset(); limpiarFotoNueva();
+      $('form-nuevo').reset(); limpiarFotoNueva(); $('np-unidades').value = '0'; margenNuevo(); claveNuevo = nuevaClave();
+      var bc = $('form-nuevo').querySelector('button[type="submit"]'); bc.disabled = false; bc.textContent = 'Crear producto';
       var pintar = function () {
         $('np-cat').innerHTML = '<option value="">Elige una categoría</option>' + categoriasActivas.map(function (c) {
           return '<option value="' + escapar(c.categoria_id) + '">' + escapar(c.nombre) + ' · ' + escapar(c.codigo) + '</option>';
@@ -2156,24 +2238,30 @@
     $('form-nuevo').addEventListener('submit', function (ev) {
       ev.preventDefault();
       if (!$('np-cat').value) { avisar('Elige una categoría.', true); return; }
+      if ($('np-nombre').value.trim().length < 2) { avisar('Escribe el nombre del producto.', true); $('np-nombre').focus(); return; }
+      if (!(Number(soloDigitos($('np-precio').value)) > 0)) { avisar('Escribe el precio de venta.', true); $('np-precio').focus(); return; }
+      var unidades = Number(soloDigitos($('np-unidades').value)) || 0;
+      if (unidades > 0 && !(Number(soloDigitos($('np-costo').value)) > 0)) { avisar('Escribe cuánto te costó cada unidad. Sirve para calcular tu margen.', true); $('np-costo').focus(); return; }
       var btn = this.querySelector('button[type="submit"]');
-      btn.disabled = true; btn.textContent = 'Creando…';
+      btn.disabled = true; btn.innerHTML = '<span class="giro-mini"></span>Creando producto…';
       api('crearProducto', {
         categoria_id: $('np-cat').value,
         nombre: $('np-nombre').value,
         precio: soloDigitos($('np-precio').value),
-        descripcion: $('np-desc').value
+        descripcion: $('np-desc').value,
+        existencias: String(unidades),
+        costo_unitario: unidades > 0 ? soloDigitos($('np-costo').value) : '',
+        idempotency_key: claveNuevo || (claveNuevo = nuevaClave())
       }).then(function (r) {
         if (!r.ok) { btn.disabled = false; btn.textContent = 'Crear producto'; manejarError(r); return; }
         var creado = r.data;
+        var mensaje = creado.nombre + ' creado · ' + (creado.stock_total ? creado.stock_total + (creado.stock_total === 1 ? ' unidad' : ' unidades') : 'sin existencias aún');
         if (!fotoNueva) {
-          btn.disabled = false; btn.textContent = 'Crear producto';
-          avisar(creado.nombre + ' creado · SKU ' + creado.sku); abrirProducto(creado.product_id); return;
+          avisar(mensaje); mostrarProducto(creado); return;
         }
-        btn.textContent = 'Subiendo foto…';
+        btn.innerHTML = '<span class="giro-mini"></span>Subiendo la foto…';
         api('subirFoto', { product_id: creado.product_id, web: fotoNueva.web, mini: fotoNueva.mini }).then(function (rf) {
-          btn.disabled = false; btn.textContent = 'Crear producto';
-          avisar(creado.nombre + ' creado · SKU ' + creado.sku + (rf.ok ? ' · con foto' : ' · la foto no se guardó, agrégala desde la ficha'), !rf.ok);
+          avisar(mensaje + (rf.ok ? ' · con foto' : ' · la foto no se guardó, agrégala aquí'), !rf.ok);
           limpiarFotoNueva(); abrirProducto(creado.product_id);
         });
       });
@@ -2185,17 +2273,21 @@
 
     function abrirProducto(id) {
       panelVar = { id: null, modo: null };
-      editandoVar = null;
+      editandoVar = null; exModo = null;
       irA('producto');
-      $('pd-titulo').textContent = 'Cargando…';
-      $('pd-sku').textContent = '';
-      $('lista-var').innerHTML = '';
+      producto = null;
+      $('pd-cuerpo').hidden = true; $('pd-cargando').hidden = false;
       recargarProducto(id);
+    }
+    /** Muestra un producto que ya llegó del servidor (sin volver a pedirlo). */
+    function mostrarProducto(datos) {
+      panelVar = { id: null, modo: null }; editandoVar = null; exModo = null;
+      irA('producto'); producto = datos; pintarProducto();
     }
 
     function recargarProducto(id) {
       return api('obtenerProducto', { product_id: id }).then(function (r) {
-        if (!r.ok) { manejarError(r); return; }
+        if (!r.ok) { $('pd-cargando').hidden = true; manejarError(r); return; }
         producto = r.data;
         pintarProducto();
       });
@@ -2203,13 +2295,19 @@
 
     function pintarProducto() {
       var p = producto;
-      $('pd-sku').textContent = p.sku;
+      $('pd-cargando').hidden = true; $('pd-cuerpo').hidden = false;
+      $('pd-sku').textContent = p.sku + ' · ' + p.categoria;
+      var w = p.web || {};
+      $('pd-web').className = 'web-linea' + (w.visible ? ' si' : '');
+      $('pd-web').innerHTML = '<i></i>' + (w.visible ? 'Se ve en la tienda web' : 'No se ve en la tienda web · ' + escapar((w.motivo || '').toLowerCase()) +
+        (w.motivo === 'Falta foto' ? ' (agrégala abajo)' : w.motivo === 'Sin existencias' ? ' (agrega unidades)' : ''));
+      pintarExistencias();
       $('pd-titulo').textContent = p.nombre;
       var est = $('pd-estado');
       est.className = 'etiqueta ' + p.estado;
       est.textContent = nombreEstado(p.estado);
       var acc = [];
-      if (p.estado !== 'publicado') acc.push('<button class="enlace" data-estado="publicado" type="button">Publicar</button>');
+      if (p.estado !== 'publicado') acc.push('<button class="enlace" data-estado="publicado" type="button">Activar</button>');
       if (p.estado !== 'borrador') acc.push('<button class="enlace" data-estado="borrador" type="button">Pasar a borrador</button>');
       if (p.estado !== 'archivado') acc.push('<button class="enlace peligro" data-estado="archivado" type="button">Archivar</button>');
       $('pd-acciones-estado').innerHTML = acc.join('');
@@ -2272,12 +2370,101 @@
       var b = ev.target.closest('button[data-estado]');
       if (!b) return;
       if (hayCambios()) { avisar('Primero guarda los cambios de la información.', true); return; }
-      b.disabled = true;
       var estado = b.dataset.estado;
+      if (estado === 'archivado' && !window.confirm('¿Archivar ' + producto.nombre + '?\n\nDeja de aparecer en Nueva venta y en la tienda web. Su historial se conserva y lo puedes volver a activar cuando quieras.')) return;
+      b.disabled = true;
       api('cambiarEstadoProducto', { product_id: producto.product_id, estado: estado }).then(function (r) {
         b.disabled = false;
         if (!r.ok) { manejarError(r); return; }
-        avisar({ publicado: 'Producto publicado.', borrador: 'Producto en borrador.', archivado: 'Producto archivado.' }[estado]);
+        avisar({ publicado: 'Producto activo: ya lo puedes vender.', borrador: 'Producto en borrador.', archivado: 'Producto archivado.' }[estado]);
+        producto = r.data; pintarProducto();
+      });
+    });
+
+    /* ---------------- Existencias (v0.20) ---------------- */
+    var exModo = null, exVar = null, exMotivo = null, exClave = null;
+    var EX_MOTIVOS = {
+      sumar: [['reposicion', 'Llegó más mercancía'], ['conteo', 'Corrección de conteo'], ['encontrado', 'La encontré'], ['otro', 'Otro']],
+      restar: [['perdida', 'Se perdió'], ['dano', 'Se dañó'], ['muestra', 'Regalo o muestra'], ['uso_interno', 'Uso personal'], ['conteo', 'Corrección de conteo'], ['otro', 'Otro']]
+    };
+    function variantesActivas() { return producto.variantes.filter(function (v) { return v.estado === 'activa'; }); }
+    function pintarExistencias() {
+      var p = producto, act = variantesActivas();
+      var total = act.reduce(function (s, v) { return s + v.stock; }, 0);
+      var reservado = act.reduce(function (s, v) { return s + (v.reservado || 0); }, 0);
+      $('ex-num').textContent = total;
+      $('ex-unid').textContent = (total === 1 ? 'unidad' : 'unidades') + ' en existencia';
+      var conCosto = act.filter(function (v) { return v.costo_promedio !== null; });
+      var costo = conCosto.length === 1 || act.length === 1 ? (conCosto[0] || {}).costo_promedio : null;
+      $('ex-meta').innerHTML = (costo ? 'Costo <b>' + pesos(costo) + '</b> · Precio <b>' + pesos(p.precio) + '</b><br>Margen <b>' + Math.round((p.precio - costo) / p.precio * 100) + '%</b>' : 'Precio <b>' + pesos(p.precio) + '</b>' + (total ? '' : '<br>Aún sin unidades')) +
+        (reservado ? '<br>' + reservado + ' apartada' + (reservado === 1 ? '' : 's') + ' en pedidos' : '');
+      $('ex-variantes').innerHTML = act.length > 1 ? act.map(function (v) { return escapar(v.valor) + ': <b>' + v.stock + '</b>'; }).join(' · ') : 'Las ventas descuentan unidades solas. Aquí registras lo que llega o lo que sale por otro motivo.';
+      $('ex-restar').disabled = total === 0;
+      ['ex-sumar', 'ex-restar'].forEach(function (id) { $(id).setAttribute('aria-expanded', String((id === 'ex-sumar' ? 'sumar' : 'restar') === exModo)); });
+      pintarPanelEx();
+    }
+    function pintarPanelEx() {
+      var f = $('ex-panel');
+      if (!exModo) { f.hidden = true; f.innerHTML = ''; return; }
+      var act = variantesActivas();
+      if (!exVar || !act.some(function (v) { return v.variant_id === exVar; })) exVar = act[0] && act[0].variant_id;
+      var v = act.filter(function (x) { return x.variant_id === exVar; })[0];
+      if (!v) { f.hidden = true; return; }
+      var primera = exModo === 'sumar' && !v.tiene_movimientos;
+      if (!exMotivo || !EX_MOTIVOS[exModo].some(function (m) { return m[0] === exMotivo; })) exMotivo = EX_MOTIVOS[exModo][0][0];
+      var html = '';
+      if (act.length > 1) html += '<div><span class="etq">¿Cuál?</span><div class="chips">' + act.map(function (x) {
+        return '<button class="chip" type="button" data-exvar="' + escapar(x.variant_id) + '" aria-pressed="' + (x.variant_id === exVar) + '">' + escapar(x.valor) + ' · ' + x.stock + '</button>'; }).join('') + '</div></div>';
+      html += '<div><span class="etq">' + (exModo === 'sumar' ? '¿Cuántas llegan?' : '¿Cuántas salen?') + '</span><div class="fila-contador">' +
+        '<div class="contador" data-contador="ex"><button type="button" data-paso="-1" aria-label="Menos">−</button><input id="ex-cant" inputmode="numeric" value="1" aria-label="Unidades"><button type="button" data-paso="1" aria-label="Más">+</button></div>' +
+        (exModo === 'restar' ? '<span class="pista" style="margin:0">Disponibles: ' + (v.stock - (v.reservado || 0)) + '</span>' : '') + '</div></div>';
+      if (!primera) html += '<div><span class="etq">¿Por qué?</span><div class="chips">' + EX_MOTIVOS[exModo].map(function (m) {
+        return '<button class="chip" type="button" data-exmot="' + m[0] + '" aria-pressed="' + (m[0] === exMotivo) + '">' + m[1] + '</button>'; }).join('') + '</div></div>';
+      var pideCosto = exModo === 'sumar' && (primera || exMotivo === 'reposicion');
+      if (pideCosto) html += '<div><label class="etq" for="ex-costo">' + (primera || v.costo_promedio === null ? '¿Cuánto te costó cada una?' : 'Costo de cada una (opcional)') + '</label>' +
+        '<input id="ex-costo" class="campo" inputmode="numeric" data-precio placeholder="' + (primera || v.costo_promedio === null ? '$ 20.000' : 'Vacío = ' + pesos(v.costo_promedio)) + '"></div>';
+      html += '<div><label class="etq" for="ex-nota">Nota' + (exMotivo === 'otro' && !primera ? '' : ' (opcional)') + '</label><input id="ex-nota" class="campo" maxlength="200" placeholder="' + (exModo === 'sumar' ? 'Ej.: pedido a proveedor de Bogotá' : 'Ej.: se reventó el broche') + '"></div>';
+      html += '<div class="pie-form" style="margin:0"><button class="boton" type="submit">' + (exModo === 'sumar' ? 'Agregar unidades' : 'Restar unidades') + '</button>' +
+        '<button class="enlace" type="button" data-excerrar="1">Cancelar</button></div>' +
+        (exModo === 'sumar' && exMotivo === 'reposicion' ? '<p class="pista" style="margin:0">Si tienes la factura, regístrala en Compras: así queda también lo que le debes al proveedor.</p>' : '');
+      f.innerHTML = html; f.hidden = false;
+    }
+    ['ex-sumar', 'ex-restar'].forEach(function (id) {
+      $(id).addEventListener('click', function () {
+        var modo = id === 'ex-sumar' ? 'sumar' : 'restar';
+        exModo = exModo === modo ? null : modo; exMotivo = null; exClave = nuevaClave();
+        pintarExistencias();
+        if (exModo) setTimeout(function () { var i = $('ex-cant'); if (i) { i.focus(); i.select(); } }, 30);
+      });
+    });
+    $('ex-panel').addEventListener('click', function (ev) {
+      var b = ev.target.closest('[data-exvar],[data-exmot],[data-excerrar]'); if (!b) return;
+      var cant = $('ex-cant') ? $('ex-cant').value : '1';
+      if (b.dataset.excerrar) { exModo = null; pintarExistencias(); return; }
+      if (b.dataset.exvar) exVar = b.dataset.exvar;
+      if (b.dataset.exmot) exMotivo = b.dataset.exmot;
+      pintarPanelEx(); $('ex-cant').value = cant;
+    });
+    $('ex-panel').addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var v = variantesActivas().filter(function (x) { return x.variant_id === exVar; })[0];
+      var cant = Number(soloDigitos($('ex-cant').value)) || 0;
+      if (cant <= 0) { avisar('Escribe cuántas unidades.', true); return; }
+      var primera = exModo === 'sumar' && !v.tiene_movimientos;
+      var costo = $('ex-costo') ? soloDigitos($('ex-costo').value) : '';
+      if ($('ex-costo') && (primera || v.costo_promedio === null) && !(Number(costo) > 0)) { avisar('Escribe cuánto te costó cada una.', true); $('ex-costo').focus(); return; }
+      if (!primera && exMotivo === 'otro' && $('ex-nota').value.trim().length < 3) { avisar('Cuéntanos el motivo en la nota.', true); $('ex-nota').focus(); return; }
+      var btn = this.querySelector('button[type="submit"]'), txt = btn.textContent;
+      btn.disabled = true; btn.innerHTML = '<span class="giro-mini"></span>Guardando…';
+      api('registrarMovimiento', {
+        variant_id: v.variant_id, tipo: primera ? 'INICIAL' : (exModo === 'sumar' ? 'AJUSTE_ENTRADA' : 'AJUSTE_SALIDA'),
+        cantidad: String(cant), costo_unitario: costo, motivo: primera ? '' : exMotivo, nota: $('ex-nota').value,
+        idempotency_key: exClave || (exClave = nuevaClave())
+      }).then(function (r) {
+        btn.disabled = false; btn.textContent = txt;
+        if (!r.ok) { manejarError(r); return; }
+        avisar((exModo === 'sumar' ? 'Listo: +' : 'Listo: −') + cant + '. Ahora hay ' + r.data.stock_despues + (r.data.stock_despues === 1 ? ' unidad.' : ' unidades.'));
+        exModo = null; exClave = null;
         recargarProducto(producto.product_id);
       });
     });
@@ -2322,7 +2509,7 @@
           '<span class="item-meta">' + inv + '</span></div>' +
           (inactiva ? '<span class="etiqueta">Inactiva</span>' : alerta) +
           '<div class="item-acciones">' +
-            '<button class="enlace" data-acc="mov" type="button"' + (abierto && panelVar.modo === 'mov' ? ' aria-expanded="true"' : '') + '>Movimiento</button>' +
+            '<button class="enlace" data-acc="mov" type="button"' + (abierto && panelVar.modo === 'mov' ? ' aria-expanded="true"' : '') + '>Ajuste avanzado</button>' +
             '<button class="enlace" data-acc="hist" type="button">Historial</button>' +
             (unica ? '' : '<button class="enlace" data-acc="editar" type="button">Editar</button>' +
               '<button class="enlace" data-acc="estado" type="button">' + (inactiva ? 'Activar' : 'Desactivar') + '</button>') +
@@ -3123,7 +3310,7 @@
         txt('clientas', d.clientas.fechas_semana ? '<b>' + plural(d.clientas.fechas_semana, 'fecha especial', 'fechas especiales') + '</b> esta semana' : 'Historial y fechas');
         alerta('clientas', d.clientas.fechas_semana);
         var p = d.productos;
-        txt('productos', plural(p.publicados, 'publicado', 'publicados') + (p.sin_foto ? ' · <b>' + plural(p.sin_foto, 'sin foto', 'sin foto') + '</b>' : ''));
+        txt('productos', plural(p.publicados, 'activo', 'activos') + (p.sin_foto ? ' · <b>' + plural(p.sin_foto, 'sin foto', 'sin foto') + '</b>' : ''));
         alerta('productos', p.sin_foto);
         var i = d.inventario;
         txt('inventario', plural(i.unidades, 'unidad', 'unidades') + (i.agotadas || i.bajo_minimo ? ' · <b>' + (i.agotadas ? plural(i.agotadas, 'agotada', 'agotadas') : '') + (i.agotadas && i.bajo_minimo ? ', ' : '') + (i.bajo_minimo ? i.bajo_minimo + ' bajo mínimo' : '') + '</b>' : ''));
