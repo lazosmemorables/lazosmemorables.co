@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.20.0 · Panel administrativo (productos y existencias simplificados) -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.22.0 · Panel administrativo (envío contra entrega) -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -2760,6 +2760,7 @@
         $('lista-ventas').innerHTML = d.pedidos.length ? d.pedidos.map(function (p) {
           var extra = p.estado === 'pendiente_pago' && p.expira_en && !p.envio_por_cotizar ? ' · Reserva hasta ' + horaCorta(p.expira_en) : '';
           if (p.envio_por_cotizar) extra += ' · <b>Envío por cotizar</b>';
+          if (p.envio_contra_entrega) extra += ' · Envío contra entrega';
           return '<li class="item enlazado" data-oid="' + escapar(p.order_id) + '" tabindex="0">' +
             '<div class="item-principal"><span class="item-nombre">' + escapar(p.numero) + ' · ' + escapar(p.clienta) + '</span>' +
             '<span class="item-meta">' + escapar(p.resumen) + ' · ' + p.unidades + ' uds · ' + escapar(p.canal) + ' · ' + escapar(fechaCorta(p.creado_en)) + extra + '</span></div>' +
@@ -3066,7 +3067,7 @@
           }).join('') + '</div>' +
           '<div class="cp-tot"><div><span>Subtotal</span><span>' + pesos(d.subtotal) + '</span></div>' +
             (d.descuento ? '<div><span>Descuento</span><span>−' + pesos(d.descuento) + '</span></div>' : '') +
-            (d.envio ? '<div><span>Envío</span><span>' + pesos(d.envio) + '</span></div>' : '') +
+            (d.envio ? '<div><span>Envío</span><span>' + pesos(d.envio) + '</span></div>' : d.envio_contra_entrega ? '<div><span>Envío</span><span>Lo pagas al recibir</span></div>' : '') +
             '<div class="grande"><span>Total</span><span>' + pesos(d.total) + '</span></div></div>' +
           '<div class="cp-dos"><div class="cp-caja"><h4>Pago</h4>' +
             '<div><b>Estado:</b> ' + escapar(p.texto) + '</div>' +
@@ -3179,7 +3180,7 @@
       }).join('');
       $('pe-totales').innerHTML = '<div><span>Subtotal</span><span>' + pesos(p.subtotal) + '</span></div>' +
         (p.descuento ? '<div><span>Descuento</span><span>−' + pesos(p.descuento) + '</span></div>' : '') +
-        (p.envio_por_cotizar ? '<div><span>Envío</span><span>Por cotizar</span></div>' : p.envio_cobrado ? '<div><span>Envío cobrado</span><span>' + pesos(p.envio_cobrado) + '</span></div>' : '') +
+        (p.envio_por_cotizar ? '<div><span>Envío</span><span>Por cotizar</span></div>' : p.envio_contra_entrega ? '<div><span>Envío</span><span>Contra entrega · lo paga al recibir</span></div>' : p.envio_cobrado ? '<div><span>Envío cobrado</span><span>' + pesos(p.envio_cobrado) + '</span></div>' : '') +
         '<div class="total"><span>Total</span><span>' + pesos(p.total) + '</span></div>';
       var res = $('pe-resultado');
       res.hidden = p.contribucion === null || cerrado;

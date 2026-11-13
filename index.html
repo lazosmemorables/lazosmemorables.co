@@ -2,7 +2,7 @@
 <html lang="es-CO">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS MEMORABLES — index.html · Vitrina v2.4.0 (carrito, búsqueda y compra ágil) -->
+  <!-- LAZOS MEMORABLES — index.html · Vitrina v2.4.1 (envío contra entrega) -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Lazos Memorables · Accesorios femeninos · Cartagena</title>
   <meta name="description" content="Aretes, collares y pulseras que reflejan tu esencia y acompañan momentos significativos. Desde Cartagena para toda Colombia.">
@@ -208,7 +208,8 @@
     .resumen div { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; font-size: 14px; }
     .resumen div span:last-child { white-space: nowrap; }
     .resumen .total { border-top: 1px solid var(--cacao); margin-top: 6px; padding-top: 14px; font-family: var(--serif); font-size: 28px; }
-    .formulario { display: grid; gap: 22px; }
+    .formulario { display: grid; gap: 22px; grid-template-columns: minmax(0, 1fr); }
+    .formulario > *, .opciones-entrega > * { min-width: 0; }
     .formulario .doble { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
     .etq { display: block; font-size: 10px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--texto-suave); margin-bottom: 4px; }
     .campo, .selector {
@@ -892,7 +893,7 @@
           '<div class="derecha-l"><span>' + pesos(x.r.precio * x.l.cantidad) + '</span><br><button class="quitar" type="button" data-b="x">Quitar</button></div></div>';
       }).join('');
       $('bolsa-resumen').innerHTML = '<div class="total"><span>Subtotal</span><span>' + pesos(t.subtotal) + '</span></div>' +
-        '<div><span style="color:var(--texto-suave);font-size:12px">El envío se calcula en el siguiente paso.</span></div>';
+        '<div><span style="color:var(--texto-suave);font-size:12px;white-space:normal">El envío se calcula en el siguiente paso.</span></div>';
       $('bolsa-acciones').innerHTML = '<a class="boton" href="#/checkout" style="border-radius:14px">Ir a pagar · ' + pesos(t.subtotal) + '</a>';
     }
     $('bolsa-lineas').addEventListener('click', function (ev) {
@@ -907,12 +908,15 @@
     /* ---------- Checkout ---------- */
     var claveCheckout = null;
     function nuevaClave() { return 'w' + Date.now().toString(36) + Math.random().toString(36).slice(2, 12); }
-    function textoTarifa(v) { return v === null || v === undefined ? 'Te confirmamos el costo del envío' : 'Envío ' + pesos(v); }
+    function textoTarifa(v, e) {
+      if (v !== null && v !== undefined) return 'Envío ' + pesos(v);
+      return tienda.envio_contra_entrega ? (e === 'nacional' ? 'Pagas el envío al recibir' : 'Pagas el domicilio al recibir') : 'Te confirmamos el costo del envío';
+    }
     function entregaElegida() { var r = document.querySelector('input[name="entrega"]:checked'); return r ? r.value : 'domicilio'; }
     function prepararCheckout() {
       if (!claveCheckout) claveCheckout = nuevaClave();
-      $('ck-tarifa-domicilio').textContent = textoTarifa(tienda.envio && tienda.envio.domicilio);
-      $('ck-tarifa-nacional').textContent = textoTarifa(tienda.envio && tienda.envio.nacional);
+      $('ck-tarifa-domicilio').textContent = textoTarifa(tienda.envio && tienda.envio.domicilio, 'domicilio');
+      $('ck-tarifa-nacional').textContent = textoTarifa(tienda.envio && tienda.envio.nacional, 'nacional');
       $('ck-error').hidden = true;
       $('ck-caja-pago').hidden = !tienda.pago_en_linea;
       try {
@@ -930,11 +934,13 @@
       document.querySelectorAll('.opcion-entrega').forEach(function (o) { o.classList.toggle('activa', o.querySelector('input').checked); });
       $('ck-caja-ciudad').hidden = e !== 'nacional';
       var t = totalesBolsa(), envio = tienda.envio ? tienda.envio[e] : null;
+      var sinTarifa = envio === null || envio === undefined, contra = sinTarifa && !!tienda.envio_contra_entrega;
       $('ck-resumen').innerHTML = t.lineas.map(function (x) { return '<div><span>' + esc(x.r.nombre) + ' × ' + x.l.cantidad + '</span><span>' + pesos(x.r.precio * x.l.cantidad) + '</span></div>'; }).join('') +
-        '<div><span>Envío</span><span>' + (envio === null || envio === undefined ? 'Por confirmar' : pesos(envio)) + '</span></div>' +
-        '<div class="total"><span>Total</span><span>' + pesos(t.subtotal + (envio || 0)) + '</span></div>' +
-        (envio === null || envio === undefined ? '<div><span style="color:var(--texto-suave);font-size:12px">Te escribiremos con el valor del envío antes de que pagues.</span></div>' : '');
-      var porCotizar = envio === null || envio === undefined, total = t.subtotal + (envio || 0), btn = $('ck-enviar');
+        '<div><span>' + (e === 'nacional' ? 'Envío' : 'Domicilio') + '</span><span>' + (contra ? 'Al recibir' : sinTarifa ? 'Por confirmar' : pesos(envio)) + '</span></div>' +
+        '<div class="total"><span>Total' + (contra ? ' a pagar hoy' : '') + '</span><span>' + pesos(t.subtotal + (envio || 0)) + '</span></div>' +
+        (contra ? '<div><span style="color:var(--texto-suave);font-size:12px;white-space:normal">' + (e === 'nacional' ? 'El envío lo pagas a la transportadora cuando recibas tu pedido.' : 'El domicilio lo pagas directamente al mensajero cuando recibas tu pedido.') + '</span></div>'
+          : sinTarifa ? '<div><span style="color:var(--texto-suave);font-size:12px;white-space:normal">Te escribiremos con el valor del envío antes de que pagues.</span></div>' : '');
+      var porCotizar = sinTarifa && !contra, total = t.subtotal + (envio || 0), btn = $('ck-enviar');
       if (!btn.disabled) btn.innerHTML = porCotizar ? 'Apartar mi pedido' : pagoElegido() === 'wompi' ? 'Pagar <span class="pago-total">' + pesos(total) + '</span>' : 'Confirmar pedido';
       $('ck-nota-pago').textContent = porCotizar ? 'Apartamos tus piezas y te escribimos con el valor del envío para que puedas pagar.'
         : pagoElegido() === 'wompi' ? 'Se abre el pago seguro de Wompi aquí mismo. Tu pedido se confirma al instante.' : 'Al confirmar, apartamos tus piezas y te mostramos los datos para transferir.';
@@ -1036,7 +1042,7 @@
       }
       html += '<div class="resumen" style="max-width:none">' + d.lineas.map(function (l) { return '<div><span>' + esc(l.nombre) + ' × ' + l.cantidad + '</span><span>' + pesos(l.precio * l.cantidad) + '</span></div>'; }).join('') +
         (d.descuento ? '<div><span>Descuento</span><span>−' + pesos(d.descuento) + '</span></div>' : '') +
-        '<div><span>' + esc(d.entrega) + '</span><span>' + (d.envio_por_cotizar ? 'Por confirmar' : pesos(d.envio)) + '</span></div>' +
+        '<div><span>' + esc(d.entrega) + '</span><span>' + (d.envio_por_cotizar ? 'Por confirmar' : d.envio_contra_entrega ? 'Lo pagas al recibir' : pesos(d.envio)) + '</span></div>' +
         '<div class="total"><span>Total</span><span>' + pesos(d.total) + '</span></div></div>' +
         '<p style="margin-top:36px"><a class="enlace-sup" href="https://ig.me/m/lazosmemorables" target="_blank" rel="noopener">¿Dudas? Escríbenos por Instagram</a></p>';
       $('pedido-contenido').innerHTML = html;
