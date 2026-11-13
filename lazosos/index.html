@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.17.0 · Panel administrativo -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.17.1 · Panel administrativo -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -680,37 +680,45 @@
       .doble-suave { grid-template-columns: 1fr; }
     }
 
-    /* ---------- Comprobante (se dibuja fuera de pantalla y se convierte a PDF) ---------- */
-    #comprobante-lienzo { position: fixed; left: -10000px; top: 0; width: 600px; background: #fff; }
-    .cp { width: 600px; background: #fff; color: #35272C; font-family: 'Montserrat', Arial, sans-serif; padding: 44px 48px 36px; box-sizing: border-box; }
+    /* ---------- Comprobante (se dibuja fuera de pantalla y se convierte a PDF) · v0.17.1 rosa ---------- */
+    #comprobante-lienzo { position: fixed; left: -10000px; top: 0; width: 600px; }
+    .cp { width: 600px; background: #F2E5E7; color: #35272C; font-family: 'Montserrat', Arial, sans-serif; padding: 46px 44px 38px; box-sizing: border-box; }
     .cp-logo { display: block; width: 150px; margin: 0 auto 22px; }
-    .cp-gracias { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 34px; line-height: 1.1; text-align: center; margin: 0 0 8px; font-weight: 400; }
-    .cp-frase { text-align: center; font-size: 12.5px; color: rgba(53, 39, 44, .72); margin: 0 0 26px; line-height: 1.6; }
-    .cp-meta { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #B89B7B; border-bottom: 1px solid rgba(53, 39, 44, .12); padding: 12px 0; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+    .cp-gracias { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 38px; line-height: 1.05; text-align: center; margin: 0 0 10px; font-weight: 400; }
+    .cp-frase-intro { text-align: center; font-size: 12.5px; color: rgba(53, 39, 44, .78); margin: 0 auto 24px; line-height: 1.65; max-width: 430px; }
+    .cp-frase { text-align: center; margin: 0 auto 28px; max-width: 440px; }
+    .cp-frase .linea { display: block; width: 46px; height: 1px; background: #B89B7B; margin: 0 auto; }
+    .cp-frase .eti { display: block; font-size: 9.5px; font-weight: 600; letter-spacing: .26em; color: #9C7A64; margin: 14px 0 10px; }
+    .cp-frase p { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 25px; line-height: 1.25; margin: 0 0 16px; color: #35272C; }
+    .cp-tarjeta { background: #FBF8F3; border-radius: 22px; padding: 22px 24px 18px; }
+    .cp-meta { display: flex; justify-content: space-between; align-items: center; padding: 0 0 14px; border-bottom: 1px solid rgba(53, 39, 44, .12); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; }
     .cp-meta b { font-weight: 600; }
-    .cp-sello { display: inline-block; padding: 6px 12px; border-radius: 999px; font-size: 10px; font-weight: 600; letter-spacing: .16em; }
+    .cp-sello { display: inline-block; padding: 6px 12px; border-radius: 999px; font-size: 9.5px; font-weight: 600; letter-spacing: .16em; }
     .cp-sello.pagado { background: #35272C; color: #fff; }
-    .cp-sello.pendiente, .cp-sello.reportado { background: #F2E5E7; color: #35272C; border: 1px solid #C2556A; }
-    .cp-sello.credito { background: #F5F1E9; color: #35272C; border: 1px solid #B89B7B; }
-    .cp-para { margin: 20px 0 6px; font-size: 12px; color: rgba(53, 39, 44, .72); }
+    .cp-sello.pendiente, .cp-sello.reportado { background: #fff; color: #35272C; border: 1px solid #C2556A; }
+    .cp-sello.credito { background: #F2E5E7; color: #35272C; border: 1px solid #C16478; }
+    .cp-para { margin: 14px 0 4px; font-size: 12px; color: rgba(53, 39, 44, .72); }
     .cp-para b { color: #35272C; font-size: 14px; font-weight: 600; }
-    .cp-lineas { margin: 14px 0 6px; }
-    .cp-linea { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid rgba(53, 39, 44, .1); }
-    .cp-foto { width: 46px; height: 58px; border-radius: 8px; background: #F2E5E7; overflow: hidden; flex: none; display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', Georgia, serif; color: #9C7A64; font-size: 17px; }
+    .cp-lineas { margin: 8px 0 4px; }
+    .cp-linea { display: flex; align-items: center; gap: 14px; padding: 11px 0; border-bottom: 1px solid rgba(53, 39, 44, .09); }
+    .cp-foto { width: 46px; height: 58px; border-radius: 9px; background: #F2E5E7; overflow: hidden; flex: none; display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', Georgia, serif; color: #9C7A64; font-size: 17px; }
     .cp-foto img { width: 100%; height: 100%; object-fit: cover; }
     .cp-ln { flex: 1; font-size: 13px; }
     .cp-ln small { display: block; color: rgba(53, 39, 44, .65); font-size: 11.5px; margin-top: 2px; }
     .cp-val { font-size: 13px; font-weight: 600; white-space: nowrap; }
-    .cp-tot { margin: 10px 0 0 auto; width: 260px; font-size: 12.5px; }
+    .cp-tot { margin: 8px 0 0 auto; width: 250px; font-size: 12.5px; }
     .cp-tot div { display: flex; justify-content: space-between; padding: 4px 0; }
     .cp-tot .grande { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 28px; border-top: 1px solid #35272C; margin-top: 6px; padding-top: 10px; }
-    .cp-caja { background: #FBF8F3; border-radius: 14px; padding: 16px 18px; margin: 22px 0 0; font-size: 12px; line-height: 1.65; }
-    .cp-caja h4 { margin: 0 0 6px; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 19px; }
-    .cp-caja pre { font-family: 'Montserrat', Arial, sans-serif; white-space: pre-wrap; margin: 6px 0 0; font-size: 12px; }
-    .cp-pie { text-align: center; margin-top: 30px; padding-top: 18px; border-top: 1px solid rgba(53, 39, 44, .12); }
+    .cp-dos { display: flex; gap: 12px; margin-top: 14px; }
+    .cp-caja { flex: 1; background: #fff; border-radius: 16px; padding: 14px 16px; font-size: 11.5px; line-height: 1.65; }
+    .cp-caja h4 { margin: 0 0 4px; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 18px; }
+    .cp-caja pre { font-family: 'Montserrat', Arial, sans-serif; white-space: pre-wrap; margin: 6px 0 0; font-size: 11.5px; }
+    .cp-cierre { text-align: center; margin: 28px auto 0; max-width: 430px; font-size: 12.5px; line-height: 1.7; color: rgba(53, 39, 44, .82); }
+    .cp-firma { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 19px; color: #35272C; margin-top: 8px; }
+    .cp-pie { text-align: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(184, 155, 123, .55); }
     .cp-lema { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 20px; color: #9C7A64; }
-    .cp-redes { font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; margin-top: 6px; }
-    .cp-legal { font-size: 9.5px; color: rgba(53, 39, 44, .55); margin-top: 10px; }
+    .cp-redes { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; margin-top: 6px; }
+    .cp-legal { font-size: 9px; color: rgba(53, 39, 44, .55); margin-top: 10px; }
 
 
     /* ---------- Nuevo producto (v0.17) ---------- */
@@ -2710,31 +2718,78 @@
         document.head.appendChild(s);
       });
     }
+    /**
+     * Banco de frases (D-037). Mujeres memorables: valor propio, logros, independencia
+     * y vínculos. Textos originales de la marca; sin frases de terceros.
+     * La frase se elige según el número de la venta: es aleatoria entre ventas,
+     * pero el mismo comprobante siempre muestra la misma.
+     */
+    var FRASES = [
+      'Celebrarte también es un lazo que vale la pena cuidar.',
+      'Lo que has construido merece llevarse con orgullo.',
+      'Tu esencia no se explica: se nota.',
+      'No necesitas permiso para sentirte extraordinaria.',
+      'Cada logro tuyo cuenta, también los que nadie ve.',
+      'Mereces lo bonito todos los días, no solo en fechas especiales.',
+      'La mujer que eres hoy es el mejor regalo para la que fuiste ayer.',
+      'Que este detalle te recuerde lo lejos que has llegado.',
+      'Tu valor no depende de nadie más: ya vive en ti.',
+      'Regalarte algo también es una forma de decirte «lo hiciste bien».',
+      'Eres de las que dejan huella sin necesidad de hacer ruido.',
+      'Hay lazos que se eligen; el más importante es el que tienes contigo.',
+      'Tu historia merece detalles a su altura.',
+      'Florecer a tu ritmo también es avanzar.',
+      'Lo delicado también es fuerte. Tú lo sabes bien.',
+      'Hoy celebramos a la mujer que decidió no conformarse.',
+      'Nada te queda mejor que estar orgullosa de ti.',
+      'Que nadie te haga dudar de lo valiosa que eres.',
+      'Las mujeres que se celebran inspiran a otras a hacerlo.',
+      'Tu independencia también se viste de detalles.',
+      'Mereces todo lo que te hace sentir en casa contigo misma.',
+      'Cada pieza guarda un momento; este es tuyo.',
+      'Eres memorable, y no por casualidad.',
+      'Lo que sueñas también se construye paso a paso.',
+      'Sé tu propio lugar seguro.',
+      'Hoy, mañana y siempre: elígete.',
+      'Detrás de cada lazo hay una mujer que vale la pena celebrar.',
+      'Tu brillo no compite con nadie: acompaña.',
+      'Lo que te propones con amor termina floreciendo.',
+      'Gracias por recordarnos que celebrarse no es un lujo, es un acto de amor propio.'
+    ];
+    function fraseDe(numero) {
+      var n = Number(String(numero).replace(/\D/g, '')) || 0;
+      return FRASES[(n * 7 + 3) % FRASES.length];
+    }
     function htmlComprobante(d) {
       var nombre = (d.clienta.nombre || '').split(' ')[0];
       var p = d.pago, sello = { pagado: 'PAGADO', credito: 'PAGO PENDIENTE', pendiente: 'PAGO PENDIENTE', reportado: 'PAGO EN VERIFICACIÓN' }[p.estado];
       return '<div class="cp">' +
         '<img class="cp-logo" src="/assets/logo-lazos-memorables.png" alt="Lazos Memorables">' +
-        '<h1 class="cp-gracias">Gracias por tu compra' + (nombre ? ', ' + escapar(nombre) : '') + '</h1>' +
-        '<p class="cp-frase">Gracias por elegirnos. Esperamos que cada pieza te acompañe en momentos que valga la pena recordar.</p>' +
-        '<div class="cp-meta"><span>Comprobante <b>' + escapar(d.numero) + '</b> · ' + escapar(fechaLarga(d.fecha)) + '</span><span class="cp-sello ' + p.estado + '">' + sello + '</span></div>' +
-        '<p class="cp-para">Para <b>' + escapar(d.clienta.nombre) + '</b>' + (d.clienta.telefono ? ' · ' + escapar(telTexto(d.clienta.telefono)) : '') + '</p>' +
-        '<div class="cp-lineas">' + d.lineas.map(function (l) {
-          return '<div class="cp-linea"><div class="cp-foto">' + (l.foto ? '<img src="' + escapar(l.foto) + '" alt="">' : escapar(iniciales(l.nombre))) + '</div>' +
-            '<div class="cp-ln">' + escapar(l.nombre) + '<small>' + l.cantidad + ' × ' + pesos(l.precio) + '</small></div><div class="cp-val">' + pesos(l.precio * l.cantidad) + '</div></div>';
-        }).join('') + '</div>' +
-        '<div class="cp-tot"><div><span>Subtotal</span><span>' + pesos(d.subtotal) + '</span></div>' +
-          (d.descuento ? '<div><span>Descuento</span><span>−' + pesos(d.descuento) + '</span></div>' : '') +
-          (d.envio ? '<div><span>Envío</span><span>' + pesos(d.envio) + '</span></div>' : '') +
-          '<div class="grande"><span>Total</span><span>' + pesos(d.total) + '</span></div></div>' +
-        '<div class="cp-caja"><h4>Pago</h4>' +
-          '<div><b>Estado:</b> ' + escapar(p.texto) + '</div>' +
-          (p.medio ? '<div><b>Medio:</b> ' + escapar(p.medio) + '</div>' : '') +
-          (p.abonado && p.saldo ? '<div><b>Abonado:</b> ' + pesos(p.abonado) + '</div>' : '') +
-          (p.saldo ? '<div><b>Saldo pendiente:</b> ' + pesos(p.saldo) + '</div>' : '') +
-          (p.vencimiento ? '<div><b>Paga a más tardar:</b> ' + escapar(fechaLarga(p.vencimiento)) + '</div>' : '') +
-          (d.pago_instrucciones ? '<pre>' + escapar(d.pago_instrucciones) + '</pre>' : '') + '</div>' +
-        '<div class="cp-caja" style="margin-top:12px"><h4>Entrega</h4><div>' + escapar(d.entrega) + (d.direccion && d.entrega.indexOf('Recoge') < 0 ? ' · ' + escapar(d.direccion) : '') + '</div></div>' +
+        '<h1 class="cp-gracias">Gracias' + (nombre ? ', ' + escapar(nombre) : '') + '</h1>' +
+        '<p class="cp-frase-intro">Gracias por elegir Lazos Memorables. Cada pieza que sale de nuestras manos lleva la intención de acompañarte en tus momentos, y en los que te regalas a ti misma.</p>' +
+        '<div class="cp-frase"><span class="linea"></span><span class="eti">UNA FRASE PARA TI</span><p>' + escapar(fraseDe(d.numero)) + '</p><span class="linea"></span></div>' +
+        '<div class="cp-tarjeta">' +
+          '<div class="cp-meta"><span>Comprobante <b>' + escapar(d.numero) + '</b> · ' + escapar(fechaLarga(d.fecha)) + '</span><span class="cp-sello ' + p.estado + '">' + sello + '</span></div>' +
+          '<p class="cp-para">Para <b>' + escapar(d.clienta.nombre) + '</b>' + (d.clienta.telefono ? ' · ' + escapar(telTexto(d.clienta.telefono)) : '') + '</p>' +
+          '<div class="cp-lineas">' + d.lineas.map(function (l) {
+            return '<div class="cp-linea"><div class="cp-foto">' + (l.foto ? '<img src="' + escapar(l.foto) + '" alt="">' : escapar(iniciales(l.nombre))) + '</div>' +
+              '<div class="cp-ln">' + escapar(l.nombre) + '<small>' + l.cantidad + ' × ' + pesos(l.precio) + '</small></div><div class="cp-val">' + pesos(l.precio * l.cantidad) + '</div></div>';
+          }).join('') + '</div>' +
+          '<div class="cp-tot"><div><span>Subtotal</span><span>' + pesos(d.subtotal) + '</span></div>' +
+            (d.descuento ? '<div><span>Descuento</span><span>−' + pesos(d.descuento) + '</span></div>' : '') +
+            (d.envio ? '<div><span>Envío</span><span>' + pesos(d.envio) + '</span></div>' : '') +
+            '<div class="grande"><span>Total</span><span>' + pesos(d.total) + '</span></div></div>' +
+          '<div class="cp-dos"><div class="cp-caja"><h4>Pago</h4>' +
+            '<div><b>Estado:</b> ' + escapar(p.texto) + '</div>' +
+            (p.medio ? '<div><b>Medio:</b> ' + escapar(p.medio) + '</div>' : '') +
+            (p.abonado && p.saldo ? '<div><b>Abonado:</b> ' + pesos(p.abonado) + '</div>' : '') +
+            (p.saldo ? '<div><b>Saldo:</b> ' + pesos(p.saldo) + '</div>' : '') +
+            (p.vencimiento ? '<div><b>Paga a más tardar:</b> ' + escapar(fechaLarga(p.vencimiento)) + '</div>' : '') +
+            (d.pago_instrucciones ? '<pre>' + escapar(d.pago_instrucciones) + '</pre>' : '') + '</div>' +
+            '<div class="cp-caja"><h4>Entrega</h4><div>' + escapar(d.entrega) + (d.direccion && d.entrega.indexOf('Recoge') < 0 ? '<br>' + escapar(d.direccion) : '') + '</div></div></div>' +
+        '</div>' +
+        '<div class="cp-cierre">Esta pieza ya es tuya. Llévala con orgullo, regálala con intención y celebra cada lazo que te hace bien.' +
+          '<div class="cp-firma">Con cariño, Laura · Lazos Memorables</div></div>' +
         '<div class="cp-pie"><div class="cp-lema">Transmitiendo amor</div><div class="cp-redes">@lazosmemorables · lazosmemorables.co · Cartagena de Indias</div>' +
           '<div class="cp-legal">Comprobante de compra. No reemplaza una factura electrónica.</div></div></div>';
     }
@@ -2748,7 +2803,7 @@
         return Promise.all(imgs.map(function (im) {
           return new Promise(function (ok) { if (im.complete && im.naturalWidth) ok(); else { im.onload = ok; im.onerror = function () { var p = im.parentNode; if (p.classList.contains('cp-foto')) p.textContent = ''; else im.remove(); ok(); }; } });
         })).then(function () { return document.fonts ? document.fonts.ready : null; }).then(function () {
-          return window.html2canvas(lienzo.firstChild, { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false });
+          return window.html2canvas(lienzo.firstChild, { scale: 2, backgroundColor: '#F2E5E7', useCORS: true, logging: false });
         }).then(function (canvas) {
           var ancho = 420, alto = Math.round(canvas.height / canvas.width * ancho);
           var doc = new window.jspdf.jsPDF({ unit: 'pt', format: [ancho, alto], compress: true });
