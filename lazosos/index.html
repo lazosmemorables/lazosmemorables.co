@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.15.0 · Panel administrativo -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.16.0 · Panel administrativo -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -567,6 +567,33 @@
       .app-titulo { font-size: 23px; }
     }
 
+
+    /* ---------- Cartera ---------- */
+    .tramos { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--linea); margin: 6px 0 8px; }
+    .tramos i { display: block; height: 100%; }
+    .tramos .t1 { background: #B89B7B; } .tramos .t2 { background: #E5C1CB; } .tramos .t3 { background: #C2556A; }
+    .tramos-etq { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12px; color: var(--texto-suave); margin-bottom: 28px; }
+    .tramos-etq span::before { content: ''; display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
+    .tramos-etq .e1::before { background: #B89B7B; } .tramos-etq .e2::before { background: #E5C1CB; } .tramos-etq .e3::before { background: #C2556A; }
+    .deudora { border: 1px solid rgba(53, 39, 44, .1); border-radius: 16px; background: #FBF8F3; margin: 0 0 12px; overflow: hidden; }
+    .deudora > button { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 20px; background: none; border: 0; cursor: pointer; text-align: left; font-family: var(--sans); color: var(--cacao); }
+    .deudora .d-nombre { font-family: var(--serif); font-size: 24px; line-height: 1.15; display: block; }
+    .deudora .d-meta { font-size: 12px; color: var(--texto-suave); display: block; margin-top: 2px; }
+    .deudora .d-saldo { font-family: var(--serif); font-size: 26px; white-space: nowrap; text-align: right; }
+    .deudora .d-saldo small { display: block; font-family: var(--sans); font-size: 10px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--texto-suave); }
+    .deudora.vencida { border-color: #C2556A; }
+    .deudora .d-cuerpo { padding: 0 20px 18px; border-top: 1px solid var(--linea); }
+    .cuenta-cx { padding: 14px 0; border-bottom: 1px solid var(--linea); font-size: 13px; }
+    .cuenta-cx:last-of-type { border-bottom: 0; }
+    .cuenta-cx .c-fila { display: flex; justify-content: space-between; gap: 12px; }
+    .cuenta-cx .c-desc { font-weight: 500; }
+    .cuenta-cx .c-meta { color: var(--texto-suave); font-size: 12px; margin-top: 2px; }
+    .cuenta-cx .c-abonos { margin: 8px 0 0; padding: 0; list-style: none; font-size: 12px; color: var(--texto-suave); }
+    .cuenta-cx .c-acciones { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 10px; }
+    .form-abono { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: end; margin-top: 10px; }
+    .d-acciones { display: flex; gap: 20px; flex-wrap: wrap; padding-top: 14px; }
+    @media (max-width: 720px) { .form-abono { grid-template-columns: 1fr 1fr; } }
+
     /* ---------- Clientas ---------- */
     .proximas { list-style: none; margin: 0 0 28px; padding: 0; display: grid; gap: 8px; }
     .proximas li { display: flex; justify-content: space-between; gap: 12px; background: var(--marfil-suave, #FBF8F3); padding: 12px 14px; font-size: 13px; cursor: pointer; }
@@ -786,6 +813,10 @@
         <button class="app-principal" type="button" data-ir-app="nueva-venta">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span><span class="app-titulo">Nueva venta</span><span class="app-sub">Instagram, WhatsApp o en persona</span></span>
         </button>
+        <button class="app-ancha app-cartera" type="button" data-ir-app="cartera" style="margin:0 0 14px">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M16 15h2"/></svg>
+          <span><span class="app-titulo">Por cobrar</span><span class="app-sub" id="ti-cartera">Clientas con saldo pendiente</span></span><span class="app-alerta" id="al-cartera" hidden></span>
+        </button>
         <div class="app-rejilla">
           <button class="app-tarjeta" type="button" data-ir-app="ventas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16l-1.5 9H5.5z"/><path d="M8 6l1-3h6l1 3"/><circle cx="8" cy="19" r="1.2"/><circle cx="16" cy="19" r="1.2"/></svg><span class="app-titulo">Ventas</span><span class="app-sub" id="ti-ventas">Pedidos y cobros</span><span class="app-alerta" id="al-ventas" hidden></span></button>
           <button class="app-tarjeta" type="button" data-ir-app="clientas"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/></svg><span class="app-titulo">Clientas</span><span class="app-sub" id="ti-clientas">Historial y fechas</span><span class="app-alerta" id="al-clientas" hidden></span></button>
@@ -892,7 +923,9 @@
               <select id="nv-pago" class="selector" style="width:100%">
                 <option value="pendiente">Aún no paga · reservar</option>
                 <option value="verificado">Ya pagó y lo verifiqué</option>
+                <option value="credito">Se la lleva y paga después (crédito)</option>
               </select></div>
+            <div id="nv-venc-caja" hidden><label class="etq" for="nv-venc">Paga a más tardar (opcional)</label><input id="nv-venc" class="campo" type="date"></div>
             <div id="nv-medio-caja" hidden><label class="etq" for="nv-medio">Medio</label><select id="nv-medio" class="selector" style="width:100%"></select></div>
           </div>
           <div><label class="etq" for="nv-nota">Nota (opcional)</label><input id="nv-nota" class="campo" maxlength="300" placeholder="Ej.: es un regalo, empacar con tarjeta"></div>
@@ -1201,6 +1234,42 @@
       </section>
 
       <!-- Categorías -->
+      <!-- Cartera -->
+      <section id="vista-cartera" hidden>
+        <div class="encabezado-vista">
+          <h2 class="titulo-vista">Por cobrar</h2>
+          <button id="btn-nueva-deuda" class="boton" type="button">Registrar deuda</button>
+        </div>
+        <p class="intro">Clientas que se llevaron su pieza y pagan después. Registra cada pago, total o parcial, y envía un recordatorio amable.</p>
+        <div class="cifras">
+          <div class="cifra-bloque"><span id="cx-total" class="valor">—</span><span class="rotulo">Por cobrar</span></div>
+          <div class="cifra-bloque"><span id="cx-clientas" class="valor">—</span><span class="rotulo">Clientas</span></div>
+          <div class="cifra-bloque"><span id="cx-vencido" class="valor">—</span><span class="rotulo">Vencido</span></div>
+          <div class="cifra-bloque"><span id="cx-cobrado" class="valor">—</span><span class="rotulo">Cobrado este mes</span></div>
+        </div>
+        <div id="cx-tramos"></div>
+        <form id="form-deuda" class="formulario panel-var" autocomplete="off" hidden>
+          <p class="titulo-seccion" style="margin:0">Registrar deuda anterior</p>
+          <p class="pista" style="margin:0">Para lo que se fió antes del sistema. Las ventas nuevas a crédito se registran en Nueva venta, así descuentan el inventario.</p>
+          <div class="doble"><div><label class="etq" for="dd-nombre">Clienta</label><input id="dd-nombre" class="campo" maxlength="80" list="dd-clientas" placeholder="Nombre y apellido"><datalist id="dd-clientas"></datalist></div>
+          <div><label class="etq" for="dd-tel">Celular (opcional)</label><input id="dd-tel" class="campo" maxlength="16" inputmode="tel" placeholder="300 123 4567"></div></div>
+          <div class="doble"><div><label class="etq" for="dd-desc">Qué se llevó</label><input id="dd-desc" class="campo" maxlength="120" placeholder="Ej.: Aretes en mostacilla"></div>
+          <div><label class="etq" for="dd-monto">Valor</label><input id="dd-monto" class="campo" inputmode="numeric" data-precio placeholder="0"></div></div>
+          <div class="doble"><div><label class="etq" for="dd-fecha">Fecha de la compra</label><input id="dd-fecha" class="campo" type="date"></div>
+          <div><label class="etq" for="dd-venc">Paga a más tardar (opcional)</label><input id="dd-venc" class="campo" type="date"></div></div>
+          <div class="pie-form" style="margin:0"><button class="boton" type="submit">Guardar deuda</button><button class="enlace" type="button" id="dd-cerrar">Cerrar</button></div>
+        </form>
+        <div class="filtros">
+          <input id="cx-buscar" class="campo" type="search" placeholder="Buscar clienta" autocomplete="off" style="max-width:320px;margin-bottom:18px">
+          <div class="pildoras" id="filtro-cartera" role="group" aria-label="Ver">
+            <button class="pildora" type="button" data-f="pendientes" aria-pressed="true">Pendientes</button>
+            <button class="pildora" type="button" data-f="pagadas" aria-pressed="false">Pagadas</button>
+            <button class="pildora" type="button" data-f="todas" aria-pressed="false">Todas</button>
+          </div>
+        </div>
+        <div id="cx-lista"></div>
+      </section>
+
       <!-- Clientas -->
       <section id="vista-clientas" hidden>
         <div class="encabezado-vista"><h2 class="titulo-vista">Clientas</h2></div>
@@ -1520,7 +1589,7 @@
       document.querySelectorAll('.nav button').forEach(function (b) {
         if (b.dataset.vista === navActiva) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
       });
-      ['inicio', 'ventas', 'clientas', 'clienta', 'nueva-venta', 'pedido', 'productos', 'nuevo', 'producto', 'inventario', 'compras', 'nueva-compra', 'compra', 'finanzas', 'marketing', 'categorias', 'configuracion'].forEach(function (v) { $('vista-' + v).hidden = v !== vista; });
+      ['inicio', 'ventas', 'cartera', 'clientas', 'clienta', 'nueva-venta', 'pedido', 'productos', 'nuevo', 'producto', 'inventario', 'compras', 'nueva-compra', 'compra', 'finanzas', 'marketing', 'categorias', 'configuracion'].forEach(function (v) { $('vista-' + v).hidden = v !== vista; });
       window.scrollTo(0, 0);
       if (vista === 'inicio') cargarInicio();
       if (vista === 'productos') cargarProductos();
@@ -1529,6 +1598,7 @@
       if (vista === 'finanzas') cargarFinanzas();
       if (vista === 'marketing') cargarMarketing();
       if (vista === 'clientas') cargarClientas();
+      if (vista === 'cartera') cargarCartera();
       if (vista === 'ventas') cargarVentas();
       if (vista === 'nueva-venta') prepararVenta();
       if (vista === 'nueva-compra') prepararCompra();
@@ -2309,7 +2379,7 @@
     });
     ['input', 'change'].forEach(function (t) { $('form-venta').addEventListener(t, recalcularVenta); });
     $('nv-entrega').addEventListener('change', cambiosEntrega);
-    $('nv-pago').addEventListener('change', function () { $('nv-medio-caja').hidden = this.value !== 'verificado'; });
+    $('nv-pago').addEventListener('change', function () { $('nv-medio-caja').hidden = this.value !== 'verificado'; $('nv-venc-caja').hidden = this.value !== 'credito'; });
     function cambiosEntrega() {
       var recoge = $('nv-entrega').value === 'recoge';
       $('nv-envio-caja').hidden = recoge; $('nv-dir-caja').hidden = recoge;
@@ -2351,7 +2421,7 @@
         customer_id: clienta.customer_id, canal: $('nv-canal').value, tipo_entrega: $('nv-entrega').value,
         descuento: soloDigitos($('nv-desc').value), envio_cobrado: soloDigitos($('nv-envio').value),
         direccion_entrega: $('nv-dir').value, ciudad_entrega: $('nv-ciudad').value, nota: $('nv-nota').value,
-        pago: $('nv-pago').value, medio: $('nv-medio').value, idempotency_key: claveVenta,
+        pago: $('nv-pago').value, medio: $('nv-medio').value, vencimiento: $('nv-pago').value === 'credito' ? $('nv-venc').value : '', idempotency_key: claveVenta,
         lineas: ls.map(function (l) { return { variant_id: l.v.variant_id, cantidad: l.cantidad }; })
       }).then(function (r) {
         btn.disabled = false; btn.textContent = 'Registrar venta';
@@ -2508,6 +2578,9 @@
       api('resumenInicio').then(function (r) {
         if (!r.ok) return;
         var d = r.data, txt = function (id, html) { $('ti-' + id).innerHTML = html; };
+        var cx = d.cartera;
+        txt('cartera', cx.saldo ? '<b>' + pesos(cx.saldo) + '</b> · ' + plural(cx.clientas, 'clienta', 'clientas') + (cx.vencidas ? ' · ' + plural(cx.vencidas, 'vencida', 'vencidas') : '') : 'Nadie debe. Todo al día.');
+        alerta('cartera', cx.clientas);
         var v = d.ventas;
         txt('ventas', v.por_cobrar || v.por_despachar ? '<b>' + plural(v.por_cobrar, 'por cobrar', 'por cobrar') + '</b> · ' + plural(v.por_despachar, 'por despachar', 'por despachar') : 'Al día · ' + pesos(v.mes) + ' este mes');
         alerta('ventas', v.por_verificar + v.por_despachar);
@@ -2529,15 +2602,126 @@
       });
     }
     document.addEventListener('click', function (ev) { var b = ev.target.closest('[data-ir-app]'); if (b) irA(b.dataset.irApp); });
-    ['ventas', 'clientas', 'productos', 'inventario', 'compras', 'finanzas', 'marketing', 'categorias', 'configuracion'].forEach(function (v) {
+    ['ventas', 'cartera', 'clientas', 'productos', 'inventario', 'compras', 'finanzas', 'marketing', 'categorias', 'configuracion'].forEach(function (v) {
       var sec = $('vista-' + v); if (!sec) return;
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'enlace volver volver-inicio'; b.dataset.ir = 'inicio'; b.textContent = '← Inicio';
       sec.insertBefore(b, sec.firstChild);
     });
 
+
+    /* ---------------- Cartera (por cobrar) ---------------- */
+    var cxFiltro = 'pendientes', cxDatos = null, cxAbiertos = {}, claveDeuda = null, cxTimer;
+    function diasTexto(d) { return d === 0 ? 'hoy' : d === 1 ? 'hace 1 día' : 'hace ' + d + ' días'; }
+    function cargarCartera() {
+      api('listarCartera', { filtro: cxFiltro, q: $('cx-buscar').value }).then(function (r) {
+        if (!r.ok) { manejarError(r); return; }
+        cxDatos = r.data; var R = r.data.resumen, T = r.data.tramos;
+        $('cx-total').textContent = pesos(R.por_cobrar);
+        $('cx-clientas').textContent = R.clientas;
+        $('cx-vencido').textContent = pesos(R.vencido);
+        $('cx-cobrado').textContent = pesos(R.cobrado_mes);
+        var tot = T.hasta30 + T.de31a60 + T.mas60;
+        $('cx-tramos').innerHTML = tot ? '<p class="titulo-seccion" style="margin-top:0">Antigüedad de la deuda</p><div class="tramos">' +
+          '<i class="t1" style="width:' + (T.hasta30 / tot * 100) + '%"></i><i class="t2" style="width:' + (T.de31a60 / tot * 100) + '%"></i><i class="t3" style="width:' + (T.mas60 / tot * 100) + '%"></i></div>' +
+          '<div class="tramos-etq"><span class="e1">Hasta 30 días · ' + pesos(T.hasta30) + '</span><span class="e2">31 a 60 días · ' + pesos(T.de31a60) + '</span><span class="e3">Más de 60 días · ' + pesos(T.mas60) + '</span></div>' : '';
+        pintarCartera();
+      });
+    }
+    function recordatorio(g) {
+      var pend = g.cuentas.filter(function (c) { return c.estado === 'pendiente'; });
+      var detalle = pend.map(function (c) { return c.descripcion + ' (' + pesos(c.saldo) + ')'; }).join(', ');
+      return 'Hola, ' + g.nombre.split(' ')[0] + '. Te escribimos de Lazos Memorables para recordarte con cariño el saldo pendiente de ' + detalle +
+        (pend.length > 1 ? ', para un total de ' + pesos(g.saldo) : '') + '. Cuando puedas, nos confirmas el pago por aquí. Gracias por elegirnos.';
+    }
+    function pintarCartera() {
+      var d = cxDatos, hoy = d.hoy;
+      if (!d.grupos.length) { $('cx-lista').innerHTML = '<p class="vacio">' + (cxFiltro === 'pendientes' ? 'Nadie tiene saldo pendiente.' : 'Nada por aquí.') + '</p>'; return; }
+      $('cx-lista').innerHTML = d.grupos.map(function (g, gi) {
+        var abierto = !!cxAbiertos[g.clave];
+        var pend = g.cuentas.filter(function (c) { return c.estado === 'pendiente'; }).length;
+        var cuerpo = !abierto ? '' : '<div class="d-cuerpo">' + g.cuentas.map(function (c) {
+          return '<div class="cuenta-cx" data-cx="' + escapar(c.cxc_id) + '"><div class="c-fila"><span class="c-desc">' + escapar(c.descripcion) + '</span><span>' + (c.estado === 'pagada' ? 'Pagada' : pesos(c.saldo)) + '</span></div>' +
+            '<div class="c-meta">' + (c.numero ? escapar(c.numero) + ' · ' : '') + fechaLarga(c.fecha) + ' · ' + diasTexto(c.dias) + (c.monto !== c.saldo && c.estado === 'pendiente' ? ' · valor ' + pesos(c.monto) : '') +
+              (c.vencimiento ? ' · ' + (c.vencida ? '<b style="color:#C2556A">venció el ' + fechaLarga(c.vencimiento) + '</b>' : 'paga a más tardar ' + fechaLarga(c.vencimiento)) : '') + (c.origen === 'saldo_inicial' ? ' · deuda anterior' : '') + '</div>' +
+            (c.abonos.length ? '<ul class="c-abonos">' + c.abonos.map(function (a) { return '<li>Pagó ' + pesos(a.monto) + ' · ' + escapar(a.medio) + ' · ' + fechaLarga(a.fecha) + ' · ' + escapar(a.por) + ' <button class="enlace peligro" type="button" data-anular-abono="' + escapar(a.abono_id) + '" style="font-size:11px">Anular</button></li>'; }).join('') + '</ul>' : '') +
+            (c.estado === 'pendiente' ? '<div class="c-acciones"><button class="enlace" type="button" data-abonar>Registrar pago</button>' + (c.origen === 'saldo_inicial' && !c.abonos.length ? '<button class="enlace peligro" type="button" data-anular-deuda>Anular deuda</button>' : '') + '</div>' +
+              '<form class="form-abono" hidden><div><label class="etq">Valor</label><input class="campo ab-monto" inputmode="numeric" data-precio value="' + Number(c.saldo).toLocaleString('es-CO') + '"></div>' +
+              '<div><label class="etq">Medio</label><select class="selector ab-medio" style="width:100%">' + opciones(d.medios) + '</select></div>' +
+              '<div><label class="etq">Fecha</label><input class="campo ab-fecha" type="date" value="' + hoy + '" max="' + hoy + '"></div>' +
+              '<div><button class="boton" type="submit">Guardar</button></div></form>' : '') + '</div>';
+        }).join('') +
+          (pend ? '<div class="d-acciones"><button class="enlace" type="button" data-copiar-rec="' + gi + '">Copiar recordatorio</button>' +
+            (g.telefono ? '<a class="enlace" href="https://wa.me/' + g.telefono.replace(/\D/g, '') + '?text=' + encodeURIComponent(recordatorio(g)) + '" target="_blank" rel="noopener">Escribirle por WhatsApp</a>' : '') +
+            (g.customer_id ? '<button class="enlace" type="button" data-ficha="' + escapar(g.customer_id) + '">Ver ficha</button>' : '') + '</div>' : '') + '</div>';
+        return '<div class="deudora' + (g.vencida ? ' vencida' : '') + '" data-grupo="' + escapar(g.clave) + '"><button type="button" data-toggle>' +
+          '<span><span class="d-nombre">' + escapar(g.nombre) + '</span><span class="d-meta">' + (pend ? plural(pend, 'pendiente', 'pendientes') + ' · la más antigua ' + diasTexto(g.mas_antigua) : plural(g.cuentas.length, 'cuenta', 'cuentas') + ' · ' + pesos(g.total)) + '</span></span>' +
+          '<span class="d-saldo">' + (g.saldo ? pesos(g.saldo) + '<small>Debe</small>' : '<small>Al día</small>') + '</span></button>' + cuerpo + '</div>';
+      }).join('');
+    }
+    $('filtro-cartera').addEventListener('click', function (ev) {
+      var b = ev.target.closest('.pildora'); if (!b) return;
+      this.querySelectorAll('.pildora').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      cxFiltro = b.dataset.f; cargarCartera();
+    });
+    $('cx-buscar').addEventListener('input', function () { clearTimeout(cxTimer); cxTimer = setTimeout(cargarCartera, 350); });
+    $('btn-nueva-deuda').addEventListener('click', function () {
+      var f = $('form-deuda'); f.reset(); claveDeuda = nuevaClave();
+      $('dd-fecha').value = hoyBogota(); $('dd-fecha').max = hoyBogota();
+      api('listarClientas', {}).then(function (r) { if (r.ok) $('dd-clientas').innerHTML = r.data.clientas.map(function (c) { return '<option value="' + escapar(c.nombre) + '">'; }).join(''); });
+      f.hidden = false; $('dd-nombre').focus();
+    });
+    $('dd-cerrar').addEventListener('click', function () { $('form-deuda').hidden = true; });
+    $('form-deuda').addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var btn = this.querySelector('button[type="submit"]'); btn.disabled = true;
+      api('registrarDeuda', { nombre: $('dd-nombre').value, telefono: $('dd-tel').value, descripcion: $('dd-desc').value, monto: soloDigitos($('dd-monto').value),
+        fecha: $('dd-fecha').value, vencimiento: $('dd-venc').value, idempotency_key: claveDeuda }).then(function (r) {
+        btn.disabled = false;
+        if (!r.ok) { manejarError(r); return; }
+        avisar('Deuda de ' + $('dd-nombre').value + ' registrada.');
+        // Deja el formulario listo para la siguiente, con la misma fecha.
+        claveDeuda = nuevaClave(); $('dd-desc').value = ''; $('dd-monto').value = ''; $('dd-nombre').focus();
+        cargarCartera();
+      });
+    });
+    $('cx-lista').addEventListener('click', function (ev) {
+      var t = ev.target.closest('[data-toggle]');
+      if (t) { var k = t.closest('[data-grupo]').dataset.grupo; cxAbiertos[k] = !cxAbiertos[k]; pintarCartera(); return; }
+      var cx = ev.target.closest('[data-cx]');
+      if (ev.target.closest('[data-abonar]')) { var f = cx.querySelector('.form-abono'); f.hidden = !f.hidden; if (!f.hidden) f.querySelector('.ab-monto').select(); return; }
+      var cr = ev.target.closest('[data-copiar-rec]');
+      if (cr) {
+        var txt = recordatorio(cxDatos.grupos[Number(cr.dataset.copiarRec)]);
+        (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () { avisar('Recordatorio copiado. Pégalo en el chat con la clienta.'); }).catch(function () { window.prompt('Copia el mensaje:', txt); });
+        return;
+      }
+      var aa = ev.target.closest('[data-anular-abono]');
+      if (aa) {
+        if (!window.confirm('¿Anular este pago? El saldo vuelve a quedar pendiente.')) return;
+        api('anularAbono', { abono_id: aa.dataset.anularAbono }).then(function (r) { if (!r.ok) { manejarError(r); return; } avisar('Pago anulado.'); cargarCartera(); });
+        return;
+      }
+      if (ev.target.closest('[data-anular-deuda]')) {
+        var motivo = window.prompt('¿Por qué se anula esta deuda?'); if (!motivo) return;
+        api('anularDeuda', { cxc_id: cx.dataset.cx, motivo: motivo }).then(function (r) { if (!r.ok) { manejarError(r); return; } avisar('Deuda anulada.'); cargarCartera(); });
+      }
+    });
+    $('cx-lista').addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var f = ev.target, cx = f.closest('[data-cx]'), btn = f.querySelector('button'); btn.disabled = true;
+      if (!f.dataset.clave) f.dataset.clave = nuevaClave();
+      api('registrarAbono', { cxc_id: cx.dataset.cx, monto: soloDigitos(f.querySelector('.ab-monto').value), medio: f.querySelector('.ab-medio').value,
+        fecha: f.querySelector('.ab-fecha').value, idempotency_key: f.dataset.clave }).then(function (r) {
+        btn.disabled = false;
+        if (!r.ok) { manejarError(r); return; }
+        avisar(r.data.saldo ? 'Pago registrado. Queda debiendo ' + pesos(r.data.saldo) + '.' : 'Pago registrado. Esa cuenta quedó saldada.');
+        cargarCartera();
+      });
+    });
+
     /* ---------------- Clientas ---------------- */
-    var filtroClientas = '', clienta = null, buscarClTimer;
+    var filtroClientas = '', fichaCl = null, buscarClTimer;
     var MESES_CORTOS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
     function telTexto(t) { var d = String(t || '').replace(/\D/g, '').replace(/^57(?=\d{10}$)/, ''); return d.length === 10 ? d.slice(0, 3) + ' ' + d.slice(3, 6) + ' ' + d.slice(6) : String(t || ''); }
     function mesDiaTexto(md) { if (!md) return ''; var p = md.split('-'); return Number(p[1]) + ' ' + MESES_CORTOS[Number(p[0]) - 1]; }
@@ -2576,7 +2760,7 @@
     document.addEventListener('click', function (ev) { var b = ev.target.closest('[data-ficha]'); if (b) abrirClienta(b.dataset.ficha); });
     function abrirClienta(id) {
       irA('clienta'); $('ck-titulo').textContent = 'Cargando…'; $('ck-cuerpo').innerHTML = '';
-      api('obtenerClienta', { customer_id: id }).then(function (r) { if (!r.ok) { manejarError(r); return; } clienta = r.data; pintarClienta(false); });
+      api('obtenerClienta', { customer_id: id }).then(function (r) { if (!r.ok) { manejarError(r); return; } fichaCl = r.data; pintarFicha(false); });
     }
     function selectorMesDia(id, valor) {
       var p = valor ? valor.split('-') : ['', ''];
@@ -2585,8 +2769,8 @@
       return '<div class="fecha-md"><select id="' + id + '-d" class="selector">' + dias + '</select><select id="' + id + '-m" class="selector">' + meses + '</select></div>';
     }
     function leerMesDia(id) { var d = $(id + '-d').value, m = $(id + '-m').value; return d && m ? m + '-' + d : ''; }
-    function pintarClienta(editando) {
-      var c = clienta, m = c.metricas;
+    function pintarFicha(editando) {
+      var c = fichaCl, m = c.metricas;
       $('ck-sub').textContent = telTexto(c.telefono) + (c.ciudad ? ' · ' + c.ciudad : '') + ' · Desde ' + fechaLarga(c.creado_en);
       $('ck-titulo').textContent = c.nombre;
       $('ck-segmento').className = 'etiqueta ' + m.segmento; $('ck-segmento').textContent = c.segmento_texto;
@@ -2628,20 +2812,20 @@
         }).join('') : '<li class="vacio">Aún no tiene pedidos.</li>') + '</ul>';
     }
     $('vista-clienta').addEventListener('click', function (ev) {
-      if (ev.target.closest('[data-editar-ficha]')) { pintarClienta(true); return; }
-      if (ev.target.closest('[data-cancelar-ficha]')) { pintarClienta(false); return; }
+      if (ev.target.closest('[data-editar-ficha]')) { pintarFicha(true); return; }
+      if (ev.target.closest('[data-cancelar-ficha]')) { pintarFicha(false); return; }
       var o = ev.target.closest('[data-oid-cl]'); if (o) abrirPedido(o.dataset.oidCl);
     });
     $('vista-clienta').addEventListener('submit', function (ev) {
       ev.preventDefault();
       var btn = ev.target.querySelector('button[type="submit"]'); btn.disabled = true;
-      api('actualizarClienta', { customer_id: clienta.customer_id, nombre: $('fc-nombre').value, telefono: $('fc-tel').value, email: $('fc-email').value,
+      api('actualizarClienta', { customer_id: fichaCl.customer_id, nombre: $('fc-nombre').value, telefono: $('fc-tel').value, email: $('fc-email').value,
         ciudad: $('fc-ciudad').value, barrio: $('fc-barrio').value, direccion: $('fc-dir').value, notas: $('fc-notas').value, preferencias: $('fc-pref').value,
         cumpleanos: leerMesDia('fc-cumple'), fecha_especial: leerMesDia('fc-especial'), fecha_especial_motivo: $('fc-motivo').value,
         consentimiento_marketing: $('fc-novedades').checked }).then(function (r) {
         btn.disabled = false;
         if (!r.ok) { manejarError(r); return; }
-        clienta = r.data; pintarClienta(false); avisar('Ficha actualizada.');
+        fichaCl = r.data; pintarFicha(false); avisar('Ficha actualizada.');
       });
     });
 
@@ -2791,6 +2975,7 @@
         c.innerHTML = '<p class="titulo-seccion" style="margin-top:0">Flujo de caja · ' + mesTexto(d.mes) + '</p>' +
           '<table class="estado-res"><tbody>' +
           filaRes('Cobros verificados', F.cobros, 0) +
+          (F.abonos ? filaRes('Abonos de clientas a crédito', F.abonos, 0) : '') +
           filaRes('Reembolsos a clientas', -F.reembolsos, 0, 'sub') +
           filaRes('Pagos a proveedores', -F.pagos_proveedores, 0, 'sub') +
           filaRes('Gastos operativos', -F.gastos, 0, 'sub') +
@@ -2798,7 +2983,7 @@
           filaRes('Flujo neto del mes', F.neto, 0, 'final') + '</tbody></table>' +
           graficoSerie('flujo_neto', 'Flujo neto · últimos 6 meses') +
           '<p class="titulo-seccion">Pendientes hoy</p><div class="cifras">' +
-          '<div class="cifra-bloque"><span class="valor">' + pesos(P.por_cobrar) + '</span><span class="rotulo">Pagos por verificar</span></div>' +
+          '<div class="cifra-bloque"><span class="valor">' + pesos(P.por_cobrar + (P.cartera || 0)) + '</span><span class="rotulo">Por cobrar (incluye crédito)</span></div>' +
           '<div class="cifra-bloque"><span class="valor">' + pesos(P.por_pagar) + '</span><span class="rotulo">Por pagar a proveedores</span></div>' +
           '<div class="cifra-bloque"><span class="valor">' + pesos(P.vencido) + '</span><span class="rotulo">Vencido</span></div>' +
           '<div class="cifra-bloque"><span class="valor">' + pesos(P.por_reembolsar) + '</span><span class="rotulo">Por reembolsar</span></div></div>' +
