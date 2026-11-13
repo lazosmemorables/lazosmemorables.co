@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.17.1 · Panel administrativo -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.18.0 · Panel administrativo -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -743,6 +743,35 @@
       .np-vista-nombre { margin: 0; }
     }
 
+
+    /* ---------- Avisos (v0.18) ---------- */
+    .campana { position: relative; background: none; border: 1px solid rgba(53, 39, 44, .14); width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; margin-right: 6px; }
+    .campana svg { width: 20px; height: 20px; fill: none; stroke: var(--cacao); stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; }
+    .campana-n { position: absolute; top: -4px; right: -4px; min-width: 19px; height: 19px; padding: 0 5px; border-radius: 10px; background: #C2556A; color: #fff;
+      font-size: 10.5px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+    .campana.timbre svg { animation: timbre .9s ease 2; transform-origin: 50% 10%; }
+    @keyframes timbre { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(14deg); } 40% { transform: rotate(-12deg); } 60% { transform: rotate(8deg); } 80% { transform: rotate(-4deg); } }
+    .hoy-avisos { margin: -10px 0 22px; }
+    .hoy-titulo { display: flex; justify-content: space-between; align-items: baseline; margin: 0 0 10px; }
+    .hoy-titulo span { font-size: 10.5px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--texto-suave); }
+    .av { display: grid; grid-template-columns: 10px 1fr; gap: 14px; background: #FBF8F3; border: 1px solid rgba(53, 39, 44, .08); border-radius: 16px; padding: 15px 16px; margin: 0 0 10px; }
+    .av-punto { width: 10px; height: 10px; border-radius: 50%; margin-top: 6px; background: #B89B7B; }
+    .av.alta .av-punto { background: #C2556A; box-shadow: 0 0 0 4px rgba(194, 85, 106, .15); }
+    .av.media .av-punto { background: #B89B7B; }
+    .av.baja .av-punto { background: rgba(53, 39, 44, .25); }
+    .av.alta { background: #fff; border-color: rgba(194, 85, 106, .35); }
+    .av-cat { font-size: 10px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--texto-suave); }
+    .av-tit { display: block; font-weight: 600; font-size: 14.5px; margin: 3px 0 3px; line-height: 1.35; }
+    .av-det { display: block; font-size: 12.5px; color: var(--texto-suave); line-height: 1.5; }
+    .av-acc { display: flex; gap: 18px; margin-top: 10px; flex-wrap: wrap; }
+    .av-grupo { font-family: var(--serif); font-size: 24px; margin: 26px 0 10px; }
+    .av-grupo small { font-family: var(--sans); font-size: 12px; color: var(--texto-suave); margin-left: 8px; }
+    .av-todo-bien { text-align: center; padding: 26px 16px; background: #FBF8F3; border-radius: 18px; }
+    .av-todo-bien b { display: block; font-family: var(--serif); font-weight: 400; font-size: 24px; margin-bottom: 4px; }
+    .av-notif { margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--linea); font-size: 12.5px; color: var(--texto-suave); }
+    .toast.compra { background: #35272C; border-left: 4px solid #E5C1CB; }
+
     /* ---------- Cartera ---------- */
     .tramos { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--linea); margin: 6px 0 8px; }
     .tramos i { display: block; height: 100%; }
@@ -963,6 +992,10 @@
       </div>
       <div class="cab-der">
         <span id="entorno" class="entorno"></span>
+        <button id="btn-avisos" class="campana" type="button" aria-label="Avisos" data-ir-app="avisos">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>
+          <span id="badge-avisos" class="campana-n" hidden>0</span>
+        </button>
         <button id="btn-salir" class="enlace" type="button">Salir</button>
       </div>
     </header>
@@ -985,6 +1018,7 @@
       <section id="vista-inicio">
         <p class="app-fecha" id="app-fecha"></p>
         <h2 id="saludo" class="saludo">Hola.</h2>
+        <div id="hoy-avisos" class="hoy-avisos"></div>
         <button class="app-principal" type="button" data-ir-app="nueva-venta">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span><span class="app-titulo">Nueva venta</span><span class="app-sub">Instagram, WhatsApp o en persona</span></span>
         </button>
@@ -1416,6 +1450,18 @@
       </section>
 
       <!-- Categorías -->
+      <!-- Avisos -->
+      <section id="vista-avisos" hidden>
+        <div class="encabezado-vista"><h2 class="titulo-vista">Avisos</h2></div>
+        <p class="intro">Lo que conviene atender, calculado con tus ventas, inventario, cobros y contenido. Se actualiza solo cada minuto.</p>
+        <div class="chips" id="av-filtro" role="group" aria-label="Categoría"></div>
+        <div id="av-lista"><p class="vacio">Calculando…</p></div>
+        <div class="av-notif" id="av-notif" hidden>
+          <p>Recibe una alerta del navegador cuando entre una compra por la web mientras el panel esté abierto.</p>
+          <button class="enlace" type="button" id="av-permiso">Activar alertas del navegador</button>
+        </div>
+      </section>
+
       <!-- Cartera -->
       <section id="vista-cartera" hidden>
         <div class="encabezado-vista">
@@ -1692,6 +1738,7 @@
     }
 
     function irAlAcceso(aviso) {
+      if (typeof detenerAvisos === 'function') detenerAvisos();
       sessionStorage.removeItem('lazos_token');
       pin = '';
       pintarPuntos();
@@ -1714,6 +1761,7 @@
         pintarEstado(r.data);
         irA('inicio');
         mostrar('app');
+        iniciarAvisos();
       });
     }
 
@@ -1771,7 +1819,7 @@
       document.querySelectorAll('.nav button').forEach(function (b) {
         if (b.dataset.vista === navActiva) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
       });
-      ['inicio', 'ventas', 'cartera', 'clientas', 'clienta', 'nueva-venta', 'pedido', 'productos', 'nuevo', 'producto', 'inventario', 'compras', 'nueva-compra', 'compra', 'finanzas', 'marketing', 'categorias', 'configuracion'].forEach(function (v) { $('vista-' + v).hidden = v !== vista; });
+      ['inicio', 'avisos', 'ventas', 'cartera', 'clientas', 'clienta', 'nueva-venta', 'pedido', 'productos', 'nuevo', 'producto', 'inventario', 'compras', 'nueva-compra', 'compra', 'finanzas', 'marketing', 'categorias', 'configuracion'].forEach(function (v) { $('vista-' + v).hidden = v !== vista; });
       window.scrollTo(0, 0);
       if (vista === 'inicio') cargarInicio();
       if (vista === 'productos') cargarProductos();
@@ -1781,6 +1829,7 @@
       if (vista === 'marketing') cargarMarketing();
       if (vista === 'clientas') cargarClientas();
       if (vista === 'cartera') cargarCartera();
+      if (vista === 'avisos') pintarAvisos();
       if (vista === 'ventas') cargarVentas();
       if (vista === 'nueva-venta') prepararVenta();
       if (vista === 'nueva-compra') prepararCompra();
@@ -3030,13 +3079,101 @@
       });
     }
     document.addEventListener('click', function (ev) { var b = ev.target.closest('[data-ir-app]'); if (b) irA(b.dataset.irApp); });
-    ['ventas', 'cartera', 'clientas', 'productos', 'inventario', 'compras', 'finanzas', 'marketing', 'categorias', 'configuracion'].forEach(function (v) {
+    ['avisos', 'ventas', 'cartera', 'clientas', 'productos', 'inventario', 'compras', 'finanzas', 'marketing', 'categorias', 'configuracion'].forEach(function (v) {
       var sec = $('vista-' + v); if (!sec) return;
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'enlace volver volver-inicio'; b.dataset.ir = 'inicio'; b.textContent = '← Inicio';
       sec.insertBefore(b, sec.firstChild);
     });
 
+
+
+    /* ---------------- Avisos (v0.18) ---------------- */
+    var avDatos = null, avFiltro = '', avTimer = null, avTituloBase = document.title;
+    var CAT_AVISO = { ventas: 'Ventas', inventario: 'Inventario', cobros: 'Cobros', compras: 'Compras', finanzas: 'Finanzas', clientas: 'Clientas', marketing: 'Marketing', sistema: 'Sistema' };
+    function webVistos() { try { return JSON.parse(localStorage.getItem('lazos_web_vistos') || '[]'); } catch (e) { return []; } }
+    function guardarWebVistos(l) { try { localStorage.setItem('lazos_web_vistos', JSON.stringify(l.slice(-50))); } catch (e) { /* sin almacenamiento */ } }
+    function cargarAvisos(primera) {
+      if (!sessionStorage.getItem('lazos_token')) return;
+      api('listarAvisos').then(function (r) {
+        if (!r.ok) { if (r.error && r.error.code === 'SESION_INVALIDA') detenerAvisos(); return; }
+        avDatos = r.data;
+        var urgentes = r.data.conteo.alta + r.data.conteo.media;
+        $('badge-avisos').hidden = !urgentes; $('badge-avisos').textContent = urgentes;
+        document.title = (r.data.conteo.alta ? '(' + r.data.conteo.alta + ') ' : '') + avTituloBase;
+        // Compras nuevas por la web: alerta inmediata una sola vez por pedido.
+        var vistos = webVistos(), nuevas = r.data.web.filter(function (w) { return vistos.indexOf(w.id) < 0; });
+        if (nuevas.length) {
+          if (!primera || nuevas.length) {
+            var w = nuevas[0];
+            var t = $('toast'); t.textContent = w.titulo + ' · ' + w.detalle; t.className = 'toast visible compra';
+            clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.className = 'toast'; }, 9000);
+            $('btn-avisos').classList.remove('timbre'); void $('btn-avisos').offsetWidth; $('btn-avisos').classList.add('timbre');
+            if (navigator.vibrate) navigator.vibrate([120, 60, 120]);
+            if (window.Notification && Notification.permission === 'granted' && document.hidden) {
+              try { new Notification(w.titulo, { body: w.detalle, icon: '/assets/logo-lazos-memorables.png' }); } catch (e) { /* no disponible */ }
+            }
+          }
+          guardarWebVistos(vistos.concat(nuevas.map(function (n) { return n.id; })));
+        }
+        pintarHoy();
+        if (vistaActual === 'avisos') pintarAvisos();
+      });
+    }
+    function iniciarAvisos() { detenerAvisos(); cargarAvisos(true); avTimer = setInterval(function () { if (!document.hidden) cargarAvisos(false); }, 60000); }
+    function detenerAvisos() { if (avTimer) clearInterval(avTimer); avTimer = null; }
+    document.addEventListener('visibilitychange', function () { if (!document.hidden && avTimer) cargarAvisos(false); });
+    function tarjetaAviso(a, compacta) {
+      return '<div class="av ' + a.nivel + '"><span class="av-punto"></span><div><span class="av-cat">' + escapar(CAT_AVISO[a.categoria] || a.categoria) + '</span>' +
+        '<span class="av-tit">' + escapar(a.titulo) + '</span>' + (compacta ? '' : '<span class="av-det">' + escapar(a.detalle) + '</span>') +
+        '<div class="av-acc">' + (a.accion ? '<button class="enlace" type="button" data-av-ir="' + escapar(a.accion.vista) + '" data-av-id="' + escapar(a.accion.id || '') + '">' + escapar(a.accion.texto) + ' →</button>' : '') +
+        (compacta ? '' : '<button class="enlace" type="button" data-av-listo="' + escapar(a.id) + '">Listo</button>') + '</div></div></div>';
+    }
+    function pintarHoy() {
+      if (!avDatos) return;
+      var altas = avDatos.avisos.filter(function (a) { return a.nivel === 'alta'; });
+      var mostrar = (altas.length ? altas : avDatos.avisos.filter(function (a) { return a.nivel === 'media'; })).slice(0, 3);
+      var total = avDatos.conteo.alta + avDatos.conteo.media + avDatos.conteo.baja;
+      $('hoy-avisos').innerHTML = mostrar.length
+        ? '<div class="hoy-titulo"><span>' + (altas.length ? 'Atiende hoy' : 'Esta semana') + '</span><button class="enlace" type="button" data-ir-app="avisos">Ver ' + (total > mostrar.length ? 'los ' + total + ' avisos' : 'avisos') + '</button></div>' +
+          mostrar.map(function (a) { return tarjetaAviso(a, true); }).join('')
+        : '<div class="av-todo-bien" style="padding:16px"><span class="av-cat">Todo al día</span><span class="av-det" style="margin-top:4px">No hay nada urgente. Buen momento para crear contenido.</span></div>';
+    }
+    function pintarAvisos() {
+      if (!avDatos) { $('av-lista').innerHTML = '<p class="vacio">Calculando…</p>'; cargarAvisos(false); return; }
+      var cats = {}; avDatos.avisos.forEach(function (a) { cats[a.categoria] = (cats[a.categoria] || 0) + 1; });
+      $('av-filtro').innerHTML = '<button class="chip" type="button" data-avf="" aria-pressed="' + (!avFiltro) + '">Todo · ' + avDatos.avisos.length + '</button>' +
+        Object.keys(cats).map(function (k) { return '<button class="chip" type="button" data-avf="' + k + '" aria-pressed="' + (avFiltro === k) + '">' + escapar(CAT_AVISO[k] || k) + ' · ' + cats[k] + '</button>'; }).join('');
+      var lista = avDatos.avisos.filter(function (a) { return !avFiltro || a.categoria === avFiltro; });
+      var grupos = [['alta', 'Atiende hoy'], ['media', 'Esta semana'], ['baja', 'Sugerencias']];
+      $('av-lista').innerHTML = (lista.length ? grupos.map(function (g) {
+        var items = lista.filter(function (a) { return a.nivel === g[0]; }); if (!items.length) return '';
+        return '<p class="av-grupo">' + g[1] + '<small>' + items.length + '</small></p>' + items.map(function (a) { return tarjetaAviso(a, false); }).join('');
+      }).join('') : '<div class="av-todo-bien"><b>Todo al día</b><span class="av-det">No hay avisos pendientes' + (avFiltro ? ' en esta categoría' : '') + '.</span></div>') +
+        (avDatos.listos.length && !avFiltro ? '<details class="estado-sistema"><summary>Ya atendidos · ' + avDatos.listos.length + '</summary>' + avDatos.listos.map(function (a) {
+          return '<p class="av-det" style="margin:10px 0">' + escapar(a.titulo) + ' · ' + escapar(a.listo_por || '') + '</p>';
+        }).join('') + '</details>' : '');
+      $('av-notif').hidden = !(window.Notification && Notification.permission === 'default');
+    }
+    document.addEventListener('click', function (ev) {
+      var ir = ev.target.closest('[data-av-ir]');
+      if (ir) { if (ir.dataset.avIr === 'pedido' && ir.dataset.avId) abrirPedido(ir.dataset.avId); else irA(ir.dataset.avIr); return; }
+      var listo = ev.target.closest('[data-av-listo]');
+      if (listo) {
+        listo.disabled = true;
+        api('marcarAvisoListo', { aviso_id: listo.dataset.avListo }).then(function (r) {
+          if (!r.ok) { listo.disabled = false; manejarError(r); return; }
+          avDatos = r.data; var u = r.data.conteo.alta + r.data.conteo.media;
+          $('badge-avisos').hidden = !u; $('badge-avisos').textContent = u; pintarAvisos(); pintarHoy();
+        });
+        return;
+      }
+      var f = ev.target.closest('[data-avf]'); if (f) { avFiltro = f.dataset.avf; pintarAvisos(); }
+    });
+    $('av-permiso').addEventListener('click', function () {
+      if (!window.Notification) return;
+      Notification.requestPermission().then(function (p) { avisar(p === 'granted' ? 'Listo: te avisaremos de las compras web.' : 'El navegador no dio permiso.'); pintarAvisos(); });
+    });
 
     /* ---------------- Cartera (por cobrar) ---------------- */
     var cxFiltro = 'pendientes', cxDatos = null, cxAbiertos = {}, claveDeuda = null, cxTimer;
