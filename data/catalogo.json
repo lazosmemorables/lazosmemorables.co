@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-16T22:28:20-05:00",
+ "generado": "2026-11-16T22:30:06-05:00",
  "version": 1,
  "moneda": "COP",
  "categorias": [
@@ -19,12 +19,12 @@
    "descripcion": "",
    "fotos": [
     {
-     "web": "/assets/productos/lm-are-0005/f042a35a2c7b2.jpg",
-     "mini": "/assets/productos/lm-are-0005/f042a35a2c7b2-mini.jpg"
-    },
-    {
      "web": "/assets/productos/lm-are-0005/fc28537398faa.jpg",
      "mini": "/assets/productos/lm-are-0005/fc28537398faa-mini.jpg"
+    },
+    {
+     "web": "/assets/productos/lm-are-0005/f042a35a2c7b2.jpg",
+     "mini": "/assets/productos/lm-are-0005/f042a35a2c7b2-mini.jpg"
     }
    ],
    "variantes": []
