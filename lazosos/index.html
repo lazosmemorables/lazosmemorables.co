@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <!-- LAZOS OS — lazosos/index.html · Versión 0.27.1 · Panel administrativo (asesor de marketing con Gemini o Claude) -->
+  <!-- LAZOS OS — lazosos/index.html · Versión 0.27.3 · Panel administrativo (asesor de marketing con Gemini o Claude) -->
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <meta name="theme-color" content="#FFFFFF">
@@ -623,6 +623,13 @@
     .foto-agregar:hover { border-color: var(--cacao); color: var(--cacao); }
     .foto-agregar .mas { font-family: var(--serif); font-size: 34px; font-weight: 400; letter-spacing: 0; line-height: 1; }
     .foto-agregar.cargando { pointer-events: none; opacity: .6; }
+    .foto-agregar.cargando .giro-mini { margin: 0 0 6px; width: 18px; height: 18px; border-color: rgba(53,39,44,.2); border-top-color: var(--oro); }
+    .fotos.trabajando .acciones-foto, .fotos.trabajando .foto-agregar { pointer-events: none; opacity: .45; }
+    .foto-capa { position: absolute; top: 0; left: 0; right: 0; aspect-ratio: 4 / 5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+      background: rgba(251,248,243,.82); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); color: var(--cacao);
+      font-size: 10px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; text-align: center; padding: 10px; animation: aparecer .15s ease; }
+    .foto-capa .giro { width: 28px; height: 28px; border: 2px solid rgba(184,155,123,.3); border-top-color: var(--oro); border-radius: 50%; animation: girar .8s linear infinite; }
+    @keyframes aparecer { from { opacity: 0; } to { opacity: 1; } }
     .mini-lista { width: 44px; height: 55px; object-fit: cover; background: var(--marfil); flex: none; }
     .mini-vacia { width: 44px; height: 55px; flex: none; border: 1px dashed var(--linea); }
 
@@ -847,6 +854,17 @@
     .np-mas { font-family: var(--serif); font-size: 54px; line-height: 1; color: #C16478; }
     .np-foto-caja small { font-size: 11px; color: var(--texto-suave); }
     .np-quitar { position: absolute; bottom: 12px; right: 12px; background: rgba(255, 255, 255, .92); border: 0; border-radius: 999px; padding: 8px 14px; font-size: 12px; cursor: pointer; color: var(--cacao); }
+    .np-tira { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 10px; }
+    .np-tira[hidden] { display: none; }
+    .np-mini { position: relative; aspect-ratio: 4 / 5; border-radius: 10px; overflow: hidden; background: var(--marfil); border: 1.5px solid transparent; padding: 0; cursor: pointer; }
+    .np-mini img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .np-mini.principal { border: 2px solid var(--oro); box-shadow: 0 0 0 2px rgba(184,155,123,.25); }
+    .np-mini .x { position: absolute; top: 3px; right: 3px; width: 20px; height: 20px; border-radius: 50%; background: rgba(53,39,44,.78); color: #fff; font-size: 13px; line-height: 20px; text-align: center; }
+    .np-mini-mas { aspect-ratio: 4 / 5; border-radius: 10px; border: 1.5px dashed rgba(193,100,120,.45); background: #F2E5E7; display: grid; place-items: center; font-family: var(--serif); font-size: 26px; color: #C16478; cursor: pointer; }
+    .np-mini-mas.cargando, .np-mini.cargando { pointer-events: none; }
+    .np-mini-mas .giro-mini { margin: 0; border-color: rgba(193,100,120,.25); border-top-color: #C16478; }
+    .np-cuenta { position: absolute; top: 10px; left: 10px; white-space: nowrap; background: var(--cacao); color: var(--marfil-suave); font-size: 10px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; padding: 6px 10px; border-radius: 999px; }
+    .np-tira-ayuda { grid-column: 1 / -1; font-size: 11px; color: var(--texto-suave); margin: 2px 0 0; }
     .np-vista-nombre { font-family: var(--serif); font-size: 22px; margin: 14px 0 0; line-height: 1.2; }
     .np-vista-precio { font-weight: 600; margin: 4px 0 0; }
     .np-grande { font-size: 18px !important; width: 100%; }
@@ -890,6 +908,7 @@
       .np-tarjeta { grid-template-columns: 1fr; gap: 20px; }
       .np-foto-col { display: grid; grid-template-columns: 130px 1fr; gap: 0 16px; align-items: end; }
       .np-foto-col .np-foto-caja { grid-row: span 2; }
+      .np-foto-col .np-tira { grid-column: 1 / -1; grid-row: 3; }
       .np-vista-nombre { margin: 0; }
     }
 
@@ -1353,12 +1372,13 @@
         <form id="form-nuevo" class="np-tarjeta" autocomplete="off">
           <div class="np-foto-col">
             <label class="np-foto-caja" for="np-foto" id="np-foto-btn">
-              <span class="np-mas">+</span><span>Agregar foto</span><small>Opcional · se recorta en 4:5</small>
+              <span class="np-mas">+</span><span>Agregar fotos</span><small>Opcional · hasta 5 · se recortan en 4:5</small>
             </label>
-            <div class="np-foto-caja con-foto" id="np-foto-vista" hidden><img alt="Vista previa de la foto"><button class="np-quitar" type="button" id="np-foto-quitar">Quitar</button></div>
-            <input id="np-foto" type="file" accept="image/*" hidden>
+            <div class="np-foto-caja con-foto" id="np-foto-vista" hidden><img alt="Vista previa de la foto principal"><span class="np-cuenta" id="np-cuenta">Principal</span><button class="np-quitar" type="button" id="np-foto-quitar">Quitar</button></div>
+            <input id="np-foto" type="file" accept="image/*" multiple hidden>
             <p class="np-vista-nombre" id="np-vista-nombre">Nombre del producto</p>
             <p class="np-vista-precio" id="np-vista-precio">$0</p>
+            <div class="np-tira" id="np-tira" hidden></div>
           </div>
           <div class="np-datos">
             <span class="etq">Categoría</span>
@@ -2349,19 +2369,49 @@
     $('btn-nuevo-producto').addEventListener('click', function () { irA('nuevo'); });
 
     /* ---------------- Productos: nuevo ---------------- */
-    var fotoNueva = null;
-    function limpiarFotoNueva() { fotoNueva = null; $('np-foto-vista').hidden = true; $('np-foto-btn').hidden = false; }
+    /* Varias fotos antes de crear: la primera es la principal; se suben en orden al crear. */
+    var MAX_FOTOS = 5, fotosNuevas = [], preparandoFotos = 0;
+    function limpiarFotoNueva() { fotosNuevas = []; pintarFotosNuevas(); }
+    function pintarFotosNuevas() {
+      var hay = fotosNuevas.length;
+      $('np-foto-btn').hidden = !!hay; $('np-foto-vista').hidden = !hay;
+      if (hay) {
+        $('np-foto-vista').querySelector('img').src = 'data:image/jpeg;base64,' + fotosNuevas[0].mini;
+      }
+      var tira = $('np-tira');
+      tira.hidden = !hay && !preparandoFotos;
+      tira.innerHTML = fotosNuevas.map(function (f, i) {
+        return '<button type="button" class="np-mini' + (i === 0 ? ' principal' : '') + '" data-np-mini="' + i + '" aria-label="' + (i === 0 ? 'Foto principal' : 'Hacer principal la foto ' + (i + 1)) + '">' +
+          '<img src="data:image/jpeg;base64,' + f.mini + '" alt=""><span class="x" data-np-quitar="' + i + '" aria-label="Quitar foto ' + (i + 1) + '">×</span></button>';
+      }).join('') +
+        (preparandoFotos ? '<span class="np-mini-mas cargando"><span class="giro-mini"></span></span>' : '') +
+        (hay && !preparandoFotos && hay < MAX_FOTOS ? '<label class="np-mini-mas" for="np-foto" aria-label="Agregar más fotos">+</label>' : '') +
+        (hay ? '<p class="np-tira-ayuda">' + hay + ' de ' + MAX_FOTOS + ' fotos' + (hay > 1 ? ' · toca una para hacerla principal.' : '.') + '</p>' : '');
+    }
     $('np-foto').addEventListener('change', function () {
-      var archivo = this.files && this.files[0]; this.value = '';
-      if (!archivo) return;
-      $('np-foto-btn').classList.add('cargando');
-      prepararFoto(archivo).then(function (f) {
-        fotoNueva = f;
-        $('np-foto-vista').querySelector('img').src = 'data:image/jpeg;base64,' + f.mini;
-        $('np-foto-vista').hidden = false; $('np-foto-btn').hidden = true;
-      }).catch(function (e) { avisar(e.message, true); }).then(function () { $('np-foto-btn').classList.remove('cargando'); });
+      var archivos = Array.prototype.slice.call(this.files || []); this.value = '';
+      if (!archivos.length) return;
+      var cupo = MAX_FOTOS - fotosNuevas.length;
+      if (archivos.length > cupo) avisar('Máximo ' + MAX_FOTOS + ' fotos por producto. Tomé las primeras ' + cupo + '.', true);
+      archivos = archivos.slice(0, cupo);
+      preparandoFotos = archivos.length;
+      $('np-foto-btn').classList.add('cargando'); pintarFotosNuevas();
+      /* Una a la vez: en el celular procesar varias juntas gasta mucha memoria. */
+      archivos.reduce(function (cadena, archivo) {
+        return cadena.then(function () {
+          return prepararFoto(archivo).then(function (f) { fotosNuevas.push(f); })
+            .catch(function (e) { avisar(e.message, true); })
+            .then(function () { preparandoFotos--; pintarFotosNuevas(); });
+        });
+      }, Promise.resolve()).then(function () { preparandoFotos = 0; $('np-foto-btn').classList.remove('cargando'); pintarFotosNuevas(); });
     });
-    $('np-foto-quitar').addEventListener('click', limpiarFotoNueva);
+    $('np-foto-quitar').addEventListener('click', function () { fotosNuevas.shift(); pintarFotosNuevas(); });
+    $('np-tira').addEventListener('click', function (ev) {
+      var q = ev.target.closest('[data-np-quitar]');
+      if (q) { fotosNuevas.splice(Number(q.dataset.npQuitar), 1); pintarFotosNuevas(); return; }
+      var m = ev.target.closest('[data-np-mini]');
+      if (m && m.dataset.npMini !== '0') { var f = fotosNuevas.splice(Number(m.dataset.npMini), 1)[0]; fotosNuevas.unshift(f); pintarFotosNuevas(); }
+    });
     $('np-cats').addEventListener('click', function (ev) {
       var c = ev.target.closest('[data-npcat]'); if (!c) return;
       this.querySelectorAll('.chip').forEach(function (x) { x.setAttribute('aria-pressed', x === c ? 'true' : 'false'); });
@@ -2424,6 +2474,7 @@
       if (!$('np-cat').value) { avisar('Elige una categoría.', true); return; }
       if ($('np-nombre').value.trim().length < 2) { avisar('Escribe el nombre del producto.', true); $('np-nombre').focus(); return; }
       if (!(Number(soloDigitos($('np-precio').value)) > 0)) { avisar('Escribe el precio de venta.', true); $('np-precio').focus(); return; }
+      if (preparandoFotos) { avisar('Espera un momento: estamos preparando las fotos.', true); return; }
       var unidades = Number(soloDigitos($('np-unidades').value)) || 0;
       if (unidades > 0 && !(Number(soloDigitos($('np-costo').value)) > 0)) { avisar('Escribe cuánto te costó cada unidad. Sirve para calcular tu margen.', true); $('np-costo').focus(); return; }
       var btn = this.querySelector('button[type="submit"]');
@@ -2440,12 +2491,21 @@
         if (!r.ok) { btn.disabled = false; btn.textContent = 'Crear producto'; manejarError(r); return; }
         var creado = r.data;
         var mensaje = creado.nombre + ' creado · ' + (creado.stock_total ? creado.stock_total + (creado.stock_total === 1 ? ' unidad' : ' unidades') : 'sin existencias aún');
-        if (!fotoNueva) {
+        var fotos = fotosNuevas.slice();
+        if (!fotos.length) {
           avisar(mensaje); mostrarProducto(creado); return;
         }
-        btn.innerHTML = '<span class="giro-mini"></span>Subiendo la foto…';
-        api('subirFoto', { product_id: creado.product_id, web: fotoNueva.web, mini: fotoNueva.mini }).then(function (rf) {
-          avisar(mensaje + (rf.ok ? ' · con foto' : ' · la foto no se guardó, agrégala aquí'), !rf.ok);
+        /* En orden, para que la primera quede como principal. */
+        var subidas = 0, fallidas = 0;
+        fotos.reduce(function (cadena, f, i) {
+          return cadena.then(function () {
+            btn.innerHTML = '<span class="giro-mini"></span>' + (fotos.length > 1 ? 'Subiendo foto ' + (i + 1) + ' de ' + fotos.length + '…' : 'Subiendo la foto…');
+            return api('subirFoto', { product_id: creado.product_id, web: f.web, mini: f.mini }).then(function (rf) { if (rf.ok) subidas++; else fallidas++; });
+          });
+        }, Promise.resolve()).then(function () {
+          var txt = !fallidas ? (subidas === 1 ? ' · con foto' : ' · con ' + subidas + ' fotos')
+            : subidas ? ' · ' + subidas + ' de ' + fotos.length + ' fotos guardadas; agrega las demás aquí' : ' · las fotos no se guardaron, agrégalas aquí';
+          avisar(mensaje + txt, !!fallidas);
           limpiarFotoNueva(); abrirProducto(creado.product_id);
         });
       });
@@ -4560,19 +4620,39 @@
       });
     }
 
+    /** Capa de "trabajando" sobre una foto y bloqueo de las demás acciones mientras responde el servidor. */
+    function fotoTrabajando(caja, texto) {
+      $('fotos-prod').classList.add('trabajando');
+      if (!caja) return;
+      var capa = caja.querySelector('.foto-capa');
+      if (!capa) { capa = document.createElement('div'); capa.className = 'foto-capa'; capa.setAttribute('role', 'status'); caja.appendChild(capa); }
+      capa.innerHTML = '<span class="giro"></span>' + escapar(texto);
+    }
+    function fotosListas() { $('fotos-prod').classList.remove('trabajando'); }
+    function terminarFoto(mensaje) {
+      return recargarProducto(producto.product_id).then(function () { fotosListas(); if (mensaje) avisar(mensaje); });
+    }
+
     $('input-foto').addEventListener('change', function () {
       var archivo = this.files && this.files[0];
       this.value = '';
       if (!archivo) return;
       var boton = $('btn-foto');
-      if (boton) { boton.classList.add('cargando'); boton.lastChild.textContent = 'Subiendo…'; }
+      if (boton) { boton.classList.add('cargando'); boton.innerHTML = '<span class="giro-mini"></span>Preparando…'; }
+      fotoTrabajando(null);
       prepararFoto(archivo).then(function (f) {
-        return api('subirFoto', { product_id: producto.product_id, web: f.web, mini: f.mini });
-      }).then(function (r) {
-        if (!r.ok) { manejarError(r); pintarFotos(); return; }
-        avisar('Foto guardada. En el sitio se verá en uno o dos minutos.');
-        recargarProducto(producto.product_id);
-      }).catch(function (e) { avisar(e.message, true); pintarFotos(); });
+        var nueva = document.createElement('div');
+        nueva.className = 'foto';
+        nueva.innerHTML = '<img src="data:image/jpeg;base64,' + f.mini + '" alt="Foto nueva">';
+        $('fotos-prod').insertBefore(nueva, $('btn-foto'));
+        if ($('btn-foto')) $('btn-foto').style.display = 'none';
+        fotoTrabajando(nueva, 'Subiendo foto…');
+        return api('subirFoto', { product_id: producto.product_id, web: f.web, mini: f.mini }).then(function (r) {
+          if (!r.ok) { manejarError(r); fotosListas(); pintarFotos(); return; }
+          fotoTrabajando(nueva, 'Guardando…');
+          return terminarFoto('Foto guardada. En el sitio se verá en uno o dos minutos.');
+        });
+      }).catch(function (e) { avisar(e.message, true); fotosListas(); pintarFotos(); });
     });
 
     $('fotos-prod').addEventListener('click', function (ev) {
@@ -4582,12 +4662,15 @@
       if (b.dataset.accFoto === 'eliminar' && b.dataset.confirmar !== '1') {
         b.dataset.confirmar = '1'; b.textContent = '¿Quitar?'; return;
       }
+      if ($('fotos-prod').classList.contains('trabajando')) return;
       b.disabled = true;
+      var caja = b.closest('.foto');
       var accion = b.dataset.accFoto === 'eliminar' ? 'eliminarFoto' : 'hacerPrincipalFoto';
+      fotoTrabajando(caja, accion === 'eliminarFoto' ? 'Quitando foto…' : 'Haciéndola principal…');
       api(accion, { foto_id: id }).then(function (r) {
-        if (!r.ok) { b.disabled = false; manejarError(r); return; }
-        avisar(accion === 'eliminarFoto' ? 'Foto retirada del sitio. La copia queda en Drive.' : 'Foto principal actualizada.');
-        recargarProducto(producto.product_id);
+        if (!r.ok) { b.disabled = false; fotosListas(); pintarFotos(); manejarError(r); return; }
+        fotoTrabajando(caja, 'Actualizando…');
+        terminarFoto(accion === 'eliminarFoto' ? 'Foto retirada del sitio. La copia queda en Drive.' : 'Foto principal actualizada.');
       });
     });
 
