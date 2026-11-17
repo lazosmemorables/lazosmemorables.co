@@ -1,9 +1,31 @@
 {
- "generado": "2026-11-12T23:28:02-05:00",
+ "generado": "2026-11-16T22:26:28-05:00",
  "version": 1,
  "moneda": "COP",
- "categorias": [],
- "productos": [],
+ "categorias": [
+  {
+   "codigo": "ARE",
+   "nombre": "Aretes"
+  }
+ ],
+ "productos": [
+  {
+   "sku": "LM-ARE-0005",
+   "slug": "aretes-tipo-flor-are-0005",
+   "nombre": "Aretes tipo flor",
+   "categoria": "Aretes",
+   "categoria_codigo": "ARE",
+   "precio": 59900,
+   "descripcion": "",
+   "fotos": [
+    {
+     "web": "/assets/productos/lm-are-0005/fc28537398faa.jpg",
+     "mini": "/assets/productos/lm-are-0005/fc28537398faa-mini.jpg"
+    }
+   ],
+   "variantes": []
+  }
+ ],
  "tienda": {
   "checkout_activo": true,
   "envio": {
